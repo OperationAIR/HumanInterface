@@ -147,7 +147,7 @@ def pressurePlot():
             pr = ser.readline().decode('utf-8').rstrip()
         except:
             pr = 0
-        print(pr)
+        #print(pr)
         
         try:
             pressure = round(float(pr), 2)
@@ -188,7 +188,7 @@ tab_control.add(tab2, text='Graphs')
 btn_start = Button(tab1, text='START')
 btn_stop = Button(tab1, text='STOP', command= helloCallBack)
 btn_start.place(x=0,y=0)
-btn_stop.place(x=50,y=0)
+btn_stop.place(x=70,y=0)
 
 image = PhotoImage(file="logo.png")
 label = Label(tab1, image=image)
@@ -234,7 +234,7 @@ lbl5 = Label(tab1, text= 'Max Pressure alarm [cm-H20]')
 lbl5.place(x=10,y=200)
 combo5 = ttk.Combobox(tab1)
 combo5['values']= (10, 20, 30, 40, 50)
-combo5.place(x=200,y=200)
+combo5.place(x=210,y=200)
 combo5.bind("<<ComboboxSelected>>", lambda _ : saveAlarm("MaxP",combo5.get()))
 
 lbl6 = Label(tab1, text= 'Min Pressure alarm [cm-H20]')
@@ -273,8 +273,8 @@ combo10.place(x=200,y=350)
 combo10.bind("<<ComboboxSelected>>", lambda _ : saveAlarm("minF",combo10.get()))
 
 #tab 2 Graphs
-lbl2 = Label(tab2, text= 'PT Curve')
-lbl2.grid(column=0, row=0)
+# lbl2 = Label(tab2, text= 'PT Curve')
+# lbl2.grid(column=0, row=0)
 
 
 tab_control.pack(expand=1, fill='both')
