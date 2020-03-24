@@ -11,6 +11,8 @@ import datetime as dt
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import serial
+
+from settings import Settings
 #global variables (maybe Dictionary)
 valuePEEP = 0
 valueFreq = 0
@@ -67,7 +69,7 @@ def saveAlarm(sendtype, sendvalue):
     elif sendtype == "MaxF":
         MaxFi = int(sendvalue)
     elif sendtype == "MinF":
-        MinFi = int(sendvalue)    
+        MinFi = int(sendvalue)
     else:
         print("fout")
 
@@ -76,7 +78,7 @@ def checkAllAlarms():
     ser = serial.Serial ("/dev/ttyACM0", 115200, timeout=1)    #Open port with baud rate
     ser.flushInput()
     ser.write(b'p')
-    
+
     if valuePEEP > MaxPres:
         lbl5.configure(foreground="red")
         giveAlarm()
@@ -87,7 +89,7 @@ def checkAllAlarms():
         lbl6.configure(foreground="red")
         giveAlarm()
     else:
-        lbl6.configure(foreground="black") 
+        lbl6.configure(foreground="black")
 
     if valueTida > MaxTV:
         lbl7.configure(foreground="red")
@@ -99,7 +101,7 @@ def checkAllAlarms():
         lbl8.configure(foreground="red")
         giveAlarm()
     else:
-        lbl8.configure(foreground="black") 
+        lbl8.configure(foreground="black")
 
     if valueO2 > MaxFi:
         lbl9.configure(foreground="red")
@@ -113,7 +115,7 @@ def checkAllAlarms():
     else:
         lbl10.configure(foreground="black")
     window.after(1000,checkAllAlarms)
-     
+
 def pressurePlot():
 
     ser = serial.Serial ("/dev/ttyACM0", 115200, timeout=1)    #Open port with baud rate
@@ -169,8 +171,8 @@ def pressurePlot():
     canvas = FigureCanvasTkAgg(fig, master=tab2)
     canvas.get_tk_widget().place(x=10,y=10)
     ani = animation.FuncAnimation(fig, animate, fargs=(ys,), interval=50, blit=True)
-    plt.show()
-    
+    #plt.show()
+
     #print("Alarms checked")
     window.after(1000,checkAllAlarms)
 
@@ -179,7 +181,7 @@ window.title('Project AIR')
 window.geometry('800x480')
 
 tab_control = ttk.Notebook(window)
-tab1 = ttk.Frame(tab_control) #buttons 
+tab1 = ttk.Frame(tab_control) #buttons
 tab2 = ttk.Frame(tab_control) #graphs
 tab_control.add(tab1, text='Settings')
 tab_control.add(tab2, text='Graphs')
@@ -194,12 +196,15 @@ image = PhotoImage(file="logo.png")
 label = Label(tab1, image=image)
 label.place(x=460,y=50)
 
+settings = Settings(0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+
 lbl1 = Label(tab1, text= 'PEEP [cm-H20]')
 lbl1.place(x=50,y=50)
 combo1 = ttk.Combobox(tab1)
 combo1['values']= (5, 10, 15, 20, 25)
+combo1.set(5)
 combo1.place(x=200,y=50)
-combo1.bind("<<ComboboxSelected>>", lambda _ : sendCommand("PEEP",combo1.get()))
+combo1.bind("<<ComboboxSelected>>", lambda _ : sendCommand("PEEP",get_settings()))
 lbl11 = Label(tab1, text= str(valuePEEP))
 lbl11.place(x=410,y=50)
 
@@ -207,8 +212,9 @@ lbl2 = Label(tab1, text= 'Frequency [per min]')
 lbl2.place(x=50,y=80)
 combo2 = ttk.Combobox(tab1)
 combo2['values']= (10, 15, 20, 25, 30, 35)
+combo2.set(10)
 combo2.place(x=200,y=80)
-combo2.bind("<<ComboboxSelected>>", lambda _ : sendCommand("Freq",combo2.get()))
+combo2.bind("<<ComboboxSelected>>", lambda _ : sendCommand("Freq",get_settings()))
 lbl21 = Label(tab1, text= str(valueFreq))
 lbl21.place(x=410,y=80)
 
@@ -216,8 +222,9 @@ lbl3 = Label(tab1, text= 'Tidal Volume [mL]')
 lbl3.place(x=50,y=110)
 combo3 = ttk.Combobox(tab1)
 combo3['values']= (100, 200, 300, 400, 500, 600, 700, 800)
+combo3.set(100)
 combo3.place(x=200,y=110)
-combo3.bind("<<ComboboxSelected>>", lambda _ : sendCommand("Tida",combo3.get()))
+combo3.bind("<<ComboboxSelected>>", lambda _ : sendCommand("Tida",get_settings()))
 lbl31 = Label(tab1, text= str(valueTida))
 lbl31.place(x=410,y=110)
 
@@ -225,8 +232,9 @@ lbl4 = Label(tab1, text= 'Pressure [cm-H20]')
 lbl4.place(x=50,y=140)
 combo4 = ttk.Combobox(tab1)
 combo4['values']= (10, 15, 20, 25, 30, 35)
+combo4.set(10)
 combo4.place(x=200,y=140)
-combo4.bind("<<ComboboxSelected>>", lambda _ : sendCommand("Pres",combo4.get()))
+combo4.bind("<<ComboboxSelected>>", lambda _ : sendCommand("Pres",get_settings()))
 lbl41 = Label(tab1, text= str(valuePres))
 lbl41.place(x=410,y=140)
 
@@ -234,43 +242,52 @@ lbl5 = Label(tab1, text= 'Max Pressure alarm [cm-H20]')
 lbl5.place(x=10,y=200)
 combo5 = ttk.Combobox(tab1)
 combo5['values']= (10, 20, 30, 40, 50)
-combo5.place(x=210,y=200)
-combo5.bind("<<ComboboxSelected>>", lambda _ : saveAlarm("MaxP",combo5.get()))
+combo5.set(10)
+combo5.place(x=200,y=200)
+combo5.bind("<<ComboboxSelected>>", lambda _ : saveAlarm("MaxP",get_settings()))
 
 lbl6 = Label(tab1, text= 'Min Pressure alarm [cm-H20]')
 lbl6.place(x=10,y=230)
 combo6 = ttk.Combobox(tab1)
 combo6['values']= (5, 10, 15, 20, 25, 30)
+combo6.set(5)
 combo6.place(x=200,y=230)
-combo6.bind("<<ComboboxSelected>>", lambda _ : saveAlarm("MinP",combo6.get()))
+combo6.bind("<<ComboboxSelected>>", lambda _ : saveAlarm("MinP",get_settings()))
 
 lbl7 = Label(tab1, text= 'Max TV alarm [mL]')
 lbl7.place(x=10,y=260)
 combo7 = ttk.Combobox(tab1)
 combo7['values']= (100, 200, 300, 400, 500, 600, 700, 800)
+combo7.set(100)
 combo7.place(x=200,y=260)
-combo7.bind("<<ComboboxSelected>>", lambda _ : saveAlarm("MaxT",combo7.get()))
+combo7.bind("<<ComboboxSelected>>", lambda _ : saveAlarm("MaxT",get_settings()))
 
 lbl8 = Label(tab1, text= 'Min TV alarm [mL]')
 lbl8.place(x=10,y=290)
-combo8 = ttk.Combobox(tab1)
+combo8 = ttk.Combobox(tab1, textvariable=100)
 combo8['values']= (100, 150, 200, 250, 300)
+combo8.set(100)
 combo8.place(x=200,y=290)
-combo8.bind("<<ComboboxSelected>>", lambda _ : saveAlarm("MinT",combo8.get()))
+combo8.bind("<<ComboboxSelected>>", lambda _ : saveAlarm("MinT",get_settings()))
 
 lbl9 = Label(tab1, text= 'Max fiO2 alarm [%]')
 lbl9.place(x=10,y=320)
 combo9 = ttk.Combobox(tab1)
 combo9['values']= (40, 50, 60, 70, 80)
+combo9.set(40)
 combo9.place(x=200,y=320)
-combo9.bind("<<ComboboxSelected>>", lambda _ : saveAlarm("MaxF",combo9.get()))
+combo9.bind("<<ComboboxSelected>>", lambda _ : saveAlarm("MaxF",get_settings()))
 
 lbl10 = Label(tab1, text= 'Min fiO2 alarm [%]')
 lbl10.place(x=10,y=350)
 combo10 = ttk.Combobox(tab1)
 combo10['values']= (20, 35, 40, 45)
+combo10.set(20)
 combo10.place(x=200,y=350)
-combo10.bind("<<ComboboxSelected>>", lambda _ : saveAlarm("minF",combo10.get()))
+combo10.bind("<<ComboboxSelected>>", lambda _ : saveAlarm("minF", get_settings()))
+
+def get_settings():
+    return Settings(combo1.get(), combo2.get(), combo3.get(), combo4.get(), combo5.get(), combo6.get(), combo7.get(), combo8.get(), combo9.get(), combo10.get())
 
 #tab 2 Graphs
 # lbl2 = Label(tab2, text= 'PT Curve')
