@@ -75,9 +75,9 @@ def saveAlarm(sendtype, settings):
 
 def checkAllAlarms():
     getValues()
-    #ser = serial.Serial ("/dev/ttyACM0", 115200, timeout=1)    #Open port with baud rate
-    #ser.flushInput()
-    #ser.write(b'p')
+    ser = serial.Serial ("/dev/ttyACM0", 115200, timeout=1)    #Open port with baud rate
+    ser.flushInput()
+    ser.write(b'p')
 
     if valuePEEP > MaxPres:
         lbl5.configure(foreground="red")
@@ -160,9 +160,9 @@ def confirm_settings(settings):
 
 def pressurePlot():
 
-    #ser = serial.Serial ("/dev/ttyACM0", 115200, timeout=1)    #Open port with baud rate
-    #ser.flushInput()
-    #ser.write(b'p')
+    ser = serial.Serial ("/dev/ttyACM0", 115200, timeout=1)    #Open port with baud rate
+    ser.flushInput()
+    ser.write(b'p')
     # Parameters
     x_len = 200         # Number of points to display
     y_range = [0, 30]  # Range of possible Y values to display
