@@ -131,7 +131,7 @@ def confirm_settings(settings):
     label1.pack(side="top", fill="x")
     label2 = ttk.Label(popup, text="Frequency [per min]: " + str(settings.freq), font=("Helvetica", 20))
     label2.pack(side="top", fill="x")
-    label3 = ttk.Label(popup, text="Tidal Volume [mL]: " + str(settings.freq), font=("Helvetica", 20))
+    label3 = ttk.Label(popup, text="Tidal Volume [mL]: " + str(settings.tidal_vol), font=("Helvetica", 20))
     label3.pack(side="top", fill="x")
     label4 = ttk.Label(popup, text="Pressure [cm-H2O]: " + str(settings.pressure), font=("Helvetica", 20))
     label4.pack(side="top", fill="x")
