@@ -149,8 +149,8 @@ def pressurePlot():
             pr = ser.readline().decode('utf-8').rstrip()
         except:
             pr = 0
-        print(pr)
-
+        #print(pr)
+        
         try:
             pressure = round(float(pr), 2)
         except ValueError:
@@ -190,7 +190,7 @@ tab_control.add(tab2, text='Graphs')
 btn_start = Button(tab1, text='START')
 btn_stop = Button(tab1, text='STOP', command= helloCallBack)
 btn_start.place(x=0,y=0)
-btn_stop.place(x=50,y=0)
+btn_stop.place(x=70,y=0)
 
 image = PhotoImage(file="logo.png")
 label = Label(tab1, image=image)
@@ -290,8 +290,8 @@ def get_settings():
     return Settings(combo1.get(), combo2.get(), combo3.get(), combo4.get(), combo5.get(), combo6.get(), combo7.get(), combo8.get(), combo9.get(), combo10.get())
 
 #tab 2 Graphs
-lbl2 = Label(tab2, text= 'PT Curve')
-lbl2.grid(column=0, row=0)
+# lbl2 = Label(tab2, text= 'PT Curve')
+# lbl2.grid(column=0, row=0)
 
 
 tab_control.pack(expand=1, fill='both')
