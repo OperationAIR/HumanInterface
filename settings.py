@@ -1,5 +1,5 @@
 import struct
-import binascii
+import serial
 
 class Settings():
     def __init__(self, peep, freq, tidal_vol, pressure, max_pressure, min_pressure, max_tv, min_tv, max_fio2, min_fio2):
@@ -22,3 +22,12 @@ class Settings():
         s = struct.Struct('I H H H H H H H H H H')
         packed_data = s.pack(*values)
         return packed_data
+
+    def update(self):
+        print("Sending settings")
+        ser = serial.Serial("/dev/ttyACM0", 115200, timeout=1)    #Open port with baud rate
+        ser.flushInput()
+        bit_repr = settings.get_bit_string()
+        ser.write(bit_repr)
+        reading = ser.readline()
+        print(reading)
