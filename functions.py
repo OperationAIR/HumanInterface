@@ -7,7 +7,6 @@ ser = serial.Serial("/dev/ttyACM0", 115200, timeout=1)    #Open port with baud r
 ser.flushInput()
 
 def sendCommand(sendtype, settings):
-
     bit_repr = settings.get_bit_string()
     ser.write(bit_repr)
     reading = ser.readline()
