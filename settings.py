@@ -1,6 +1,10 @@
 import struct
 import serial
 
+def get_settings_from_binary(packed_data):
+    unpacked = struct.unpack('I H H H H H H H H H H', packed_data)
+    return Settings(unpacked[1], unpacked[2], unpacked[3], unpacked[4], unpacked[5], unpacked[6], unpacked[7], unpacked[8], unpacked[9], unpacked[10])
+
 class Settings():
     def __init__(self, peep, freq, tidal_vol, pressure, max_pressure, min_pressure, max_tv, min_tv, max_fio2, min_fio2):
         self.peep = int(peep)
@@ -23,11 +27,14 @@ class Settings():
         packed_data = s.pack(*values)
         return packed_data
 
+    def equals(self, cmp):
+        return self.peep == cmp.peep and self.freq == cmp.freq and self.tidal_vol == cmp.tidal_vol and self.pressure == cmp.pressure and self.max_pressure == cmp.max_pressure and self.min_pressure == cmp.min_pressure and self.max_tv==cmp.max_tv and self.min_tv==cmp.min_tv and self.max_fio2==cmp.max_fio2 and self.min_fio2==cmp.min_fio2
+
     def update(self):
         print("Sending settings")
         ser = serial.Serial("/dev/ttyACM0", 115200, timeout=1)    #Open port with baud rate
         ser.flushInput()
-        bit_repr = settings.get_bit_string()
+        bit_repr = self.get_bit_string()
         ser.write(bit_repr)
         reading = ser.readline()
         print(reading)
