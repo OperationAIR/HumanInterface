@@ -8,6 +8,7 @@ from enum import Enum
 
 import crcmod
 from settings import Settings
+from sensors import Sensors, sensors_from_binary
 
 
 class SerialCommands(Enum):
@@ -101,6 +102,9 @@ class Microcontroller:
                             data = data[i+1:]
                         elif data.startswith(SerialCommands.SensorData.format()):
                             print('new settings')
+                            s = sensors_from_binary(data[4:])
+                            # do something with sensor data
+                            print(s)
                             data = []
                         else:
                             print('got unknown data:', data)
