@@ -75,9 +75,9 @@ def saveAlarm(sendtype, settings):
 
 def checkAllAlarms():
     getValues()
-    #ser = serial.Serial ("/dev/ttyACM0", 115200, timeout=1)    #Open port with baud rate
-    #ser.flushInput()
-    #ser.write(b'p')
+    ser = serial.Serial ("/dev/ttyACM0", 115200, timeout=1)    #Open port with baud rate
+    ser.flushInput()
+    ser.write(b'p')
 
     if valuePEEP > MaxPres:
         lbl5.configure(foreground="red")
@@ -131,7 +131,7 @@ def confirm_settings(settings):
     label1.pack(side="top", fill="x")
     label2 = ttk.Label(popup, text="Frequency [per min]: " + str(settings.freq), font=("Helvetica", 20))
     label2.pack(side="top", fill="x")
-    label3 = ttk.Label(popup, text="Tidal Volume [mL]: " + str(settings.freq), font=("Helvetica", 20))
+    label3 = ttk.Label(popup, text="Tidal Volume [mL]: " + str(settings.tidal_vol), font=("Helvetica", 20))
     label3.pack(side="top", fill="x")
     label4 = ttk.Label(popup, text="Pressure [cm-H2O]: " + str(settings.pressure), font=("Helvetica", 20))
     label4.pack(side="top", fill="x")
@@ -160,9 +160,9 @@ def confirm_settings(settings):
 
 def pressurePlot():
 
-    #ser = serial.Serial ("/dev/ttyACM0", 115200, timeout=1)    #Open port with baud rate
-    #ser.flushInput()
-    #ser.write(b'p')
+    ser = serial.Serial ("/dev/ttyACM0", 115200, timeout=1)    #Open port with baud rate
+    ser.flushInput()
+    ser.write(b'p')
     # Parameters
     x_len = 200         # Number of points to display
     y_range = [0, 30]  # Range of possible Y values to display
