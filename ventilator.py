@@ -1,5 +1,8 @@
 import tkinter as tk
 import signal
+import time
+from threading import Thread
+from queue import Queue
 
 from settings import Settings
 from mcu import Microcontroller
@@ -16,13 +19,30 @@ class App(tk.Tk):
 
         self.offbtn = tk.Button(self, text="Led off",
                              command=self.say_bye)
-        self.offbtn.pack(padx=220, pady=30)
+        self.offbtn.pack(padx=120, pady=30)
 
         self.settingsbtn = tk.Button(self, text="New Settings",
                              command=self.send_settings)
-        self.settingsbtn.pack(padx=320, pady=30)
+        self.settingsbtn.pack(padx=120, pady=30)
 
-        self.mcu = Microcontroller(TTY, BAUDRATE)
+        self.sensorbtn = tk.Button(self, text="Sensors",
+                             command=self.req_sensors)
+        self.sensorbtn.pack(padx=120, pady=30)
+
+        self.queue = Queue()
+        self.mcu = Microcontroller(TTY, BAUDRATE, self.queue)
+
+        self._thread_alive = True
+        self.io_thread = Thread(target=self.asyncio)
+        self.io_thread.start()
+
+    def quit(self, _signal=None, _=None):
+        self._thread_alive = False
+        self.mcu.disconnect()
+        if self.io_thread:
+            self.io_thread.join()
+        print('bye')
+        self.destroy()
 
     def say_hello(self):
         print("Hello, Tkinter!")
@@ -31,6 +51,10 @@ class App(tk.Tk):
     def say_bye(self):
         print("Bye, Tkinter!")
         self.mcu.led_off()
+
+    def req_sensors(self):
+        print('request sensor data')
+        self.mcu.request_sensor_data()
 
     def send_settings(self):
         settings = Settings(
@@ -47,15 +71,21 @@ class App(tk.Tk):
         self.mcu.send_settings(settings)
         print("Send settings")
 
-    def quit(self, _signal=None, _=None):
-        self.mcu.disconnect()
-        print('bye')
-        self.destroy()
+    def asyncio(self):
+        while self._thread_alive:
+
+            if not self.queue.empty():
+                packet = self.queue.get()
+                print("Got packet:")
+                print(packet)
+
+            time.sleep(0.1)
 
 
 
 if __name__ == "__main__":
     app = App()
+    app.protocol("WM_DELETE_WINDOW", app.quit)
     app.title("Operation Air Ventilator")
     app.geometry('800x480')
     signal.signal(signal.SIGINT, app.quit)

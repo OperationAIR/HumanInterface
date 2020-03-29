@@ -3,8 +3,10 @@ import serial
 import threading
 import time
 import signal
-import crcmod
+from queue import Queue
 from enum import Enum
+
+import crcmod
 from settings import Settings
 
 
@@ -19,7 +21,7 @@ class SerialCommands(Enum):
 
 class Microcontroller:
 
-    def __init__(self, port, baudrate):
+    def __init__(self, port, baudrate, queue: Queue):
 
         self.serial = None
         self._reader_alive = False
@@ -27,7 +29,7 @@ class Microcontroller:
         self.port = port
         self.baudrate = baudrate
         self.crc = crcmod.predefined.mkPredefinedCrcFun('crc-16-usb')
-
+        self.queue = queue
         self.connect()
 
     def _start_reader(self):
@@ -35,7 +37,7 @@ class Microcontroller:
         print('Start reader thread')
         self._reader_alive = True
         # start serial->console thread
-        self.receiver_thread = threading.Thread(target=self.reader, name='rx')
+        self.receiver_thread = threading.Thread(target=self._reader, name='rx')
         self.receiver_thread.daemon = True
         self.receiver_thread.start()
 
@@ -53,7 +55,7 @@ class Microcontroller:
             self.serial.write(buffer)
 
     def connect(self):
-        self.serial = serial.Serial(self.port, self.baudrate, timeout=10)
+        self.serial = serial.Serial(self.port, self.baudrate, timeout=1)
         print('open port: ', self.serial, self.serial.port)
         self._start_reader()
 
@@ -83,22 +85,40 @@ class Microcontroller:
         self._send_buffer(SerialCommands.SensorData.format())
 
 
-    def reader(self):
+    def _reader(self):
         """loop and copy serial->console"""
         try:
             while self._reader_alive:
-                data = self.serial.readline()
-                if data:
-                    print('got {} bytes back'.format(len(data)), type(data))
-                    try:
-                        if chr(data[-1]) == '\n':
-                            text = ''.join([chr(c) for c in data])
-                            print(text)
+                # try to read up to 1kb at a time
+                data = self.serial.read(1024)
+                if data and len(data):
+                    while len(data):
+                        print('got', data, SerialCommands.SensorData.format())
+                        if data.startswith(b'###'):
+                            i = data.index(b'\n')
+                            print(data[3:i].decode("utf-8"))
+                            # pop text and newline (so i+1)
+                            data = data[i+1:]
+                        elif data.startswith(SerialCommands.SensorData.format()):
+                            print('new settings')
+                            data = []
                         else:
-                            print("Got bytes: ", data)
-                    except e:
-                        print('parse error:', e)
-                        pass
+                            print('got unknown data:', data)
+                            data = []
+                time.sleep(0.1)
+
+                    # else:
+                    #     self.queue.put(data)
+                    # print('got {} bytes back'.format(len(data)), type(data))
+                    # try:
+                    #     if chr(data[-1]) == '\n':
+                    #         text = ''.join([chr(c) for c in data])
+                    #         print(text)
+                    #     else:
+                    #         print("Got bytes: ", data)
+                    # except e:
+                    #     print('parse error:', e)
+                    #     pass
 
         except serial.SerialException:
             # ToDo how to handle
