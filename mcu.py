@@ -101,6 +101,9 @@ class Microcontroller:
                             # pop text and newline (so i+1)
                             data = data[i+1:]
                         elif data.startswith(SerialCommands.SensorData.format()):
+                            # TODO: check data length, save data somewhere if not enough bytes have arrived.
+                            #       Then also set timeout to discard data in case data never arrives
+                            #       Also we should add the CRC16 to the sensor data
                             print('new settings')
                             s = sensors_from_binary(data[4:])
                             # do something with sensor data
