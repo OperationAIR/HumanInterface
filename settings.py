@@ -21,20 +21,10 @@ class Settings():
     def get_bit_string(self):
         #B = unsigned char
         #H = unsigned short
-        start_flag = 0x0D15EA5E
-        values = (start_flag, self.peep, self.freq, self.tidal_vol, self.pressure, self.max_pressure,self.min_pressure,self.max_tv,self.min_tv, self.max_fio2, self.min_fio2)
-        s = struct.Struct('I H H H H H H H H H H')
+        values = (self.peep, self.freq, self.tidal_vol, self.pressure, self.max_pressure,self.min_pressure,self.max_tv,self.min_tv, self.max_fio2, self.min_fio2)
+        s = struct.Struct('H H H H H H H H H H')
         packed_data = s.pack(*values)
         return packed_data
 
     def equals(self, cmp):
         return self.peep == cmp.peep and self.freq == cmp.freq and self.tidal_vol == cmp.tidal_vol and self.pressure == cmp.pressure and self.max_pressure == cmp.max_pressure and self.min_pressure == cmp.min_pressure and self.max_tv==cmp.max_tv and self.min_tv==cmp.min_tv and self.max_fio2==cmp.max_fio2 and self.min_fio2==cmp.min_fio2
-
-    def update(self):
-        print("Sending settings")
-        ser = serial.Serial("/dev/ttyACM0", 115200, timeout=1)    #Open port with baud rate
-        ser.flushInput()
-        bit_repr = self.get_bit_string()
-        ser.write(bit_repr)
-        reading = ser.readline()
-        print(reading)
