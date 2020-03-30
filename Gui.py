@@ -27,6 +27,10 @@ MinTV = 0
 MaxFi = 0
 MinFi = 0
 
+window = Tk()
+window.title('Project AIR')
+window.geometry('800x480')
+
 def helloCallBack():
     messagebox.showinfo( "Warning", "Warning, You stop the machinal ventilation")
 
@@ -75,8 +79,8 @@ def saveAlarm(sendtype, settings):
 
 def checkAllAlarms():
     getValues()
-    #ser = serial.Serial ("/dev/ttyACM0", 115200, timeout=1)    #Open port with baud rate
-    #ser.flushInput()
+    ser = serial.Serial ("/dev/ttyS0", 115200, timeout=1)    #Open port with baud rate
+    ser.flushInput()
     #ser.write(b'p')
 
     if valuePEEP > MaxPres:
@@ -158,6 +162,40 @@ def confirm_settings(settings):
     popup.mainloop()
     return
 
+def PeepPop():
+    popup = Tk()
+    popup.wm_title("PEEP")
+    popup.geometry("700x380")
+    label1 = ttk.Label(popup, text="Select New PEEP value", font=("Helvetica", 20))
+    #label1.pack(side="top", fill="x", pady=10)
+
+    btn1 = Button(tab1, text="5", command=lambda: confirm_settings(get_settings()))
+    btn1.config(height=5, width=5, state="normal")
+    btn1.grid(row=1,column=1)
+
+    btn2 = Button(tab1, text="10", command=lambda: confirm_settings(get_settings()))
+    btn2.config(height=5, width=5, state="normal")
+    btn2.grid(row=1,column=2)
+
+    btn3 = Button(tab1, text="15", command=lambda: confirm_settings(get_settings()))
+    btn3.config(height=5, width=5, state="normal")
+    btn3.grid(row=1,column=3)
+
+    btn4 = Button(tab1, text="20", command=lambda: confirm_settings(get_settings()))
+    btn4.config(height=5, width=5, state="normal")
+    btn4.grid(row=2,column=1)
+
+    btn5 = Button(tab1, text="25", command=lambda: confirm_settings(get_settings()))
+    btn5.config(height=5, width=5, state="normal")
+    btn5.grid(row=2,column=2)
+
+    btn6 = Button(tab1, text="30", command=lambda: confirm_settings(get_settings()))
+    btn6.config(height=5, width=5, state="normal")
+    btn6.grid(row=2,column=3)
+
+    popup.mainloop()
+    return
+
 def pressurePlot():
 
     #ser = serial.Serial ("/dev/ttyACM0", 115200, timeout=1)    #Open port with baud rate
@@ -218,10 +256,6 @@ def pressurePlot():
     #print("Alarms checked")
     window.after(1000,checkAllAlarms)
 
-window = Tk()
-window.title('Project AIR')
-window.geometry('800x480')
-
 tab_control = ttk.Notebook(window)
 tab1 = ttk.Frame(tab_control) #buttons
 tab2 = ttk.Frame(tab_control) #graphs
@@ -245,7 +279,12 @@ lbl1.place(x=50,y=50)
 combo1 = ttk.Combobox(tab1)
 combo1['values']= (5, 10, 15, 20, 25)
 combo1.set(5)
-combo1.place(x=200,y=50)
+optionVar1 = StringVar()
+optionVar1.set("5")
+option1 = OptionMenu(window, optionVar1, "5", "10", "15", "20", "25")
+option1.configure(font= ('calibri','20'))
+option1.pack()
+option1.place(x=200,y=50)
 lbl11 = Label(tab1, text= str(valuePEEP))
 lbl11.place(x=410,y=50)
 
