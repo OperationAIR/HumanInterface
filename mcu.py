@@ -94,7 +94,6 @@ class Microcontroller:
                 data = self.serial.read(1024)
                 if data and len(data):
                     while len(data):
-                        print('got', data, SerialCommands.SensorData.format())
                         if data.startswith(b'###'):
                             i = data.index(b'\n')
                             print(data[3:i].decode("utf-8"))
@@ -105,17 +104,19 @@ class Microcontroller:
                             #       Then also set timeout to discard data in case data never arrives
                             #       Also we should add the CRC16 to the sensor data
 
-                            s = sensors_from_binary(data[4:])
-                            # do something with sensor data
-                            print(s)
-                            data = []
+                            sensors_size = 4*4
+                            offset = 4
+                            end = offset+sensors_size
+                            sensors = sensors_from_binary(data[offset:end])
+                            self.queue.put(sensors)
+                            data = data[end:]
                         elif data.startswith(SerialCommands.NewSettings.format()):
                             settings_size = 26
                             offset = 4
                             end = offset+settings_size
                             settings = settings_from_binary(data[offset:end])
-                            data = data[end:]
                             self.queue.put(settings)
+                            data = data[end:]
                         else:
                             print('got unknown data:', data)
                             data = []
