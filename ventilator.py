@@ -12,7 +12,8 @@ from settings import Settings
 from mcu import Microcontroller
 
 BAUDRATE = 115200
-TTY = '/dev/ttyS0'
+# TTY = '/dev/ttyS0'
+TTY = '/dev/cu.usbmodemC1DDCDF83'
 
 
 class App(tk.Tk):
@@ -32,53 +33,53 @@ class App(tk.Tk):
             min_tv=200,
             max_fio2=50,
             min_fio2=20)
-        
+
         self.BuildGui()
         self.queue = Queue()
         self.mcu = Microcontroller(TTY, BAUDRATE, self.queue)
-        
+
         self._thread_alive = True
         self.io_thread = Thread(target=self.asyncio)
         self.io_thread.start()
         print(self.req_sensors())
-    
-    
-    
-    def setValues(self, settings, popup, valuetype, value, text):  
+
+
+
+    def setValues(self, settings, popup, valuetype, value, text):
         if valuetype == "peep":
             if value <= 35 and value >= 5:
                 settings.peep = value
             text.set("Confirm \n PEEP"+'\n'+str(settings.peep))
             return
-        if valuetype == "freq":  
+        if valuetype == "freq":
             if value <= 35 and value >= 0:
                 settings.freq = value
             text.set("Confirm \n Frequency"+'\n'+str(settings.freq))
             return
-        if valuetype == "pres":  
+        if valuetype == "pres":
             if value <= 70 and value >= 30:
                 settings.pressure = value
             text.set("Confirm \n Pressure"+'\n'+str(settings.pressure))
             return
-        if valuetype == "oxygen":  
+        if valuetype == "oxygen":
             if value <= 100 and value >= 20:
                 settings.oxygen = value
             text.set("Confirm \n Oxygen"+'\n'+str(settings.oxygen))
             return
-        
+
         valueTida = 200
         valuePres = 30
         valueO2 = 40
         peep_btn_text.set("PEEP"+'\n'+str(valuePEEP))
         popup.destroy()
-    
+
     def update_buttons(self):
         self.freq_btn_text.set("Frequency"+'\n'+str(self.settings.freq))
         self.peep_btn_text.set("PEEP"+'\n'+str(self.settings.peep))
         self.tv_btn_text.set("Tidal Volume"+'\n'+str(self.settings.tidal_vol))
         self.pres_btn_text.set("Pressure"+'\n'+str(self.settings.pressure))
         self.oxy_btn_text.set("Oxygen (02)"+'\n'+str(self.settings.oxygen))
-    
+
     def FreqPop(self, settings):
         popup = Tk()
         popup.wm_title("Frequency")
@@ -87,11 +88,11 @@ class App(tk.Tk):
         label1 = ttk.Label(popup, text="Select New Frequency value", font=("Helvetica", 20))
         label1.pack(side="top", fill="x", pady=10)
 
-        text = StringVar(popup) 
+        text = StringVar(popup)
         text.set("Frequency"+'\n'+str(settings.freq))
         text_btn = Button(popup, textvariable=text,background='#263655',foreground='white',command=lambda: self.send_settings(popup))
         text_btn.config(height=5, width=10, state="normal")
-        text_btn.pack(side="left") 
+        text_btn.pack(side="left")
 
         btn2 = Button(popup, text="+",background='#263655',foreground='white', command=lambda: self.setValues(settings, popup,"freq", settings.freq+5, text))
         btn2.config(height=5, width=10, state="normal")
@@ -103,7 +104,7 @@ class App(tk.Tk):
 
         popup.mainloop()
         return
-    
+
     def PeepPop(self, settings):
         popup = Tk()
         popup.wm_title("Peep")
@@ -112,11 +113,11 @@ class App(tk.Tk):
         label1 = ttk.Label(popup, text="Select New PEEP value", font=("Helvetica", 20))
         label1.pack(side="top", fill="x", pady=10)
 
-        text = StringVar(popup) 
+        text = StringVar(popup)
         text.set("Peep"+'\n'+str(settings.peep))
         text_btn = Button(popup, textvariable=text,background='#263655',foreground='white',command=lambda: self.send_settings(popup))
         text_btn.config(height=5, width=10, state="normal")
-        text_btn.pack(side="left") 
+        text_btn.pack(side="left")
 
         btn2 = Button(popup, text="+",background='#263655',foreground='white', command=lambda: self.setValues(settings, popup,"peep", settings.peep+5, text))
         btn2.config(height=5, width=10, state="normal")
@@ -128,7 +129,7 @@ class App(tk.Tk):
 
         popup.mainloop()
         return
-    
+
     def PresPop(self, settings):
         popup = Tk()
         popup.wm_title("Pressure")
@@ -137,11 +138,11 @@ class App(tk.Tk):
         label1 = ttk.Label(popup, text="Select New Pressure value", font=("Helvetica", 20))
         label1.pack(side="top", fill="x", pady=10)
 
-        text = StringVar(popup) 
+        text = StringVar(popup)
         text.set("Pressure"+'\n'+str(settings.pressure))
         text_btn = Button(popup, textvariable=text,background='#263655',foreground='white',command=lambda: self.send_settings(popup))
         text_btn.config(height=5, width=10, state="normal")
-        text_btn.pack(side="left") 
+        text_btn.pack(side="left")
 
         btn2 = Button(popup, text="+",background='#263655',foreground='white', command=lambda: self.setValues(settings, popup,"pres", settings.pressure+5, text))
         btn2.config(height=5, width=10, state="normal")
@@ -153,7 +154,7 @@ class App(tk.Tk):
 
         popup.mainloop()
         return
-    
+
     def O2Pop(self, settings):
         popup = Tk()
         popup.wm_title("Oxygen")
@@ -162,11 +163,11 @@ class App(tk.Tk):
         label1 = ttk.Label(popup, text="Select New Oxygen percentage value", font=("Helvetica", 20))
         label1.pack(side="top", fill="x", pady=10)
 
-        text = StringVar(popup) 
+        text = StringVar(popup)
         text.set("Oxygen [%]"+'\n'+str(settings.oxygen))
         text_btn = Button(popup, textvariable=text,background='#263655',foreground='white',command=lambda: self.send_settings(popup))
         text_btn.config(height=5, width=10, state="normal")
-        text_btn.pack(side="left") 
+        text_btn.pack(side="left")
 
         btn2 = Button(popup, text="+",background='#263655',foreground='white', command=lambda: self.setValues(settings, popup,"oxygen", settings.oxygen+5, text))
         btn2.config(height=5, width=10, state="normal")
@@ -178,14 +179,14 @@ class App(tk.Tk):
 
         popup.mainloop()
         return
-    
-    
+
+
     def BuildGui(self):
         self.configure(bg= '#161E2E')
         style = ttk.Style()
         style.configure("style.TButton",background='#263655')
         ttk.Style().configure("TButton", padding=6, relief="flat",background='#263655',foreground='#FFFFFF')
-        
+
         #define grid sizes and frames
         f1 = ttk.Frame(self, width=160, height=60, borderwidth=2)
         f2 = ttk.Frame(self, width=60, height=60, borderwidth=2)
@@ -216,52 +217,52 @@ class App(tk.Tk):
         #f13.grid(row=3, column=1, columnspan=3, rowspan=3)
 
 
-        air_btn_text = StringVar() 
+        air_btn_text = StringVar()
         air_btn_text.set("OperationAir")
         air_btn = Button(f1, textvariable=air_btn_text,background='#263655',foreground='white')
         air_btn.place(x=0, y=0, relwidth=1,relheight=1)
 
-        self.alarm_btn_text = StringVar() 
+        self.alarm_btn_text = StringVar()
         self.alarm_btn_text.set("Alarm")
         self.alarm_btn = Button(f2, textvariable=self.alarm_btn_text,background='#263655',foreground='white')
         self.alarm_btn.place(x=0, y=0, relwidth=1,relheight=1)
 
-        self.alarm_name_btn_text = StringVar() 
+        self.alarm_name_btn_text = StringVar()
         self.alarm_name_btn_text.set("No alarms")
         self.alarm_name_btn = Button(f3, textvariable=self.alarm_name_btn_text,background='#263655',foreground='white')
         self.alarm_name_btn.place(x=0, y=0, relwidth=1,relheight=1)
 
-        self.patient_btn_text = StringVar() 
+        self.patient_btn_text = StringVar()
         self.patient_btn_text.set("Patient")
         self.patient_btn = Button(f4, textvariable=self.patient_btn_text,background='#263655',foreground='white' )
         self.patient_btn.place(x=0, y=0, relwidth=1,relheight=1)
 
-        self.switch_btn_text = StringVar() 
+        self.switch_btn_text = StringVar()
         self.switch_btn_text.set("Started")
         self.switch_btn = Button(f5, textvariable=self.switch_btn_text,background='#263655',foreground='white',command = lambda: self.quit())
         self.switch_btn.place(x=0, y=0, relwidth=1,relheight=1)
 
-        self.freq_btn_text = StringVar() 
+        self.freq_btn_text = StringVar()
         self.freq_btn_text.set("Frequency"+'\n'+str(self.settings.freq))
         self.freq_btn = Button(f7, textvariable=self.freq_btn_text,background='#263655',foreground='white',command = lambda: self.FreqPop(self.settings))
         self.freq_btn.place(x=0, y=0, relwidth=1,relheight=1)
 
-        self.peep_btn_text = StringVar() 
+        self.peep_btn_text = StringVar()
         self.peep_btn_text.set("PEEP"+'\n'+str(self.settings.peep))
         self.peep_btn = Button(f6, textvariable=self.peep_btn_text,background='#263655',foreground='white',command = lambda: self.PeepPop(self.settings))
         self.peep_btn.place(x=0, y=0, relwidth=1,relheight=1)
 
-        self.tv_btn_text = StringVar() 
+        self.tv_btn_text = StringVar()
         self.tv_btn_text.set("Tidal Volume"+'\n'+str(self.settings.tidal_vol))
         self.tv_btn = Button(f10, textvariable=self.tv_btn_text,background='#263655',foreground='white')
         self.tv_btn.place(x=0, y=0, relwidth=1,relheight=1)
 
-        self.pres_btn_text = StringVar() 
+        self.pres_btn_text = StringVar()
         self.pres_btn_text.set("Pressure"+'\n'+str(self.settings.pressure))
         self.pres_btn = Button(f11, textvariable=self.pres_btn_text,background='#263655',foreground='white',command = lambda: self.PresPop(self.settings) )
         self.pres_btn.place(x=0, y=0, relwidth=1,relheight=1)
 
-        self.oxy_btn_text = StringVar() 
+        self.oxy_btn_text = StringVar()
         self.oxy_btn_text.set("Oxygen (02)"+'\n'+str(self.settings.oxygen))
         self.oxy_btn = Button(f12, textvariable=self.oxy_btn_text,background='#263655',foreground='white', command = lambda: self.O2Pop(self.settings) )
         self.oxy_btn.place(x=0, y=0, relwidth=1,relheight=1)
@@ -313,40 +314,3 @@ if __name__ == "__main__":
     signal.signal(signal.SIGINT, app.quit)
     app.attributes('-fullscreen', True)
     app.mainloop()
-
-
-
-
-
-# import tkinter as tk
-# from types import SimpleNamespace
-# from queue import Queue
-# from enum import Enum
-# from threading import Thread
-
-# class Messages(Enum):
-#     CLICK = 0
-
-# def updatecycle(guiref, model, queue):
-#     while True:
-#         msg = queue.get()
-#         if msg == Messages.CLICK:
-#             model.count += 1
-#             guiref.label.set("Clicked: {}".format(model.count))
-
-# def gui(root, queue):
-#     label = tk.StringVar()
-#     label.set("Clicked: 0")
-#     tk.Label(root, textvariable=label).pack()
-#     tk.Button(root, text="Click me!", command=lambda : queue.put(Messages.CLICK)).pack()
-#     return SimpleNamespace(label=label)
-
-# if __name__ == '__main__':
-#     root = tk.Tk()
-#     queue = Queue()
-#     guiref = gui(root, queue)
-#     model = SimpleNamespace(count=0)
-#     t = Thread(target=updatecycle, args=(guiref, model, queue,))
-#     t.daemon = True
-#     t.start()
-#     tk.mainloop()
