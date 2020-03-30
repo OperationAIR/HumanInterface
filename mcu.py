@@ -110,9 +110,12 @@ class Microcontroller:
                             print(s)
                             data = []
                         elif data.startswith(SerialCommands.NewSettings.format()):
-                            print('settings data:', len(data[4:]))
-                            print(settings_from_binary(data[4:]))
-                            data = []
+                            settings_size = 26
+                            offset = 4
+                            end = offset+settings_size
+                            settings = settings_from_binary(data[offset:end])
+                            data = data[end:]
+                            self.queue.put(settings)
                         else:
                             print('got unknown data:', data)
                             data = []
