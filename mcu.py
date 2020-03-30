@@ -7,7 +7,7 @@ from queue import Queue
 from enum import Enum
 
 import crcmod
-from settings import Settings
+from settings import Settings, settings_from_binary
 from sensors import Sensors, sensors_from_binary
 
 
@@ -110,7 +110,9 @@ class Microcontroller:
                             print(s)
                             data = []
                         elif data.startswith(SerialCommands.NewSettings.format()):
-                            settings_from_binary(data[4:])
+                            print('settings data:', len(data[4:]))
+                            print(settings_from_binary(data[4:]))
+                            data = []
                         else:
                             print('got unknown data:', data)
                             data = []
@@ -147,10 +149,11 @@ if __name__ == "__main__":
     conn = SerialConnection(port, baudrate)
 
     s = Settings(
-        peep=20,
+         peep=20,
         freq=20,
-        tidal_vol=120,
-        pressure=20,
+        ratio=2,
+        pressure=40,
+        oxygen = 25,
         max_pressure=45,
         min_pressure=5,
         max_tv=400,

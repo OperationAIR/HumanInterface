@@ -21,10 +21,10 @@ class App(tk.Tk):
         super().__init__()
 
         self.settings = Settings(
+            start=0,
             peep=20,
             freq=20,
             ratio=2,
-            tidal_vol=120,
             pressure=40,
             oxygen = 25,
             max_pressure=45,
@@ -76,7 +76,7 @@ class App(tk.Tk):
     def update_buttons(self):
         self.freq_btn_text.set("Frequency"+'\n'+str(self.settings.freq))
         self.peep_btn_text.set("PEEP"+'\n'+str(self.settings.peep))
-        self.tv_btn_text.set("Tidal Volume"+'\n'+str(self.settings.tidal_vol))
+        # self.tv_btn_text.set("Tidal Volume"+'\n'+str(self.settings.tidal_vol))
         self.pres_btn_text.set("Pressure"+'\n'+str(self.settings.pressure))
         self.oxy_btn_text.set("Oxygen (02)"+'\n'+str(self.settings.oxygen))
 
@@ -253,7 +253,7 @@ class App(tk.Tk):
         self.peep_btn.place(x=0, y=0, relwidth=1,relheight=1)
 
         self.tv_btn_text = StringVar()
-        self.tv_btn_text.set("Tidal Volume"+'\n'+str(self.settings.tidal_vol))
+        self.tv_btn_text.set("Tidal Volume"+'\n')
         self.tv_btn = Button(f10, textvariable=self.tv_btn_text,background='#263655',foreground='white')
         self.tv_btn.place(x=0, y=0, relwidth=1,relheight=1)
 
