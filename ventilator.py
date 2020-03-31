@@ -292,18 +292,18 @@ class App(tk.Tk):
 
             return line,
         # Set up plot to call animate() function periodically
-        
+
         canvas = FigureCanvasTkAgg(fig, master=self.f13)
         canvas.get_tk_widget().place(x=0, y=0, relwidth=1,relheight=1)
         self.pressure_animation_ref = animation.FuncAnimation(fig,
             animate,
             fargs=(ys,),
-            interval=100,
+            interval=500,
             blit=True)
-    
-    
+
+
     def checkAllAlarms(self, settings: Settings, sensors: Sensors):
-        if sensors.pressure_1_pa > settings.max_pressure: 
+        if sensors.pressure_1_pa > settings.max_pressure:
             self.pres_btn.configure(background="#FF0749")
             self.giveAlarm()
         else:
@@ -465,22 +465,22 @@ class App(tk.Tk):
         while self._thread_alive:
 
             self.mcu.request_sensor_data()
-            
+
             if not self.sensor_queue.empty():
                 sensors = self.sensor_queue.get()
                 self.latest_sensor_data = sensors
                 print('new sensor data:', sensors)
-            
+
 
             if not self.settings_queue.empty():
                 settings = self.settings_queue.get()
                     # TODOcheck settings
                     # if mismatch, send settings again
                 print("Got settings back: ", settings)
-                
+
             self.checkAllAlarms(self.settings, self.latest_sensor_data)
             #self.animate_pressure()
-            time.sleep(0.1)
+            time.sleep(0.5)
 
 
 

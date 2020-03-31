@@ -205,5 +205,7 @@ if __name__ == "__main__":
                 mcu.led_on()
             else:
                 mcu.led_off()
+                mcu.request_sensor_data()
 
         time.sleep(0.1)
+
