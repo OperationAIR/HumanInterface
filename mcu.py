@@ -116,9 +116,6 @@ class Microcontroller:
                     data = data[end:]
             else:
                 # # save data for next round
-                # self.serialdata.append(data)
-                # print('got unknown data:', data)
-                # data = []
                 break;
         return data
 
@@ -136,7 +133,6 @@ class Microcontroller:
 
         except serial.SerialException:
             # ToDo how to handle
-            # self.console.cancel()
             raise       # XXX handle instead of re-raise?
 
 

@@ -34,8 +34,10 @@ class Settings():
 
 
     def __repr__(self):
-        return """start {} peep {} freq {}
-        """.format(self.start, self.peep, self.freq)
+        return """start {}, peep {}, freq {}, ratio {}, pressure {}, oxygen {}, max_pressure {},
+        min_pressure {}, max_tv {}, min_tv {}, max_fiO2 {}, min_fiO2 {}""".format(
+            self.start, self.peep, self.freq, self.ratio, self.pressure, self.oxygen,
+            self.max_pressure, self.min_pressure, self.max_tv, self.min_tv, self.max_fio2, self.min_fio2)
 
     def __str__(self):
         return self.__repr__()
