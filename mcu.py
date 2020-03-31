@@ -26,7 +26,7 @@ class SerialCommands(Enum):
 
 class Microcontroller:
 
-    def __init__(self, port, baudrate, queue: Queue):
+    def __init__(self, port, baudrate, settings_queue: Queue, sensor_queue: Queue):
 
         self.serial = None
         self._reader_alive = False
@@ -34,7 +34,8 @@ class Microcontroller:
         self.port = port
         self.baudrate = baudrate
         self.crc = crcmod.predefined.mkPredefinedCrcFun('crc-16-usb')
-        self.queue = queue
+        self.settings_queue = settings_queue
+        self.sensor_queue = sensor_queue
         self.connect()
         self.serialdata = b''
 
@@ -108,15 +109,15 @@ class Microcontroller:
                 end = offset+sensors_size
                 if len(data[offset:]) >= sensors_size:
                     sensors = sensors_from_binary(data[offset:end])
-                    self.queue.put(sensors)
-                    data = data[end:]
+                    self.sensor_queue.put(sensors)
+                    data = data[end+2:] #account for crc16
             elif data.startswith(SerialCommands.NewSettings.format()):
                 settings_size = 26
                 offset = 4
                 end = offset+settings_size
                 if len(data[offset:]) >= settings_size:
                     settings = settings_from_binary(data[offset:end])
-                    self.queue.put(settings)
+                    self.settings_queue.put(settings)
                     data = data[end:]
             else:
                 # # save data for next round
@@ -149,8 +150,9 @@ if __name__ == "__main__":
 
     BAUDRATE = 115200
     TTY = '/dev/cu.usbmodemC1DDCDF83'
-    queue = Queue()
-    mcu = Microcontroller(TTY, BAUDRATE, queue)
+    settings_queue = Queue()
+    sensor_queue = Queue()
+    mcu = Microcontroller(TTY, BAUDRATE, settings_queue, sensor_queue)
 
     s = Settings(
         start=0,
@@ -185,9 +187,13 @@ if __name__ == "__main__":
     count = 0
     toggle = 0
     while not exit:
-        if not queue.empty():
-            packet = queue.get()
-            print("Got packet:")
+        if not sensor_queue.empty():
+            packet = sensor_queue.get()
+            print("Got sensors:")
+            print(packet)
+        if not settings_queue.empty():
+            packet = settings_queue.get()
+            print("Got settings:")
             print(packet)
 
         count += 1

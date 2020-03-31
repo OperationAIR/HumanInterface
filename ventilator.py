@@ -462,12 +462,19 @@ class App(tk.Tk):
 
     def asyncio(self):
         while self._thread_alive:
-            
 
-            if not self.queue.empty():
-                packet = self.queue.get()
-                print("Got packet:")
-                print(packet)
+            self.mcu.request_sensor_data()
+
+            if not self.sensor_queue.empty():
+                sensors = self.sensor_queue.get()
+                print('new sensor data:', sensors)
+
+
+            if not self.settings_queue.empty():
+                settings = self.settings_queue.get()
+                    # TODOcheck settings
+                    # if mismatch, send settings again
+                print("Got settings back: ", settings)
 
             time.sleep(0.1)
 
