@@ -12,10 +12,14 @@ from sensors import Sensors, sensors_from_binary
 
 
 class SerialCommands(Enum):
-    LedOn = 0x55556666
-    LedOff = 0x66667777
     NewSettings = 0x41424344
-    SensorData = 0x22226666
+    SensorData  = 0x22226666
+    LedOn       = 0x55550000
+    LedOff      = 0x66660000
+    Switch1On   = 0x55551111
+    Switch1Off  = 0x66661111
+    Switch2On   = 0x55552222
+    Switch2Off  = 0x66662222
 
     def format(self):
         return self.value.to_bytes(4, 'little')
