@@ -1,6 +1,7 @@
 import tkinter as tk
 import signal
 import time
+import random
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import matplotlib
@@ -16,7 +17,7 @@ from tkinter import messagebox
 from tkinter import StringVar, Button, Tk, font
 
 from settings import Settings
-from readings import Readings
+from sensors import Sensors
 from alarmsettings import AlarmPop
 from mcu import Microcontroller
 
@@ -27,7 +28,20 @@ TTY = '/dev/ttyS0'
 class App(tk.Tk):
     def __init__(self):
         super().__init__()
-
+        
+        #For plotting
+        self.line_pressure = None
+        self.line_flow = None
+        self.ys_p = []
+        self.ys_f = []
+        self.pressure_animation_ref = None
+        
+        self.latest_sensor_data = Sensors(
+            flow=30,
+            pressure1=45,
+            pressure2=45,
+            oxygen=40)
+        
         self.settings = Settings(
             start=0,
             peep=20,
@@ -35,23 +49,17 @@ class App(tk.Tk):
             ratio=2,
             pressure=40,
             oxygen = 25,
-            max_pressure=45,
+            max_pressure=40,
             min_pressure=5,
             max_tv=400,
             min_tv=200,
             max_fio2=50,
             min_fio2=20)
         
-        self.readings = Readings(
-            time = 0,
-            S_freq = 30,
-            S_pressure1 = 50,
-            S_pressure2 = 50,
-            S_oxygen = 50)
-        
         self.BuildGui()
-        self.queue = Queue()
-        self.mcu = Microcontroller(TTY, BAUDRATE, self.queue)
+        self.sensor_queue = Queue()
+        self.settings_queue = Queue()
+        self.mcu = Microcontroller(TTY, BAUDRATE, self.settings_queue, self.sensor_queue)
         
         self._thread_alive = True
         self.io_thread = Thread(target=self.asyncio)
@@ -202,115 +210,110 @@ class App(tk.Tk):
     def GraphPlotFlow(self):
 
         # Parameters
-        x_len = 200         # Number of points to display
-        y_range = [10, 40]  # Range of possible Y values to display
+        x_len = 100         # Number of points to display
+        y_range = [0, 80]  # Range of possible Y values to display
 
         # Create figure for plotting
         fig = plt.figure()
         fig.patch.set_facecolor('#263655')
         ax = fig.add_subplot(1, 1, 1, facecolor='#263655')
-        xs = list(range(0, 200))
-        ys = [0] * x_len
+        #ax.spines['bottom'].set_color('gray')
+        
+        xs = list(range(0, x_len))
+        ys = [random.random()*40 for x in range(x_len)]
+        
         ax.set_ylim(y_range)
-
 
         # Create a blank line. We will update the line in animate
         line, = ax.plot(xs, ys)
 
         # Add labels
-        plt.title('TMP102 Temperature over Time')
+        plt.title('Pressure over Time')
         plt.xlabel('Samples')
-        plt.ylabel('Temperature (deg C)')
+        plt.ylabel('Pressure (mmHg)')
 
         # This function is called periodically from FuncAnimation
         def animate(i, ys):
 
-            # Read temperature (Celsius) from TMP102
-            temp_c = round(2.32, 2)
-
             # Add y to list
-            ys.append(temp_c)
-
+            ys.append(self.latest_sensor_data.flow)
+            print("flow")
             # Limit y list to set number of items
             ys = ys[-x_len:]
-
             # Update line with new Y values
             line.set_ydata(ys)
 
             return line,
-
         # Set up plot to call animate() function periodically
-        ani = animation.FuncAnimation(fig,
-            animate,
-            fargs=(ys,),
-            interval=50,
-            blit=True)
+        
         canvas = FigureCanvasTkAgg(fig, master=self.f9)
         canvas.get_tk_widget().place(x=0, y=0, relwidth=1,relheight=1)
+        self.flow_animation_ref = animation.FuncAnimation(fig,
+            animate,
+            fargs=(ys,),
+            interval=100,
+            blit=True)
         
     def GraphPlotPressure(self):
 
         # Parameters
-        x_len = 200         # Number of points to display
-        y_range = [10, 40]  # Range of possible Y values to display
+        x_len = 100         # Number of points to display
+        y_range = [0, 80]  # Range of possible Y values to display
 
         # Create figure for plotting
         fig = plt.figure()
         fig.patch.set_facecolor('#263655')
         ax = fig.add_subplot(1, 1, 1, facecolor='#263655')
-        ax.spines['bottom'].set_color('gray')
+        #ax.spines['bottom'].set_color('gray')
         
-        xs = list(range(0, 200))
-        ys = [0] * x_len
+        xs = list(range(0, x_len))
+        ys = [random.random()*40 for x in range(x_len)]
+        
         ax.set_ylim(y_range)
-
 
         # Create a blank line. We will update the line in animate
         line, = ax.plot(xs, ys)
 
         # Add labels
-        plt.title('TMP102 Temperature over Time')
+        plt.title('Pressure over Time')
         plt.xlabel('Samples')
-        plt.ylabel('Temperature (deg C)')
+        plt.ylabel('Pressure (mmHg)')
 
         # This function is called periodically from FuncAnimation
         def animate(i, ys):
 
-            # Read temperature (Celsius) from TMP102
-            temp_c = round(2.32, 2)
-
             # Add y to list
-            ys.append(temp_c)
-
+            ys.append(self.latest_sensor_data.pressure_1_pa)
+            print("pressure")
             # Limit y list to set number of items
             ys = ys[-x_len:]
-
             # Update line with new Y values
             line.set_ydata(ys)
 
             return line,
-
         # Set up plot to call animate() function periodically
-        ani = animation.FuncAnimation(fig,
-            animate,
-            fargs=(ys,),
-            interval=50,
-            blit=True)
+        
         canvas = FigureCanvasTkAgg(fig, master=self.f13)
         canvas.get_tk_widget().place(x=0, y=0, relwidth=1,relheight=1)
-        
-    def checkAllAlarms(self, settings, readings):
-        if readings.S_pressure1 > settings.max_pressure: 
+        self.pressure_animation_ref = animation.FuncAnimation(fig,
+            animate,
+            fargs=(ys,),
+            interval=100,
+            blit=True)
+    
+    
+    def checkAllAlarms(self, settings: Settings, sensors: Sensors):
+        if sensors.pressure_1_pa > settings.max_pressure: 
             self.pres_btn.configure(background="#FF0749")
             self.giveAlarm()
         else:
             self.pres_btn.configure(background="#263655")
 
-        if readings.S_pressure1 < settings.min_pressure:
-            self.pres_btn.configure(background="#FF0749")
+        if sensors.pressure_2_pa < settings.min_pressure: #peep
+            self.peep_btn.configure(background="#FF0749")
             self.giveAlarm()
         else:
-            self.pres_btn.configure(background="#263655")
+            self.peep_btn.configure(background="#263655")
 
             #if valueTida > MaxTV:
             #   lbl7.configure(foreground="red")
@@ -324,18 +327,17 @@ class App(tk.Tk):
             #else:
             #    lbl8.configure(foreground="black")
 
-        if readings.S_oxygen > settings.max_fio2:
+        if sensors.oxygen > settings.max_fio2:
             self.oxy_btn.configure(background="#FF0749")
             self.giveAlarm()
         else:
             self.oxy_btn.configure(background="#263655")
 
-        if readings.S_oxygen < settings.min_fio2:
+        if sensors.oxygen < settings.min_fio2:
             self.oxy_btn.configure(background="#FF0749")
             self.giveAlarm()
         else:
             self.oxy_btn.configure(background="#263655")
-        #self.after(1000,self.checkAllAlarms(settings,readings))
         
     def BuildGui(self):
         self.configure(bg= '#161E2E')
@@ -407,9 +409,6 @@ class App(tk.Tk):
         self.freq_btn_text.set("Frequency"+'\n'+str(self.settings.freq))
         self.freq_btn = Button(f7, textvariable=self.freq_btn_text,background='#263655',foreground='white',command = lambda: self.FreqPop(self.settings))
         self.freq_btn.place(x=0, y=0, relwidth=1,relheight=1)
-
-        
-        label1 = tk.Label(f6, text='peep')
         
         self.peep_btn_text = StringVar() 
         self.peep_btn_text.set("PEEP"+'\n'+str(self.settings.peep)+" [mmHg]")
@@ -431,15 +430,17 @@ class App(tk.Tk):
         self.oxy_btn = Button(f12, textvariable=self.oxy_btn_text,background='#263655',foreground='white', command = lambda: self.O2Pop(self.settings) )
         self.oxy_btn.place(x=0, y=0, relwidth=1,relheight=1)
         
-        self.GraphPlotFlow()
+        #self.GraphPlotFlow()
         self.GraphPlotPressure()
-        self.checkAllAlarms(self.settings, self.readings)
+        
     def quit(self, _signal=None, _=None):
         self._thread_alive = False
         self.mcu.disconnect()
         if self.io_thread:
             self.io_thread.join()
         print('bye')
+        if self.pressure_animation_ref:
+            self.pressure_animation_ref.running = False
         self.destroy()
 
     def say_hello(self):
@@ -464,18 +465,21 @@ class App(tk.Tk):
         while self._thread_alive:
 
             self.mcu.request_sensor_data()
-
+            
             if not self.sensor_queue.empty():
                 sensors = self.sensor_queue.get()
+                self.latest_sensor_data = sensors
                 print('new sensor data:', sensors)
-
+            
 
             if not self.settings_queue.empty():
                 settings = self.settings_queue.get()
                     # TODOcheck settings
                     # if mismatch, send settings again
                 print("Got settings back: ", settings)
-
+                
+            self.checkAllAlarms(self.settings, self.latest_sensor_data)
+            #self.animate_pressure()
             time.sleep(0.1)
 
 
