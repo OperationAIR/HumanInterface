@@ -210,7 +210,7 @@ class App(tk.Tk):
     def GraphPlotFlow(self):
 
         # Parameters
-        x_len = 100         # Number of points to display
+        x_len = 400         # Number of points to display
         y_range = [0, 80]  # Range of possible Y values to display
 
         # Create figure for plotting
@@ -248,16 +248,16 @@ class App(tk.Tk):
         
         canvas = FigureCanvasTkAgg(fig, master=self.f9)
         canvas.get_tk_widget().place(x=0, y=0, relwidth=1,relheight=1)
-        self.flow_animation_ref = animation.FuncAnimation(fig,
-            animate,
-            fargs=(ys,),
-            interval=100,
-            blit=True)
+        #self.flow_animation_ref = animation.FuncAnimation(fig,
+        #    animate,
+        #    fargs=(ys,),
+        #    interval=100,
+        #    blit=True)
         
     def GraphPlotPressure(self):
 
         # Parameters
-        x_len = 100         # Number of points to display
+        x_len = 400         # Number of points to display
         y_range = [0, 80]  # Range of possible Y values to display
 
         # Create figure for plotting
@@ -284,7 +284,7 @@ class App(tk.Tk):
 
             # Add y to list
             ys.append(self.latest_sensor_data.pressure_1_pa)
-            print("pressure")
+            
             # Limit y list to set number of items
             ys = ys[-x_len:]
             # Update line with new Y values
@@ -298,7 +298,7 @@ class App(tk.Tk):
         self.pressure_animation_ref = animation.FuncAnimation(fig,
             animate,
             fargs=(ys,),
-            interval=500,
+            interval=50,
             blit=True)
 
 
@@ -330,10 +330,7 @@ class App(tk.Tk):
         if sensors.oxygen > settings.max_fio2:
             self.oxy_btn.configure(background="#FF0749")
             self.giveAlarm()
-        else:
-            self.oxy_btn.configure(background="#263655")
-
-        if sensors.oxygen < settings.min_fio2:
+        elif sensors.oxygen < settings.min_fio2:
             self.oxy_btn.configure(background="#FF0749")
             self.giveAlarm()
         else:
@@ -430,7 +427,7 @@ class App(tk.Tk):
         self.oxy_btn = Button(f12, textvariable=self.oxy_btn_text,background='#263655',foreground='white', command = lambda: self.O2Pop(self.settings) )
         self.oxy_btn.place(x=0, y=0, relwidth=1,relheight=1)
         
-        #self.GraphPlotFlow()
+        self.GraphPlotFlow()
         self.GraphPlotPressure()
         
     def quit(self, _signal=None, _=None):
@@ -480,7 +477,7 @@ class App(tk.Tk):
 
             self.checkAllAlarms(self.settings, self.latest_sensor_data)
             #self.animate_pressure()
-            time.sleep(0.5)
+            time.sleep(0.04)
 
 
 

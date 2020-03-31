@@ -62,7 +62,7 @@ class Microcontroller:
             self.serial.write(buffer)
 
     def connect(self):
-        self.serial = serial.Serial(self.port, self.baudrate, timeout=1)
+        self.serial = serial.Serial(self.port, self.baudrate, timeout=0.1)
         print('open port: ', self.serial, self.serial.port)
         self._start_reader()
 
@@ -111,6 +111,9 @@ class Microcontroller:
                     sensors = sensors_from_binary(data[offset:end])
                     self.sensor_queue.put(sensors)
                     data = data[end+2:] #account for crc16
+                else:
+                    print("delete data")
+                    data = b''
             elif data.startswith(SerialCommands.NewSettings.format()):
                 settings_size = 26
                 offset = 4
@@ -120,7 +123,9 @@ class Microcontroller:
                     self.settings_queue.put(settings)
                     data = data[end:]
             else:
-                # # save data for next round
+                print("delete buffer :",data)
+                data=b''# # save data for next round
+                
                 break;
         return data
 
