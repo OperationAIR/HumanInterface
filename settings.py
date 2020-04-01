@@ -4,7 +4,7 @@ from tools import pressure_to_pa
 def settings_from_binary(packed_data):
     unpacked = struct.unpack('H H H H H H H H H H H H H', packed_data)
     crc = [unpacked[-1]]
-    return Settings(*unpacked[:-1])
+    return Settings(*unpacked[:-1], max_peep=0, min_peep=0)
 
 class Settings():
     def __init__(self, start, peep, freq, ratio, pressure, oxygen, max_pressure, min_pressure, max_tv, min_tv, max_fio2, min_fio2, max_peep, min_peep):

@@ -7,6 +7,7 @@ from serial.tools import list_ports
 from queue import Queue
 from enum import Enum
 import random
+import binascii
 
 import crcmod
 from settings import Settings, settings_from_binary
@@ -155,7 +156,7 @@ class Microcontroller:
                     self.settings_queue.put(settings)
                     data = data[end:]
             else:
-                print("delete buffer :",data)
+                print('could not parse: ',binascii.hexlify(data))
                 data=b''# # save data for next round
 
                 break;

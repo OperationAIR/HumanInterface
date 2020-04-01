@@ -455,6 +455,7 @@ class App(tk.Tk):
             self.settings.start = 0
         else:
             self.settings.start = 1
+        self.send_settings()
 
     def say_hello(self):
         print("Hello, Tkinter!")
@@ -468,21 +469,23 @@ class App(tk.Tk):
         print('request sensor data')
         self.mcu.request_sensor_data()
 
-    def send_settings(self, popup):
+    def send_settings(self, popup=None):
         self.mcu.send_settings(self.settings)
         self.update_buttons()
-        popup.destroy()
+        if popup:
+            popup.destroy()
         print("Send settings")
 
     def asyncio(self):
         while self._thread_alive:
 
-            self.mcu.request_sensor_data()
+            if self.settings.start:
+                self.mcu.request_sensor_data()
 
             if not self.sensor_queue.empty():
                 sensors = self.sensor_queue.get()
                 self.latest_sensor_data = sensors
-                print('new sensor data:', sensors)
+    #            print('new sensor data:', sensors)
 
 
             if not self.settings_queue.empty():
