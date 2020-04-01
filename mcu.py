@@ -3,6 +3,7 @@ import serial
 import threading
 import time
 import signal
+import struct
 from serial.tools import list_ports
 from queue import Queue
 from enum import Enum
@@ -141,8 +142,16 @@ class Microcontroller:
                 offset = 4
                 end = offset+sensors_size
                 if len(data[offset:]) >= sensors_size:
-                    sensors = sensors_from_binary(data[offset:end])
+                    sensor_data = data[offset:end]
+                    crc = struct.unpack('H', data[end:end+2])
+                    crc_check = self.crc(sensor_data).to_bytes(2, 'little')
+                    #if crc == crc_check:
+                    #    self.sensor_queue.put(sensors)
+                    #else:
+                    #    print('sensor crc check failed')
+                    sensors = sensors_from_binary(sensor_data)
                     self.sensor_queue.put(sensors)
+                    print(sensors.pressure_1_pa)
                     data = data[end+2:] #account for crc16
                 else:
                     print("delete data")

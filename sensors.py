@@ -1,6 +1,7 @@
 
 import datetime
 import struct
+from tools import pressure_to_cm_h2o
 
 class Sensors:
     """
@@ -16,8 +17,8 @@ class Sensors:
     def __init__(self, flow, pressure1, pressure2, oxygen):
         self.timestamp = datetime.datetime.now()
         self.flow = flow
-        self.pressure_1_pa = pressure1
-        self.pressure_2_pa = pressure2
+        self.pressure_1_pa = pressure_to_cm_h2o(pressure1)
+        self.pressure_2_pa = pressure_to_cm_h2o(pressure2)
         self.oxygen = oxygen
 
     def __repr__(self):

@@ -242,7 +242,9 @@ class App(tk.Tk):
 
         # This function is called periodically from FuncAnimation
         def animate(i, ys):
-
+            
+            if not self.settings.start:
+                return line,
             # Add y to list
             ys.append(self.latest_sensor_data.flow)
             # Limit y list to set number of items
@@ -289,6 +291,8 @@ class App(tk.Tk):
         # This function is called periodically from FuncAnimation
         def animate(i, ys):
 
+            if not self.settings.start:
+                return line,
             # Add y to list
             ys.append(self.latest_sensor_data.pressure_1_pa)
 
@@ -495,7 +499,7 @@ class App(tk.Tk):
                 print("Got settings back: ", settings)
 
             self.checkAllAlarms(self.settings, self.latest_sensor_data)
-            time.sleep(0.04)
+            time.sleep(0.1)
         print ('exit app thread')
 
 
