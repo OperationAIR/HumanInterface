@@ -6,6 +6,7 @@ import signal
 from serial.tools import list_ports
 from queue import Queue
 from enum import Enum
+import random
 
 import crcmod
 from settings import Settings, settings_from_binary
@@ -27,7 +28,7 @@ class SerialCommands(Enum):
 
 class Microcontroller:
 
-    def __init__(self, port, baudrate, settings_queue: Queue, sensor_queue: Queue):
+    def __init__(self, port, baudrate, settings_queue: Queue, sensor_queue: Queue, simulate=False):
 
         self.serial = None
         self._reader_alive = False
@@ -37,27 +38,49 @@ class Microcontroller:
         self.crc = crcmod.predefined.mkPredefinedCrcFun('crc-16-usb')
         self.settings_queue = settings_queue
         self.sensor_queue = sensor_queue
-        self.connect()
+
+        self.receiver_thread = threading.Thread(target=self._reader, name='rx')
+        self.receiver_thread.daemon = True
         self.serialdata = b''
+
+        self.connect()
+        self.simulate_thread = None
+        if simulate:
+            self._simulation_alive = True
+            self.simulate_thread = threading.Thread(target=self._simulate_sensor_data, name='simulate')
+            self.simulate_thread.daemon = True
+            self.simulate_thread.start()
+
+    def _simulate_sensor_data(self):
+        while self._simulation_alive:
+            sensors = Sensors(random.random()*10, random.random()*40, random.random()*40, random.random()*100)
+            self.sensor_queue.put(sensors)
+            time.sleep(1)
+
+        print ('exit simulation thread')
+
+
 
     def _start_reader(self):
         """Start reader thread"""
         print('Start reader thread')
         self._reader_alive = True
-        # start serial->console thread
-        self.receiver_thread = threading.Thread(target=self._reader, name='rx')
-        self.receiver_thread.daemon = True
         self.receiver_thread.start()
 
     def _stop_reader(self):
         """Stop reader thread only, wait for clean exit of thread"""
         self._reader_alive = False
+        self._simulation_alive = False
         if self.serial and hasattr(self.serial, 'cancel_read'):
             self.serial.cancel_read()
 
         if self.receiver_thread:
             self.receiver_thread.join()
             print('serial thread joined')
+
+        if self.simulate_thread:
+            self.simulate_thread.join()
+            print('simulate thread joined')
 
     def _send_buffer(self, buffer: bytes):
         if self.serial:
@@ -77,6 +100,7 @@ class Microcontroller:
         self._stop_reader()
         if self.serial and self.serial.is_open:
             self.serial.close()
+
 
     def led_on(self):
         """Send Led On command to microcontroller"""
@@ -166,7 +190,7 @@ if __name__ == "__main__":
     TTY = '/dev/cu.usbmodemC1DDCDF83'
     settings_queue = Queue()
     sensor_queue = Queue()
-    mcu = Microcontroller(TTY, BAUDRATE, settings_queue, sensor_queue)
+    mcu = Microcontroller(TTY, BAUDRATE, settings_queue, sensor_queue, simulate=True)
 
     s = Settings(
         start=0,
