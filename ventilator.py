@@ -24,11 +24,15 @@ from mcu import Microcontroller
 import gui_utils as gut
 
 BAUDRATE = 115200
-TTY = '/dev/ttyS0'
 
 FULLSCREEN = False
 SIMULATE = False
-if SIMULATE: TTY = '/dev/cu.usbmodemC1DDCDF83'
+# for RPi
+#TTY = '/dev/ttyS0'
+# for Mac
+#TTY = '/dev/cu.usbmodemC1DDCDF83'
+# for Ubuntu
+TTY = '/dev/ttyUSB0'
 
 class App(tk.Tk):
     def __init__(self):
@@ -244,7 +248,6 @@ class App(tk.Tk):
 
             # Add y to list
             ys.append(self.latest_sensor_data.flow)
-            print("flow")
             # Limit y list to set number of items
             ys = ys[-x_len:]
             # Update line with new Y values
