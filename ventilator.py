@@ -106,9 +106,9 @@ class App(tk.Tk):
 
     def update_buttons(self):
         self.freq_btn_text.set("Frequency"+'\n'+str(self.settings.freq)+" [1/min]")
-        self.peep_btn_text.set("PEEP"+'\n'+str(self.settings.peep)+" [mmHg]")
+        self.peep_btn_text.set("PEEP"+'\n'+str(self.settings.peep)+" [cm H2O]")
         #self.tv_btn_text.set("Tidal Volume"+'\n'+str(self.settings.tidal_vol)+" [L/min]")
-        self.pres_btn_text.set("Pressure"+'\n'+str(self.settings.pressure)+" [mmHg]")
+        self.pres_btn_text.set("Pressure"+'\n'+str(self.settings.pressure)+" [cm H2O]")
         self.oxy_btn_text.set("Oxygen (02)"+'\n'+str(self.settings.oxygen)+" [%]")
 
     def FreqPop(self, settings):
@@ -284,7 +284,7 @@ class App(tk.Tk):
         # Add labels
         plt.title('Pressure over Time')
         plt.xlabel('Samples')
-        plt.ylabel('Pressure (mmHg)')
+        plt.ylabel('Pressure (cm H2O)')
 
         # This function is called periodically from FuncAnimation
         def animate(i, ys):
@@ -415,7 +415,7 @@ class App(tk.Tk):
         self.freq_btn.place(x=0, y=0, relwidth=1,relheight=1)
 
         self.peep_btn_text = StringVar()
-        self.peep_btn_text.set("PEEP"+'\n'+str(self.settings.peep)+" [mmHg]")
+        self.peep_btn_text.set("PEEP"+'\n'+str(self.settings.peep)+" [cm H2O]")
         self.peep_btn = Button(f6, textvariable=self.peep_btn_text,background='#263655',foreground='white',command = lambda: self.PeepPop(self.settings))
         self.peep_btn.place(x=0, y=0, relwidth=1,relheight=1)
 
@@ -425,7 +425,7 @@ class App(tk.Tk):
         self.tv_btn.place(x=0, y=0, relwidth=1,relheight=1)
 
         self.pres_btn_text = StringVar()
-        self.pres_btn_text.set("Pressure"+'\n'+str(self.settings.pressure)+" [mmHg]")
+        self.pres_btn_text.set("Pressure"+'\n'+str(self.settings.pressure)+" [cm H2O]")
         self.pres_btn = Button(f11, textvariable=self.pres_btn_text,background='#263655',foreground='white',command = lambda: self.PresPop(self.settings) )
         self.pres_btn.place(x=0, y=0, relwidth=1,relheight=1)
 

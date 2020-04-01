@@ -1,5 +1,5 @@
 import struct
-import serial
+from tools import pressure_to_pa
 
 def settings_from_binary(packed_data):
     unpacked = struct.unpack('H H H H H H H H H H H H H', packed_data)
@@ -23,10 +23,23 @@ class Settings():
         self.max_peep = int(max_peep)
         self.min_peep = int(min_peep)
 
+
     def get_bit_string(self):
         #B = unsigned char
         #H = unsigned short
-        values = (self.start, self.peep, self.freq, self.ratio, self.pressure, self.oxygen, self.max_pressure,self.min_pressure,self.max_tv,self.min_tv, self.max_fio2, self.min_fio2)
+        values = (
+                self.start, 
+                pressure_to_pa(self.peep), 
+                self.freq, 
+                self.ratio, 
+                pressure_to_pa(self.pressure), 
+                self.oxygen, 
+                pressure_to_pa(self.max_pressure),
+                pressure_to_pa(self.min_pressure),
+                self.max_tv,
+                self.min_tv,
+                self.max_fio2,
+                self.min_fio2)
         s = struct.Struct('H H H H H H H H H H H H')
         packed_data = s.pack(*values)
         return packed_data
