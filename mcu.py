@@ -39,8 +39,7 @@ class Microcontroller:
         self.settings_queue = settings_queue
         self.sensor_queue = sensor_queue
 
-        self.receiver_thread = threading.Thread(target=self._reader, name='rx')
-        self.receiver_thread.daemon = True
+
         self.serialdata = b''
 
         self.connect()
@@ -65,6 +64,8 @@ class Microcontroller:
         """Start reader thread"""
         print('Start reader thread')
         self._reader_alive = True
+        self.receiver_thread = threading.Thread(target=self._reader, name='rx')
+        self.receiver_thread.daemon = True
         self.receiver_thread.start()
 
     def _stop_reader(self):
