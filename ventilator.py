@@ -27,7 +27,7 @@ BAUDRATE = 115200
 TTY = '/dev/ttyS0'
 
 FULLSCREEN = False
-SIMULATE = True
+SIMULATE = False
 if SIMULATE: TTY = '/dev/cu.usbmodemC1DDCDF83'
 
 class App(tk.Tk):
