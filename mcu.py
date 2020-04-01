@@ -143,15 +143,14 @@ class Microcontroller:
                 end = offset+sensors_size
                 if len(data[offset:]) >= sensors_size:
                     sensor_data = data[offset:end]
-                    crc = struct.unpack('H', data[end:end+2])
-                    crc_check = self.crc(sensor_data).to_bytes(2, 'little')
-                    #if crc == crc_check:
-                    #    self.sensor_queue.put(sensors)
-                    #else:
-                    #    print('sensor crc check failed')
-                    sensors = sensors_from_binary(sensor_data)
-                    self.sensor_queue.put(sensors)
-                    print(sensors.pressure_1_pa)
+                    crc = struct.unpack('H', data[end:end+2])[0]
+                    crc_check = self.crc(sensor_data)
+                    
+                    if crc == crc_check:
+                        sensors = sensors_from_binary(sensor_data)
+                        self.sensor_queue.put(sensors)
+                    else:
+                        print('sensor crc check failed')
                     data = data[end+2:] #account for crc16
                 else:
                     print("delete data")
