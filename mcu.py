@@ -92,7 +92,7 @@ class Microcontroller:
         available_ports = [p.device for p in list_ports.comports()]
         print(available_ports)
         if self.port in available_ports:
-            self.serial = serial.Serial(self.port, self.baudrate, timeout=0.1)
+            self.serial = serial.Serial(self.port, self.baudrate, timeout=1)
             print('open port: ', self.serial, self.serial.port)
             self._start_reader()
         else:

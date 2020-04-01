@@ -474,7 +474,7 @@ class App(tk.Tk):
         self.update_buttons()
         if popup:
             popup.destroy()
-        print("Send settings")
+        print("Send settings:", self.settings)
 
     def asyncio(self):
         while self._thread_alive:
