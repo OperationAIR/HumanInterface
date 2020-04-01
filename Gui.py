@@ -35,7 +35,7 @@ def helloCallBack():
     messagebox.showinfo( "Warning", "Warning, You stop the machinal ventilation")
 
 def giveAlarm():
-    print("alarm!!")
+    pass # print("alarm!!")
 
 def getValues(): #Maybe replace to function.py if Dict
     global valuePEEP
