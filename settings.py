@@ -7,7 +7,7 @@ def settings_from_binary(packed_data):
     return Settings(*unpacked[:-1])
 
 class Settings():
-    def __init__(self, start, peep, freq, ratio, pressure, oxygen, max_pressure, min_pressure, max_tv, min_tv, max_fio2, min_fio2):
+    def __init__(self, start, peep, freq, ratio, pressure, oxygen, max_pressure, min_pressure, max_tv, min_tv, max_fio2, min_fio2, max_peep, min_peep):
         self.start = int(start)
         self.peep = int(peep)
         self.freq = int(freq)
@@ -20,6 +20,8 @@ class Settings():
         self.min_tv = int(min_tv)
         self.max_fio2 = int(max_fio2)
         self.min_fio2 = int(min_fio2)
+        self.max_peep = int(max_peep)
+        self.min_peep = int(min_peep)
 
     def get_bit_string(self):
         #B = unsigned char

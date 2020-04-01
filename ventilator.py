@@ -50,13 +50,15 @@ class App(tk.Tk):
             ratio=2,
             pressure=40,
             oxygen = 25,
-            max_pressure=40,
-            min_pressure=5,
+            max_pressure=50,
+            min_pressure=40,
             max_tv=400,
             min_tv=200,
             max_fio2=50,
-            min_fio2=20)
-
+            min_fio2=20,
+            max_peep = 35,
+            min_peep = 5)
+        
         self.BuildGui()
         self.sensor_queue = Queue()
         self.settings_queue = Queue()
@@ -92,11 +94,6 @@ class App(tk.Tk):
                 settings.oxygen = value
             text.set("Confirm \n Oxygen"+'\n'+str(settings.oxygen))
             return
-
-        valueTida = 200
-        valuePres = 30
-        valueO2 = 40
-        peep_btn_text.set("PEEP"+'\n'+str(valuePEEP))
         popup.destroy()
 
     def update_buttons(self):
