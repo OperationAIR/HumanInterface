@@ -21,10 +21,14 @@ from sensors import Sensors
 from alarmsettings import AlarmPop
 from mcu import Microcontroller
 
-BAUDRATE = 115200
-#TTY = '/dev/ttyS0'
-TTY = '/dev/cu.usbmodemC1DDCDF83'
+import gui_utils as gut
 
+BAUDRATE = 115200
+TTY = '/dev/ttyS0'
+
+FULLSCREEN = False
+SIMULATE = True
+if SIMULATE: TTY = '/dev/cu.usbmodemC1DDCDF83'
 
 class App(tk.Tk):
     def __init__(self):
@@ -60,7 +64,7 @@ class App(tk.Tk):
         self.BuildGui()
         self.sensor_queue = Queue()
         self.settings_queue = Queue()
-        self.mcu = Microcontroller(TTY, BAUDRATE, self.settings_queue, self.sensor_queue)
+        self.mcu = Microcontroller(TTY, BAUDRATE, self.settings_queue, self.sensor_queue, simulate=SIMULATE)
 
         self._thread_alive = True
         self.io_thread = None
@@ -69,7 +73,7 @@ class App(tk.Tk):
         print(self.req_sensors())
 
     def giveAlarm(self):
-        print("alarm!!")
+        pass # print("alarm!!")
 
     def setValues(self, settings, popup, valuetype, value, text):
         if valuetype == "peep":
@@ -217,9 +221,9 @@ class App(tk.Tk):
         y_range = [0, 80]  # Range of possible Y values to display
 
         # Create figure for plotting
-        fig = plt.figure()
-        fig.patch.set_facecolor('#263655')
-        ax = fig.add_subplot(1, 1, 1, facecolor='#263655')
+        self.fig = plt.figure()
+        self.fig.patch.set_facecolor('#263655')
+        ax = self.fig.add_subplot(1, 1, 1, facecolor='#263655')
         #ax.spines['bottom'].set_color('gray')
 
         xs = list(range(0, x_len))
@@ -231,9 +235,9 @@ class App(tk.Tk):
         line, = ax.plot(xs, ys)
 
         # Add labels
-        plt.title('Pressure over Time')
+        plt.title('Flow over Time')
         plt.xlabel('Samples')
-        plt.ylabel('Pressure (mmHg)')
+        plt.ylabel('Flow')
 
         # This function is called periodically from FuncAnimation
         def animate(i, ys):
@@ -249,13 +253,13 @@ class App(tk.Tk):
             return line,
         # Set up plot to call animate() function periodically
 
-        canvas = FigureCanvasTkAgg(fig, master=self.f9)
+        canvas = FigureCanvasTkAgg(self.fig, master=self.f9)
         canvas.get_tk_widget().place(x=0, y=0, relwidth=1,relheight=1)
-        #self.flow_animation_ref = animation.FuncAnimation(fig,
-        #    animate,
-        #    fargs=(ys,),
-        #    interval=100,
-        #    blit=True)
+        self.flow_animation_ref = animation.FuncAnimation(self.fig,
+           animate,
+           fargs=(ys,),
+           interval=100,
+           blit=True)
 
     def GraphPlotPressure(self):
 
@@ -492,7 +496,8 @@ if __name__ == "__main__":
     app.title("Operation Air Ventilator")
     app.geometry('800x480')
     signal.signal(signal.SIGINT, app.quit)
-    app.attributes('-fullscreen', True)
+    app.attributes('-fullscreen', FULLSCREEN)
+    gut.center(app)
     app.mainloop()
 
     print ('bye')
