@@ -53,10 +53,10 @@ class App(tk.Tk):
 
         self.settings = Settings(
             start=0,
-            peep=20,
+            peep=5,
             freq=20,
             ratio=2,
-            pressure=40,
+            pressure=30,
             oxygen = 25,
             max_pressure=50,
             min_pressure=40,
@@ -305,7 +305,7 @@ class App(tk.Tk):
         self.pressure_animation_ref = animation.FuncAnimation(self.fig,
             animate,
             fargs=(ys,),
-            interval=50,
+            interval=100,
             blit=True)
 
 
@@ -386,7 +386,7 @@ class App(tk.Tk):
 
         air_btn_text = StringVar()
         air_btn_text.set("OperationAir")
-        air_btn = Button(f1, textvariable=air_btn_text,background='#263655',foreground='white')
+        air_btn = Button(f1, textvariable=air_btn_text,background='#263655',foreground='white',command = lambda: self.quit())
         air_btn.place(x=0, y=0, relwidth=1,relheight=1)
 
         self.alarm_btn_text = StringVar()
@@ -405,8 +405,8 @@ class App(tk.Tk):
         self.patient_btn.place(x=0, y=0, relwidth=1,relheight=1)
 
         self.switch_btn_text = StringVar()
-        self.switch_btn_text.set("Started")
-        self.switch_btn = Button(f5, textvariable=self.switch_btn_text,background='#263655',foreground='white',command = lambda: self.quit())
+        self.switch_btn_text.set("Start")
+        self.switch_btn = Button(f5, textvariable=self.switch_btn_text,background='#263655',foreground='white',command = lambda: self.start())
         self.switch_btn.place(x=0, y=0, relwidth=1,relheight=1)
 
         self.freq_btn_text = StringVar()
@@ -420,7 +420,7 @@ class App(tk.Tk):
         self.peep_btn.place(x=0, y=0, relwidth=1,relheight=1)
 
         self.tv_btn_text = StringVar()
-        self.tv_btn_text.set("Tidal Volume"+'\n'+str()+" [L/min]")
+        self.tv_btn_text.set("Tidal Volume"+'\n'+str()+" [mL]")
         self.tv_btn = Button(f10, textvariable=self.tv_btn_text,background='#263655',foreground='white')
         self.tv_btn.place(x=0, y=0, relwidth=1,relheight=1)
 
@@ -448,6 +448,13 @@ class App(tk.Tk):
         if self.pressure_animation_ref:
             self.pressure_animation_ref.running = False
         self.destroy()
+
+    def start(self):
+    
+        if self.settings.start == 1:
+            self.settings.start = 0
+        else:
+            self.settings.start = 1
 
     def say_hello(self):
         print("Hello, Tkinter!")

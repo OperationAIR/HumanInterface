@@ -180,7 +180,7 @@ def PressureAlarm(self, settings, text1):
 
 def setAlarmValues(self, settings, popup, valuetype, value, text1, text2):  
     if valuetype == "MaxPeep":
-        if value > settings.min_peep and value <= 35:
+        if value > settings.min_peep and value <= 20:
             settings.max_peep = value
         text1.set("PEEP \n\n"+"Max value: "+str(settings.max_peep)+"\nMin value: "+str(settings.min_peep))
         text2.set("Confirm Alarms \n\n"+"Max value: "+str(settings.max_peep)+"\nMin value: "+str(settings.min_peep))
@@ -192,7 +192,7 @@ def setAlarmValues(self, settings, popup, valuetype, value, text1, text2):
         text2.set("Confirm Alarms \n\n"+"Max value: "+str(settings.max_peep)+"\nMin value: "+str(settings.min_peep))
         return
     if valuetype == "MaxPressure":
-        if value > settings.min_pressure and value <= 80:
+        if value > settings.min_pressure and value <= 60:
             settings.max_pressure = value
         text1.set("Pressure \n\n"+"Max value: "+str(settings.max_pressure)+"\nMin value: "+str(settings.min_pressure))
         text2.set("Confirm Alarms \n\n"+"Max value: "+str(settings.max_pressure)+"\nMin value: "+str(settings.min_pressure))
