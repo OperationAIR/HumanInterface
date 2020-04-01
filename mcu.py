@@ -3,6 +3,7 @@ import serial
 import threading
 import time
 import signal
+from serial.tools import list_ports
 from queue import Queue
 from enum import Enum
 
@@ -56,15 +57,21 @@ class Microcontroller:
 
         if self.receiver_thread:
             self.receiver_thread.join()
+            print('serial thread joined')
 
     def _send_buffer(self, buffer: bytes):
         if self.serial:
             self.serial.write(buffer)
 
     def connect(self):
-        self.serial = serial.Serial(self.port, self.baudrate, timeout=0.1)
-        print('open port: ', self.serial, self.serial.port)
-        self._start_reader()
+        available_ports = [p.device for p in list_ports.comports()]
+        print(available_ports)
+        if self.port in available_ports:
+            self.serial = serial.Serial(self.port, self.baudrate, timeout=0.1)
+            print('open port: ', self.serial, self.serial.port)
+            self._start_reader()
+        else:
+            print('could not connect')
 
     def disconnect(self):
         self._stop_reader()
@@ -125,7 +132,7 @@ class Microcontroller:
             else:
                 print("delete buffer :",data)
                 data=b''# # save data for next round
-                
+
                 break;
         return data
 
@@ -140,6 +147,8 @@ class Microcontroller:
                     self.serialdata = self.parse_serial_data(self.serialdata)
 
                 time.sleep(0.1)
+
+            print ('exit serial thread')
 
         except serial.SerialException:
             # ToDo how to handle
