@@ -65,7 +65,7 @@ class App(tk.Tk):
             min_fio2=20,
             max_peep = 35,
             min_peep = 5)
-        
+
         self.BuildGui()
         self.sensor_queue = Queue()
         self.settings_queue = Queue()
@@ -74,6 +74,7 @@ class App(tk.Tk):
         self._thread_alive = True
         self.io_thread = None
         self.io_thread = Thread(target=self.asyncio)
+        self.io_thread.daemon = True
         self.io_thread.start()
         print(self.req_sensors())
 
@@ -241,8 +242,8 @@ class App(tk.Tk):
 
         plt.yticks(fontsize=13, color='white')
 
-        plt.tick_params(axis="both", which="both", bottom="off", top="off",    
-                labelbottom="on", left="off", right="off", labelleft="on")  
+        plt.tick_params(axis="both", which="both", bottom="off", top="off",
+                labelbottom="on", left="off", right="off", labelleft="on")
         # Create a blank line. We will update the line in animate
         line, = ax.plot(xs, ys, color= '#43DBA7')
 
@@ -250,11 +251,11 @@ class App(tk.Tk):
         plt.title('Flow', fontsize= 13, color="white")
         #plt.xlabel('Samples')
         plt.ylabel('[L/min]')
-        
+
 
         # This function is called periodically from FuncAnimation
         def animate(i, ys):
-            
+
             if not self.settings.start:
                 return line,
             # Add y to list
@@ -302,8 +303,8 @@ class App(tk.Tk):
 
         plt.yticks(fontsize=13, color='white')
 
-        plt.tick_params(axis="both", which="both", bottom="off", top="off",    
-                labelbottom="on", left="off", right="off", labelleft="on")  
+        plt.tick_params(axis="both", which="both", bottom="off", top="off",
+                labelbottom="on", left="off", right="off", labelleft="on")
         # Create a blank line. We will update the line in animate
         line, = ax.plot(xs, ys, color= '#EBE1D0')
 
@@ -384,8 +385,8 @@ class App(tk.Tk):
         f1 = tk.Frame(self, width=160, height=60, borderwidth=1, bg='#161E2E')
         f2 = tk.Frame(self, width=60, height=60, borderwidth=1, bg='#161E2E')
         f3 = tk.Frame(self, width=340, height=60, borderwidth=1, bg='#161E2E')
-        f4 = tk.Frame(self, width=120, height=60, borderwidth=1, bg='#161E2E') 
-        f5 = tk.Frame(self, width=120, height=60, borderwidth=1, bg='#161E2E') 
+        f4 = tk.Frame(self, width=120, height=60, borderwidth=1, bg='#161E2E')
+        f5 = tk.Frame(self, width=120, height=60, borderwidth=1, bg='#161E2E')
         f6 = tk.Frame(self, width=220, height=84, borderwidth=1, bg='#161E2E') #160
         f7 = tk.Frame(self, width=220, height=84, borderwidth=1, bg='#161E2E') #160
         f8 = tk.Frame(self, width=580, height=504, borderwidth=1, bg='#161E2E') #dual frame
@@ -478,7 +479,7 @@ class App(tk.Tk):
         self.destroy()
 
     def start(self):
-    
+
         if self.settings.start == 1:
             self.settings.start = 0
             self.switch_btn_text.set("Start")
@@ -496,7 +497,6 @@ class App(tk.Tk):
         self.mcu.led_off()
 
     def req_sensors(self):
-        print('request sensor data')
         self.mcu.request_sensor_data()
 
     def send_settings(self, popup=None):
@@ -520,8 +520,6 @@ class App(tk.Tk):
 
             if not self.settings_queue.empty():
                 settings = self.settings_queue.get()
-                    # TODOcheck settings
-                    # if mismatch, send settings again
                 if not self.settings.equals(settings):
                     print("MISMATCH SETTINGS: RESEND")
                     self.send_settings()
