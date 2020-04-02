@@ -189,6 +189,8 @@ class Microcontroller:
                         print('sensor crc check failed: buffer too short')
 
                     data = data[end:] #account for crc16
+                    if self.serial_retry:
+                        self.serial_retry = 0
                 else:
                     self.serial_retry += 1
                     print("1. not enough data: {}/{} bytes".format(len(data[offset:]), sensors_size))
@@ -219,6 +221,8 @@ class Microcontroller:
                     settings = settings_from_binary(data[offset:end])
                     self.settings_queue.put(settings)
                     data = data[end:]
+                    if self.serial_retry:
+                        self.serial_retry = 0
                 else:
                     self.serial_retry += 1
                     print("2. not enough data: {}/{} bytes".format(len(data[offset:]), settings_size))
