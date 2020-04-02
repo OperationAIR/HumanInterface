@@ -88,12 +88,12 @@ class App(tk.Tk):
             text.set("Confirm \n PEEP"+'\n'+str(settings.peep))
             return
         if valuetype == "freq":
-            if value <= 35 and value >= 0:
+            if value <= 30 and value >= 5:
                 settings.freq = value
             text.set("Confirm \n Frequency"+'\n'+str(settings.freq))
             return
         if valuetype == "pres":
-            if value <= 70 and value >= 30:
+            if value <= 70 and value >= 10:
                 settings.pressure = value
             text.set("Confirm \n Pressure"+'\n'+str(settings.pressure))
             return
@@ -126,16 +126,33 @@ class App(tk.Tk):
         text_btn.config(height=15, width=30, state="normal")
         text_btn.pack(side="left")
 
-        btn2 = Button(popup, text="+",background='#263655',foreground='white', command=lambda: self.setValues(settings, popup,"freq", settings.freq+5, text))
+        btn2 = Button(popup, text="+",background='#263655',foreground='white', command=lambda: self.setValues(settings, popup,"freq", settings.freq+1, text))
         btn2.config(height=15, width=30, state="normal")
         btn2.pack(side="left",fill="x")
 
-        btn3 = Button(popup, text="-",background='#263655',foreground='white', command=lambda: self.setValues(settings, popup,"freq", settings.freq-5, text))
+        btn3 = Button(popup, text="-",background='#263655',foreground='white', command=lambda: self.setValues(settings, popup,"freq", settings.freq-1, text))
         btn3.config(height=15, width=30, state="normal")
         btn3.pack(side="left",fill="x")
+        
+        textR = StringVar(popup)
+        textR.set("Ratio"+'\n'+'1:2')
+        btn4 = Button(popup, textvariable=textR,background='#263655',foreground='white', command=lambda: self.setRatio(settings, textR))
+        btn4.config(height=15, width=30, state="normal")
+        btn4.pack(side="left",fill="x")
 
         popup.mainloop()
         return
+
+    def setRatio(self, settings, textR):
+        if settings.ratio == 2:
+            settings.ratio = 3
+            textR.set("Ratio"+'\n'+'1:3')
+        elif settings.ratio == 3:
+            settings.ratio = 1
+            textR.set("Ratio"+'\n'+'1:1')
+        else:
+            settings.ratio = 2
+            textR.set("Ratio"+'\n'+'1:2')
 
     def PeepPop(self, settings):
         popup = Tk()

@@ -180,7 +180,7 @@ def PressureAlarm(self, settings, text1):
 
 def setAlarmValues(self, settings, popup, valuetype, value, text1, text2):  
     if valuetype == "MaxPeep":
-        if value > settings.min_peep and value <= 20:
+        if value > settings.min_peep and value <= 70:
             settings.max_peep = value
         text1.set("PEEP \n\n"+"Max value: "+str(settings.max_peep)+"\nMin value: "+str(settings.min_peep))
         text2.set("Confirm Alarms \n\n"+"Max value: "+str(settings.max_peep)+"\nMin value: "+str(settings.min_peep))
@@ -192,13 +192,13 @@ def setAlarmValues(self, settings, popup, valuetype, value, text1, text2):
         text2.set("Confirm Alarms \n\n"+"Max value: "+str(settings.max_peep)+"\nMin value: "+str(settings.min_peep))
         return
     if valuetype == "MaxPressure":
-        if value > settings.min_pressure and value <= 60:
+        if value > settings.min_pressure and value <= 70:
             settings.max_pressure = value
         text1.set("Pressure \n\n"+"Max value: "+str(settings.max_pressure)+"\nMin value: "+str(settings.min_pressure))
         text2.set("Confirm Alarms \n\n"+"Max value: "+str(settings.max_pressure)+"\nMin value: "+str(settings.min_pressure))
         return
     if valuetype == "MinPressure":  
-        if value >= 20 and value < settings.max_pressure:
+        if value >= 5 and value < settings.max_pressure:
             settings.min_pressure = value
         text1.set("Pressure \n\n"+"Max value: "+str(settings.max_pressure)+"\nMin value: "+str(settings.min_pressure))
         text2.set("Confirm Alarms \n\n"+"Max value: "+str(settings.max_pressure)+"\nMin value: "+str(settings.min_pressure))
@@ -222,7 +222,7 @@ def setAlarmValues(self, settings, popup, valuetype, value, text1, text2):
         text2.set("Confirm Alarms \n\n"+"Max value: "+str(settings.max_fio2)+"\nMin value: "+str(settings.min_fio2))
         return
     if valuetype == "Minfio2":  
-        if value >= 5 and value < settings.max_fio2:
+        if value >= 20 and value < settings.max_fio2:
             settings.min_fio2 = value
         text1.set("Oxygen \n\n"+"Max value: "+str(settings.max_fio2)+"\nMin value: "+str(settings.min_fio2))
         text2.set("Confirm Alarms \n\n"+"Max value: "+str(settings.max_fio2)+"\nMin value: "+str(settings.min_fio2))
