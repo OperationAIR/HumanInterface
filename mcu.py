@@ -100,7 +100,7 @@ class Microcontroller:
         available_ports = [p.device for p in list_ports.comports()]
         print(available_ports)
         if 1 or self.port in available_ports: #todo rpi
-            self.serial = serial.Serial(self.port, self.baudrate, timeout=1)
+            self.serial = serial.Serial(self.port, self.baudrate, timeout=0.1)
             print('open port: ', self.serial, self.serial.port)
             self._start_reader()
         else:
@@ -267,7 +267,7 @@ if __name__ == "__main__":
     import threading
     from settings import Settings
 
-    BAUDRATE = 115200
+    BAUDRATE = 500000
     TTY = '/dev/cu.usbmodemC1DDCDF83'
     settings_queue = Queue()
     sensor_queue = Queue()

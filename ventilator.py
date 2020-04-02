@@ -22,7 +22,7 @@ from mcu import Microcontroller
 
 import gui_utils as gut
 
-BAUDRATE = 115200
+BAUDRATE = 500000
 
 FULLSCREEN = True
 SIMULATE = False
@@ -523,7 +523,7 @@ class App(tk.Tk):
                     self.send_settings()
 
             self.checkAllAlarms(self.settings, self.latest_sensor_data)
-            time.sleep(0.1)
+            time.sleep(0.05)
         print ('exit app thread')
 
 
