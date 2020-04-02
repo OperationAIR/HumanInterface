@@ -17,7 +17,7 @@ from sensors import Sensors, sensors_from_binary
 
 class SerialCommands(Enum):
     NewSettings = 0x41424344
-    SensorData  = 0x22226666
+    SensorData  = 0xF0F0F0F0 #0x0D15EA5E
     LedOn       = 0x55550000
     LedOff      = 0x66660000
     Switch1On   = 0x55551111
@@ -43,6 +43,7 @@ class Microcontroller:
 
 
         self.serialdata = b''
+        self.serial_retry = 0
 
         self.connect()
         self.simulate_thread = None
@@ -127,19 +128,26 @@ class Microcontroller:
 
 
     def parse_serial_data(self, data):
-        while len(data):
-            if data.startswith(b'###'):
-                i = data.index(b'\n')
-                print(data[3:i].decode("utf-8"))
-                # pop text and newline (so i+1)
-                data = data[i+1:]
+        PREFIX_LEN = 4
+        while len(data) >= PREFIX_LEN:
+            if data.startswith(b'####'):
+                try:
+                    i = data.index(b'\n')
+                    print(data[PREFIX_LEN:i].decode("utf-8"))
+                    # pop text and newline (so i+1)
+                    data = data[i+1:]
+                except ValueError:
+                    print(data[PREFIX_LEN:].decode("utf-8"))
+                    # data = data[i+1:]
+                except:
+                    print("error couldn't parse data")
             elif data.startswith(SerialCommands.SensorData.format()):
                 # TODO: check data length, save data somewhere if not enough bytes have arrived.
                 #       Then also set timeout to discard data in case data never arrives
                 #       Also we should add the CRC16 to the sensor data
 
                 sensors_size = 4*4
-                offset = 4
+                offset = PREFIX_LEN
                 end = offset+sensors_size
                 if len(data[offset:]) >= sensors_size:
                     sensor_data = data[offset:end]
@@ -153,21 +161,29 @@ class Microcontroller:
                         print('sensor crc check failed')
                     data = data[end+2:] #account for crc16
                 else:
-                    print("delete data")
-                    data = b''
+                    self.serial_retry += 1
+                    print("1. not enough data: ", len(data[offset:]))
+                    if self.serial_retry >= 10:
+                        print("1. delete data ", len(data[offset:]))
+                        data = b''
+                        self.serial_retry = 0
             elif data.startswith(SerialCommands.NewSettings.format()):
                 settings_size = 26
-                offset = 4
+                offset = PREFIX_LEN
                 end = offset+settings_size
                 if len(data[offset:]) >= settings_size:
                     settings = settings_from_binary(data[offset:end])
                     self.settings_queue.put(settings)
                     data = data[end:]
+                else:
+                    print("2. delete data ", len(data[offset:]))
             else:
                 print('could not parse: ',binascii.hexlify(data))
-                data=b''# # save data for next round
+                # pop 1 byte
+                data = data[1:]
+                # data=b''# # save data for next round
 
-                break;
+                #break
         return data
 
     def _reader(self):
