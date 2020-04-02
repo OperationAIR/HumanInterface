@@ -58,20 +58,20 @@ def PeepAlarm(self, settings, text1):
     text_btn.pack(side="left", expand = True) 
     
     btn1 = Button(popup, text="+ MAX Alarm",background='#263655',foreground='white', command=lambda: setAlarmValues(self, settings, popup,"MaxPeep", settings.max_peep+5, text1, text2))
-    btn1.config(height=15, width=30, state="normal")
-    btn1.pack(side="left",fill="x")
+    btn1.config(height=15, width=15, state="normal")
+    btn1.pack(side="left",expand = True)
 
     btn2 = Button(popup, text="- MAX Alarm",background='#263655',foreground='white', command=lambda: setAlarmValues(self, settings, popup,"MaxPeep", settings.max_peep-5, text1, text2))
-    btn2.config(height=15, width=30, state="normal")
-    btn2.pack(side="left",fill="x")
+    btn2.config(height=15, width=15, state="normal")
+    btn2.pack(side="left",expand = True)
 
     btn3 = Button(popup, text="+ MIN Alarm",background='#263655',foreground='white', command=lambda: setAlarmValues(self, settings, popup,"MinPeep", settings.min_peep+5, text1, text2))
-    btn3.config(height=15, width=30, state="normal")
-    btn3.pack(side="left",fill="x")
+    btn3.config(height=15, width=15, state="normal")
+    btn3.pack(side="left",expand = True)
 
     btn4 = Button(popup, text="- MIN Alarm",background='#263655',foreground='white', command=lambda: setAlarmValues(self, settings, popup,"MinPeep", settings.min_peep-5, text1, text2))
-    btn4.config(height=15, width=30, state="normal")
-    btn4.pack(side="left",fill="x")
+    btn4.config(height=15, width=15, state="normal")
+    btn4.pack(side="left",expand = True)
 
     popup.mainloop()
     return
@@ -92,20 +92,20 @@ def TvAlarm(self, settings, text1):
     text_btn.pack(side="left", expand = True) 
     
     btn1 = Button(popup, text="+ MAX Alarm",background='#263655',foreground='white', command=lambda: setAlarmValues(self, settings, popup,"MaxTV", settings.max_tv+50, text1, text2))
-    btn1.config(height=15, width=30, state="normal")
-    btn1.pack(side="left",fill="x")
+    btn1.config(height=15, width=15, state="normal")
+    btn1.pack(side="left",expand = True)
 
     btn2 = Button(popup, text="- MAX Alarm",background='#263655',foreground='white', command=lambda: setAlarmValues(self, settings, popup,"MaxTV", settings.max_tv-50, text1, text2))
-    btn2.config(height=15, width=30, state="normal")
-    btn2.pack(side="left",fill="x")
+    btn2.config(height=15, width=15, state="normal")
+    btn2.pack(side="left",expand = True)
 
     btn3 = Button(popup, text="+ MIN Alarm",background='#263655',foreground='white', command=lambda: setAlarmValues(self, settings, popup,"MinTV", settings.min_tv+50, text1, text2))
-    btn3.config(height=15, width=30, state="normal")
-    btn3.pack(side="left",fill="x")
+    btn3.config(height=15, width=15, state="normal")
+    btn3.pack(side="left",expand = True)
 
     btn4 = Button(popup, text="- MIN Alarm",background='#263655',foreground='white', command=lambda: setAlarmValues(self, settings, popup,"MinTV", settings.min_tv-50, text1, text2))
-    btn4.config(height=15, width=30, state="normal")
-    btn4.pack(side="left",fill="x")
+    btn4.config(height=15, width=15, state="normal")
+    btn4.pack(side="left",expand = True)
 
     popup.mainloop()
     return
@@ -126,20 +126,20 @@ def OxygenAlarm(self, settings, text1):
     text_btn.pack(side="left", expand = True) 
     
     btn1 = Button(popup, text="+ MAX Alarm",background='#263655',foreground='white', command=lambda: setAlarmValues(self, settings, popup,"Maxfio2", settings.max_fio2+5, text1, text2))
-    btn1.config(height=15, width=30, state="normal")
-    btn1.pack(side="left",fill="x")
+    btn1.config(height=15, width=15, state="normal")
+    btn1.pack(side="left",expand = True)
 
     btn2 = Button(popup, text="- MAX Alarm",background='#263655',foreground='white', command=lambda: setAlarmValues(self, settings, popup,"Maxfio2", settings.max_fio2-5, text1, text2))
-    btn2.config(height=15, width=30, state="normal")
-    btn2.pack(side="left",fill="x")
+    btn2.config(height=15, width=15, state="normal")
+    btn2.pack(side="left",expand = True)
 
     btn3 = Button(popup, text="+ MIN Alarm",background='#263655',foreground='white', command=lambda: setAlarmValues(self, settings, popup,"Minfio2", settings.min_fio2+5, text1, text2))
-    btn3.config(height=15, width=30, state="normal")
-    btn3.pack(side="left",fill="x")
+    btn3.config(height=15, width=15, state="normal")
+    btn3.pack(side="left",expand = True)
 
     btn4 = Button(popup, text="- MIN Alarm",background='#263655',foreground='white', command=lambda: setAlarmValues(self, settings, popup,"Minfio2", settings.min_fio2-5, text1, text2))
-    btn4.config(height=15, width=30, state="normal")
-    btn4.pack(side="left",fill="x")
+    btn4.config(height=15, width=15, state="normal")
+    btn4.pack(side="left",expand = True)
 
     popup.mainloop()
     return
@@ -160,20 +160,20 @@ def PressureAlarm(self, settings, text1):
     text_btn.pack(side="left", expand = True) 
     
     btn1 = Button(popup, text="+ MAX Alarm",background='#263655',foreground='white', command=lambda: setAlarmValues(self, settings, popup,"MaxPressure", settings.max_pressure+5, text1, text2))
-    btn1.config(height=15, width=30, state="normal")
-    btn1.pack(side="left",fill="x")
+    btn1.config(height=15, width=15, state="normal")
+    btn1.pack(side="left",expand = True)
 
     btn2 = Button(popup, text="- MAX Alarm",background='#263655',foreground='white', command=lambda: setAlarmValues(self, settings, popup,"MaxPressure", settings.max_pressure-5, text1, text2))
-    btn2.config(height=15, width=30, state="normal")
-    btn2.pack(side="left",fill="x")
+    btn2.config(height=15, width=15, state="normal")
+    btn2.pack(side="left",expand = True)
 
     btn3 = Button(popup, text="+ MIN Alarm",background='#263655',foreground='white', command=lambda: setAlarmValues(self, settings, popup,"MinPressure", settings.min_pressure+5, text1, text2))
-    btn3.config(height=15, width=30, state="normal")
-    btn3.pack(side="left",fill="x")
+    btn3.config(height=15, width=15, state="normal")
+    btn3.pack(side="left",expand = True)
 
     btn4 = Button(popup, text="- MIN Alarm",background='#263655',foreground='white', command=lambda: setAlarmValues(self, settings, popup,"MinPressure", settings.min_pressure-5, text1, text2))
-    btn4.config(height=15, width=30, state="normal")
-    btn4.pack(side="left",fill="x")
+    btn4.config(height=15, width=15, state="normal")
+    btn4.pack(side="left",expand = True)
 
     popup.mainloop()
     return

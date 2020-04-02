@@ -92,7 +92,7 @@ class Microcontroller:
     def connect(self):
         available_ports = [p.device for p in list_ports.comports()]
         print(available_ports)
-        if self.port in available_ports:
+        if 1 or self.port in available_ports: #todo rpi
             self.serial = serial.Serial(self.port, self.baudrate, timeout=1)
             print('open port: ', self.serial, self.serial.port)
             self._start_reader()

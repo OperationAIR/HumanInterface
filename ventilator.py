@@ -15,7 +15,6 @@ from queue import Queue
 from tkinter import ttk
 from tkinter import messagebox
 from tkinter import StringVar, Button, Tk, font
-
 from settings import Settings
 from sensors import Sensors
 from alarmsettings import AlarmPop
@@ -25,14 +24,14 @@ import gui_utils as gut
 
 BAUDRATE = 115200
 
-FULLSCREEN = False
+FULLSCREEN = True
 SIMULATE = False
 # for RPi
-#TTY = '/dev/ttyS0'
+TTY = '/dev/ttyS0'
 # for Mac
 #TTY = '/dev/cu.usbmodemC1DDCDF83'
 # for Ubuntu
-TTY = '/dev/ttyUSB0'
+#TTY = '/dev/ttyUSB0'
 
 class App(tk.Tk):
     def __init__(self):
@@ -231,14 +230,27 @@ class App(tk.Tk):
         ys = [random.random()*40 for x in range(x_len)]
 
         ax.set_ylim(y_range)
+        ax.spines["top"].set_visible(False)
+        ax.spines["bottom"].set_visible(False)
+        ax.spines["right"].set_visible(False)
+        ax.spines["left"].set_color("white")
+        ax.get_yaxis().tick_left()
+        ax.yaxis.label.set_size(13)
+        ax.yaxis.label.set_color('white')
+        plt.setp(ax.get_xticklabels(), visible=False)
 
+        plt.yticks(fontsize=13, color='white')
+
+        plt.tick_params(axis="both", which="both", bottom="off", top="off",    
+                labelbottom="on", left="off", right="off", labelleft="on")  
         # Create a blank line. We will update the line in animate
-        line, = ax.plot(xs, ys)
+        line, = ax.plot(xs, ys, color= '#43DBA7')
 
         # Add labels
-        plt.title('Flow over Time')
-        plt.xlabel('Samples')
-        plt.ylabel('Flow')
+        plt.title('Flow', fontsize= 13, color="white")
+        #plt.xlabel('Samples')
+        plt.ylabel('[L/min]')
+        
 
         # This function is called periodically from FuncAnimation
         def animate(i, ys):
@@ -279,14 +291,26 @@ class App(tk.Tk):
         ys = [random.random()*40 for x in range(x_len)]
 
         ax.set_ylim(y_range)
+        ax.spines["top"].set_visible(False)
+        ax.spines["bottom"].set_visible(False)
+        ax.spines["right"].set_visible(False)
+        ax.spines["left"].set_color("white")
+        ax.get_yaxis().tick_left()
+        ax.yaxis.label.set_size(13)
+        ax.yaxis.label.set_color('white')
+        plt.setp(ax.get_xticklabels(), visible=False)
 
+        plt.yticks(fontsize=13, color='white')
+
+        plt.tick_params(axis="both", which="both", bottom="off", top="off",    
+                labelbottom="on", left="off", right="off", labelleft="on")  
         # Create a blank line. We will update the line in animate
-        line, = ax.plot(xs, ys)
+        line, = ax.plot(xs, ys, color= '#EBE1D0')
 
         # Add labels
-        plt.title('Pressure over Time')
-        plt.xlabel('Samples')
-        plt.ylabel('Pressure (cm H2O)')
+        plt.title('Pressure', fontsize= 13, color="white")
+        #plt.xlabel('Samples')
+        plt.ylabel('[cm H2O]')
 
         # This function is called periodically from FuncAnimation
         def animate(i, ys):
@@ -357,27 +381,27 @@ class App(tk.Tk):
 
 
         #define grid sizes and frames
-        f1 = ttk.Frame(self, width=160, height=60, borderwidth=1)
-        f2 = ttk.Frame(self, width=60, height=60, borderwidth=1)
-        f3 = ttk.Frame(self, width=340, height=60, borderwidth=1)
-        f4 = ttk.Frame(self, width=120, height=60, borderwidth=1)
-        f5 = ttk.Frame(self, width=120, height=60, borderwidth=1)
-        f6 = ttk.Frame(self, width=160, height=84, borderwidth=1)
-        f7 = ttk.Frame(self, width=160, height=84, borderwidth=1)
-        f8 = ttk.Frame(self, width=580, height=504, borderwidth=1) #dual frame
-        self.f9 = ttk.Frame(f8, width=576, height=208, borderwidth=0)
-        f10 = ttk.Frame(self, width=220, height=84, borderwidth=1)
-        f11 = ttk.Frame(self, width=220, height=84, borderwidth=1)
-        f12 = ttk.Frame(self, width=220, height=84, borderwidth=1)
-        self.f13 = ttk.Frame(f8, width=576, height=208, borderwidth=0)
+        f1 = tk.Frame(self, width=160, height=60, borderwidth=1, bg='#161E2E')
+        f2 = tk.Frame(self, width=60, height=60, borderwidth=1, bg='#161E2E')
+        f3 = tk.Frame(self, width=340, height=60, borderwidth=1, bg='#161E2E')
+        f4 = tk.Frame(self, width=120, height=60, borderwidth=1, bg='#161E2E') 
+        f5 = tk.Frame(self, width=120, height=60, borderwidth=1, bg='#161E2E') 
+        f6 = tk.Frame(self, width=220, height=84, borderwidth=1, bg='#161E2E') #160
+        f7 = tk.Frame(self, width=220, height=84, borderwidth=1, bg='#161E2E') #160
+        f8 = tk.Frame(self, width=580, height=504, borderwidth=1, bg='#161E2E') #dual frame
+        self.f9 = tk.Frame(f8, width=576, height=208, borderwidth=0, bg='#161E2E')
+        f10 = tk.Frame(self, width=220, height=84, borderwidth=1, bg='#161E2E')
+        f11 = tk.Frame(self, width=220, height=84, borderwidth=1, bg='#161E2E')
+        f12 = tk.Frame(self, width=220, height=84, borderwidth=1, bg='#161E2E')
+        self.f13 = tk.Frame(f8, width=576, height=208, borderwidth=0, bg='#161E2E')
 
         f1.grid(row=0, column=0)
         f2.grid(row=0, column=1)
         f3.grid(row=0, column=2)
         f4.grid(row=0, column=3)
         f5.grid(row=0, column=5)
-        f6.grid(row=1, column=0)
-        f7.grid(row=2, column=0)
+        f6.grid(row=1, column=0, columnspan=2)
+        f7.grid(row=2, column=0, columnspan =2)
         f8.grid(row=1, column=2,rowspan=6,columnspan=4)
         #self.f9.grid(row=1, column=2, columnspan=4, rowspan=3)
         self.f9.grid(row=0, column=0)
@@ -390,52 +414,52 @@ class App(tk.Tk):
 
         air_btn_text = StringVar()
         air_btn_text.set("OperationAir")
-        air_btn = Button(f1, textvariable=air_btn_text,background='#263655',foreground='white',command = lambda: self.quit())
+        air_btn = Button(f1, textvariable=air_btn_text,background='#263655',highlightbackground='#161E2E', foreground='white',command = lambda: self.quit())
         air_btn.place(x=0, y=0, relwidth=1,relheight=1)
 
         self.alarm_btn_text = StringVar()
         self.alarm_btn_text.set("Alarm")
-        self.alarm_btn = Button(f2, textvariable=self.alarm_btn_text,background='#263655',foreground='white',command = lambda: AlarmPop(self,self.settings))
+        self.alarm_btn = Button(f2, textvariable=self.alarm_btn_text,background='#263655',highlightbackground='#161E2E',foreground='white',command = lambda: AlarmPop(self,self.settings))
         self.alarm_btn.place(x=0, y=0, relwidth=1,relheight=1)
 
         self.alarm_name_btn_text = StringVar()
         self.alarm_name_btn_text.set("No alarms")
-        self.alarm_name_btn = Button(f3, textvariable=self.alarm_name_btn_text,background='#263655',foreground='white')
+        self.alarm_name_btn = Button(f3, textvariable=self.alarm_name_btn_text,background='#263655',highlightbackground='#161E2E',foreground='white')
         self.alarm_name_btn.place(x=0, y=0, relwidth=1,relheight=1)
 
         self.patient_btn_text = StringVar()
         self.patient_btn_text.set("Patient")
-        self.patient_btn = Button(f4, textvariable=self.patient_btn_text,background='#263655',foreground='white' )
+        self.patient_btn = Button(f4, textvariable=self.patient_btn_text,background='#263655',highlightbackground='#161E2E',foreground='white' )
         self.patient_btn.place(x=0, y=0, relwidth=1,relheight=1)
 
         self.switch_btn_text = StringVar()
         self.switch_btn_text.set("Start")
-        self.switch_btn = Button(f5, textvariable=self.switch_btn_text,background='#263655',foreground='white',command = lambda: self.start())
+        self.switch_btn = Button(f5, textvariable=self.switch_btn_text,background='#263655',highlightbackground='#161E2E',foreground='white',command = lambda: self.start())
         self.switch_btn.place(x=0, y=0, relwidth=1,relheight=1)
 
         self.freq_btn_text = StringVar()
-        self.freq_btn_text.set("Frequency"+'\n'+str(self.settings.freq))
-        self.freq_btn = Button(f7, textvariable=self.freq_btn_text,background='#263655',foreground='white',command = lambda: self.FreqPop(self.settings))
+        self.freq_btn_text.set("Frequency"+'\n'+str(self.settings.freq)+" [1/min]")
+        self.freq_btn = Button(f7, textvariable=self.freq_btn_text,background='#263655',highlightbackground='#161E2E',foreground='white',command = lambda: self.FreqPop(self.settings))
         self.freq_btn.place(x=0, y=0, relwidth=1,relheight=1)
 
         self.peep_btn_text = StringVar()
         self.peep_btn_text.set("PEEP"+'\n'+str(self.settings.peep)+" [cm H2O]")
-        self.peep_btn = Button(f6, textvariable=self.peep_btn_text,background='#263655',foreground='white',command = lambda: self.PeepPop(self.settings))
+        self.peep_btn = Button(f6, textvariable=self.peep_btn_text,background='#263655',highlightbackground='#161E2E',foreground='white',command = lambda: self.PeepPop(self.settings))
         self.peep_btn.place(x=0, y=0, relwidth=1,relheight=1)
 
         self.tv_btn_text = StringVar()
         self.tv_btn_text.set("Tidal Volume"+'\n'+str()+" [mL]")
-        self.tv_btn = Button(f10, textvariable=self.tv_btn_text,background='#263655',foreground='white')
+        self.tv_btn = Button(f10, textvariable=self.tv_btn_text,background='#263655',highlightbackground='#161E2E',foreground='white')
         self.tv_btn.place(x=0, y=0, relwidth=1,relheight=1)
 
         self.pres_btn_text = StringVar()
         self.pres_btn_text.set("Pressure"+'\n'+str(self.settings.pressure)+" [cm H2O]")
-        self.pres_btn = Button(f11, textvariable=self.pres_btn_text,background='#263655',foreground='white',command = lambda: self.PresPop(self.settings) )
+        self.pres_btn = Button(f11, textvariable=self.pres_btn_text,background='#263655',highlightbackground='#161E2E',foreground='white',command = lambda: self.PresPop(self.settings) )
         self.pres_btn.place(x=0, y=0, relwidth=1,relheight=1)
 
         self.oxy_btn_text = StringVar()
         self.oxy_btn_text.set("Oxygen (02)"+'\n'+str(self.settings.oxygen)+" [%]")
-        self.oxy_btn = Button(f12, textvariable=self.oxy_btn_text,background='#263655',foreground='white', command = lambda: self.O2Pop(self.settings) )
+        self.oxy_btn = Button(f12, textvariable=self.oxy_btn_text,background='#263655',highlightbackground='#161E2E',foreground='white', command = lambda: self.O2Pop(self.settings) )
         self.oxy_btn.place(x=0, y=0, relwidth=1,relheight=1)
 
         self.GraphPlotFlow()
@@ -457,8 +481,10 @@ class App(tk.Tk):
     
         if self.settings.start == 1:
             self.settings.start = 0
+            self.switch_btn_text.set("Start")
         else:
             self.settings.start = 1
+            self.switch_btn_text.set("Stop")
         self.send_settings()
 
     def say_hello(self):
