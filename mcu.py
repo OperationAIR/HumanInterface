@@ -15,18 +15,24 @@ from settings import Settings, settings_from_binary
 from sensors import Sensors, sensors_from_binary
 
 
+PREFIX_LEN = 4
+
 class SerialCommands(Enum):
+    NOP         = 0
     NewSettings = 0x41424344
-    SensorData  = 0xF0F0F0F0 #0x0D15EA5E
+    SensorData  = 0x0D15EA5E
     LedOn       = 0x55550000
     LedOff      = 0x66660000
     Switch1On   = 0x55551111
     Switch1Off  = 0x66661111
     Switch2On   = 0x55552222
     Switch2Off  = 0x66662222
+    LogPrint    = 0x23232323 # '####' comment
 
     def format(self):
         return self.value.to_bytes(4, 'little')
+
+UART_MAX_RETRIES = 10
 
 class Microcontroller:
 
@@ -164,7 +170,7 @@ class Microcontroller:
             if cmd == SerialCommands.SensorData:
                 offset = PREFIX_LEN
                 crc_size = 2
-                sensors_size = 4*4 + crc_size
+                sensors_size = 4*4 + crc_size  # todo retrieve from Sensors class?
                 end = offset+sensors_size
                 if len(data[offset:]) >= sensors_size:
                     sensor_data = data[offset:end-crc_size]
@@ -185,10 +191,10 @@ class Microcontroller:
                     data = data[end:] #account for crc16
                 else:
                     self.serial_retry += 1
-                    print("1. not enough data: ", len(data[offset:]))
-                    if self.serial_retry >= 10:
-                        print("1. delete data ", len(data[offset:]))
-                        print('databuffer:',  binascii.hexlify(data))
+                    print("1. not enough data: {}/{} bytes".format(len(data[offset:]), sensors_size))
+                    if self.serial_retry >= UART_MAX_RETRIES:
+                        print("No luck after retries: delete data ", len(data[offset:]))
+                        print('databuffer contents:',  binascii.hexlify(data))
                         data = data[PREFIX_LEN:]
                         self.serial_retry = 0
                     break
@@ -206,7 +212,7 @@ class Microcontroller:
                     data = data[PREFIX_LEN:]
                     print('unknown exception', e)
             elif cmd == SerialCommands.NewSettings:
-                settings_size = 26
+                settings_size = 26 # todo retrieve from Settings class?
                 offset = PREFIX_LEN
                 end = offset+settings_size
                 if len(data[offset:]) >= settings_size:
@@ -215,9 +221,10 @@ class Microcontroller:
                     data = data[end:]
                 else:
                     self.serial_retry += 1
-                    print("2. not enough data: ", len(data[offset:]))
-                    if self.serial_retry >= 10:
-                        print("2. delete data ", len(data[offset:]))
+                    print("2. not enough data: {}/{} bytes".format(len(data[offset:]), settings_size))
+                    if self.serial_retry >= UART_MAX_RETRIES:
+                        print("delete data ", len(data[offset:]))
+                        print('databuffer contents:',  binascii.hexlify(data))
                         data = data[PREFIX_LEN:]
                         self.serial_retry = 0
                     break
