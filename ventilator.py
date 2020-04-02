@@ -515,8 +515,6 @@ class App(tk.Tk):
             if not self.sensor_queue.empty():
                 sensors = self.sensor_queue.get()
                 self.latest_sensor_data = sensors
-    #            print('new sensor data:', sensors)
-
 
             if not self.settings_queue.empty():
                 settings = self.settings_queue.get()

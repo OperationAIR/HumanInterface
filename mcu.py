@@ -127,47 +127,85 @@ class Microcontroller:
         self._send_buffer(SerialCommands.SensorData.format())
 
 
-    def parse_serial_data(self, data):
-        PREFIX_LEN = 4
-        while len(data) >= PREFIX_LEN:
-            if data.startswith(b'####'):
-                try:
-                    i = data.index(b'\n')
-                    print(data[PREFIX_LEN:i].decode("utf-8"))
-                    # pop text and newline (so i+1)
-                    data = data[i+1:]
-                except ValueError:
-                    print(data[PREFIX_LEN:].decode("utf-8"))
-                    # data = data[i+1:]
-                except:
-                    print("error couldn't parse data")
-            elif data.startswith(SerialCommands.SensorData.format()):
-                # TODO: check data length, save data somewhere if not enough bytes have arrived.
-                #       Then also set timeout to discard data in case data never arrives
-                #       Also we should add the CRC16 to the sensor data
+    def _match_prefix(self, data):
 
-                sensors_size = 4*4
+        if len(data) < PREFIX_LEN:
+            return (SerialCommands.NOP, data)
+
+        command = SerialCommands.NOP
+        while command == SerialCommands.NOP:
+            if data.startswith(SerialCommands.SensorData.format()):
+                command = SerialCommands.SensorData
+            elif data.startswith(SerialCommands.LogPrint.format()):
+                command = SerialCommands.LogPrint
+            elif data.startswith(SerialCommands.NewSettings.format()):
+                command = SerialCommands.NewSettings
+            else:
+                if len(data) < PREFIX_LEN:
+                    break
+                # pop 1 by
+                # te and try again
+                print('skip byte')
+                data = data[1:]
+
+        return (command, data)
+
+
+    def debug(self):
+        print('buffer: ', self.serialdata)
+        self.serialdata = b''
+
+
+    def _parse_serial_data(self, data):
+        cmd, data = self._match_prefix(data)
+
+        while cmd is not SerialCommands.NOP:
+
+            if cmd == SerialCommands.SensorData:
                 offset = PREFIX_LEN
+                crc_size = 2
+                sensors_size = 4*4 + crc_size
                 end = offset+sensors_size
                 if len(data[offset:]) >= sensors_size:
-                    sensor_data = data[offset:end]
-                    crc = struct.unpack('H', data[end:end+2])[0]
-                    crc_check = self.crc(sensor_data)
-                    
-                    if crc == crc_check:
-                        sensors = sensors_from_binary(sensor_data)
-                        self.sensor_queue.put(sensors)
+                    sensor_data = data[offset:end-crc_size]
+                    crc_buffer = data[end-crc_size:end]
+                    if len(crc_buffer) == 2:
+                        crc = struct.unpack('H', data[end-crc_size:end])[0]
+                        crc_check = self.crc(sensor_data)
+
+                        if crc == crc_check:
+                            sensors = sensors_from_binary(sensor_data)
+                            self.sensor_queue.put(sensors)
+                        else:
+                            print('sensor crc check failed',  binascii.hexlify(sensor_data))
+                            print('databuffer:',  binascii.hexlify(data))
                     else:
-                        print('sensor crc check failed')
-                    data = data[end+2:] #account for crc16
+                        print('sensor crc check failed: buffer too short')
+
+                    data = data[end:] #account for crc16
                 else:
                     self.serial_retry += 1
                     print("1. not enough data: ", len(data[offset:]))
                     if self.serial_retry >= 10:
                         print("1. delete data ", len(data[offset:]))
-                        data = b''
+                        print('databuffer:',  binascii.hexlify(data))
+                        data = data[PREFIX_LEN:]
                         self.serial_retry = 0
-            elif data.startswith(SerialCommands.NewSettings.format()):
+                    break
+            elif cmd == SerialCommands.LogPrint:
+                try:
+                    i = data.index(b'\n')
+                    print(data[PREFIX_LEN:i].decode("utf-8"))
+                    # pop text and newline (so i+1)
+                    data = data[i+1:]
+                except (ValueError, UnicodeDecodeError):
+                    # remove prefix so that data will be discarded during next prefix matching
+                    data = data[PREFIX_LEN:]
+                    print("error couldn't parse data")
+                except Exception as e:
+                    data = data[PREFIX_LEN:]
+                    print('unknown exception', e)
+            elif cmd == SerialCommands.NewSettings:
                 settings_size = 26
                 offset = PREFIX_LEN
                 end = offset+settings_size
@@ -176,33 +214,39 @@ class Microcontroller:
                     self.settings_queue.put(settings)
                     data = data[end:]
                 else:
-                    print("2. delete data ", len(data[offset:]))
+                    self.serial_retry += 1
+                    print("2. not enough data: ", len(data[offset:]))
+                    if self.serial_retry >= 10:
+                        print("2. delete data ", len(data[offset:]))
+                        data = data[PREFIX_LEN:]
+                        self.serial_retry = 0
+                    break
             else:
-                print('could not parse: ',binascii.hexlify(data))
-                # pop 1 byte
-                data = data[1:]
-                # data=b''# # save data for next round
+                # no command, wait for new data
+                pass
 
-                #break
+            cmd, data = self._match_prefix(data)
+
         return data
 
     def _reader(self):
         """loop and copy serial->console"""
-        try:
-            while self._reader_alive:
+        while self._reader_alive:
+            try:
                 # try to read up to 1kb at a time
                 newdata = self.serial.read(1024)
                 if newdata and len(newdata):
                     self.serialdata += newdata
-                    self.serialdata = self.parse_serial_data(self.serialdata)
+                if len(self.serialdata) >= PREFIX_LEN:
+                    self.serialdata = self._parse_serial_data(self.serialdata)
+            except serial.SerialException:
+                # ToDo how to handle
+                raise       # XXX handle instead of re-raise?
 
-                time.sleep(0.1)
 
-            print ('exit serial thread')
+            time.sleep(0.01)
 
-        except serial.SerialException:
-            # ToDo how to handle
-            raise       # XXX handle instead of re-raise?
+        print ('exit serial thread')
 
 
 
