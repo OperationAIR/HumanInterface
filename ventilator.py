@@ -510,7 +510,7 @@ class App(tk.Tk):
         while self._thread_alive:
 
             if self.settings.start:
-                self.mcu.request_sensor_data()
+                self.req_sensors()
 
             if not self.sensor_queue.empty():
                 sensors = self.sensor_queue.get()
@@ -522,7 +522,9 @@ class App(tk.Tk):
                 settings = self.settings_queue.get()
                     # TODOcheck settings
                     # if mismatch, send settings again
-                print("Got settings back: ", settings)
+                if not self.settings.equals(settings):
+                    print("MISMATCH SETTINGS: RESEND")
+                    self.send_settings()
 
             self.checkAllAlarms(self.settings, self.latest_sensor_data)
             time.sleep(0.1)
