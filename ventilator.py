@@ -17,6 +17,7 @@ from tkinter import messagebox
 from tkinter import StringVar, Button, Tk, font
 from settings import Settings
 from sensors import Sensors
+from Alarm_sounds import playAlarm
 from alarmsettings import AlarmPop
 from mcu import Microcontroller
 
@@ -123,22 +124,22 @@ class App(tk.Tk):
         text = StringVar(popup)
         text.set("Frequency"+'\n'+str(settings.freq))
         text_btn = Button(popup, textvariable=text,background='#263655',foreground='white',command=lambda: self.send_settings(popup))
-        text_btn.config(height=15, width=30, state="normal")
+        text_btn.config(height=15, width=20, state="normal")
         text_btn.pack(side="left")
 
         btn2 = Button(popup, text="+",background='#263655',foreground='white', command=lambda: self.setValues(settings, popup,"freq", settings.freq+1, text))
-        btn2.config(height=15, width=30, state="normal")
-        btn2.pack(side="left",fill="x")
+        btn2.config(height=15, width=20, state="normal")
+        btn2.pack(side="left")
 
         btn3 = Button(popup, text="-",background='#263655',foreground='white', command=lambda: self.setValues(settings, popup,"freq", settings.freq-1, text))
-        btn3.config(height=15, width=30, state="normal")
-        btn3.pack(side="left",fill="x")
+        btn3.config(height=15, width=20, state="normal")
+        btn3.pack(side="left")
         
         textR = StringVar(popup)
         textR.set("Ratio"+'\n'+'1:2')
         btn4 = Button(popup, textvariable=textR,background='#263655',foreground='white', command=lambda: self.setRatio(settings, textR))
         btn4.config(height=15, width=30, state="normal")
-        btn4.pack(side="left",fill="x")
+        btn4.pack(side="left")
 
         popup.mainloop()
         return
@@ -358,13 +359,11 @@ class App(tk.Tk):
     def checkAllAlarms(self, settings: Settings, sensors: Sensors):
         if sensors.pressure_1_pa > settings.max_pressure:
             self.pres_btn.configure(background="#FF0749")
-            self.giveAlarm()
-        else:
-            self.pres_btn.configure(background="#263655")
+            self.PlayAlarm()
 
-        if sensors.pressure_2_pa < settings.min_pressure: #peep
+        elif sensors.pressure_1_pa < settings.min_pressure: #peep
             self.peep_btn.configure(background="#FF0749")
-            self.giveAlarm()
+            self.PlayAlarm()
         else:
             self.peep_btn.configure(background="#263655")
 
