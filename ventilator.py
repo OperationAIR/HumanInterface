@@ -236,7 +236,7 @@ class App(tk.Tk):
 
         # Parameters
         x_len = 400         # Number of points to display
-        y_range = [0, 80]  # Range of possible Y values to display
+        y_range = [-30, 0]  # Range of possible Y values to display
 
         # Create figure for plotting
         self.fig = plt.figure()
@@ -245,7 +245,7 @@ class App(tk.Tk):
         #ax.spines['bottom'].set_color('gray')
 
         xs = list(range(0, x_len))
-        ys = [random.random()*40 for x in range(x_len)]
+        ys = [0 for x in range(x_len)]
 
         ax.set_ylim(y_range)
         ax.spines["top"].set_visible(False)
@@ -276,7 +276,7 @@ class App(tk.Tk):
             if not self.settings.start:
                 return line,
             # Add y to list
-            ys.append(self.latest_sensor_data.flow)
+            ys.append(-1*self.latest_sensor_data.flow)
             # Limit y list to set number of items
             ys = ys[-x_len:]
             # Update line with new Y values
@@ -306,7 +306,7 @@ class App(tk.Tk):
         #ax.spines['bottom'].set_color('gray')
 
         xs = list(range(0, x_len))
-        ys = [random.random()*40 for x in range(x_len)]
+        ys = [0 for x in range(x_len)]
 
         ax.set_ylim(y_range)
         ax.spines["top"].set_visible(False)
