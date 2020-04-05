@@ -49,7 +49,8 @@ class App(tk.Tk):
             flow=30,
             pressure1=45,
             pressure2=45,
-            oxygen=40)
+            oxygen=40,
+            cycle=0)
 
         self.settings = Settings(
             start=0,
@@ -134,7 +135,7 @@ class App(tk.Tk):
         btn3 = Button(popup, text="-",background='#263655',foreground='white', command=lambda: self.setValues(settings, popup,"freq", settings.freq-1, text))
         btn3.config(height=15, width=20, state="normal")
         btn3.pack(side="left")
-        
+
         textR = StringVar(popup)
         textR.set("Ratio"+'\n'+'1:2')
         btn4 = Button(popup, textvariable=textR,background='#263655',foreground='white', command=lambda: self.setRatio(settings, textR))

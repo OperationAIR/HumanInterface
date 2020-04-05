@@ -14,23 +14,23 @@ import crcmod
 from settings import Settings, settings_from_binary
 from sensors import Sensors, sensors_from_binary
 
-
+import sys
 PREFIX_LEN = 4
 
 class SerialCommands(Enum):
     NOP         = 0
     NewSettings = 0x41424344
     SensorData  = 0x0D15EA5E
-    LedOn       = 0x55550000
-    LedOff      = 0x66660000
-    Switch1On   = 0x55551111
-    Switch1Off  = 0x66661111
-    Switch2On   = 0x55552222
-    Switch2Off  = 0x66662222
+    LedOn       = 0x55551111
+    LedOff      = 0x66661111
+    Switch1On   = 0x55552222
+    Switch1Off  = 0x66662222
+    Switch2On   = 0x55553333
+    Switch2Off  = 0x66663333
     LogPrint    = 0x23232323 # '####' comment
 
     def format(self):
-        return self.value.to_bytes(4, 'little')
+        return self.value.to_bytes(4, sys.byteorder)
 
 UART_MAX_RETRIES = 10
 
@@ -158,8 +158,9 @@ class Microcontroller:
 
 
     def debug(self):
-        print('buffer: ', self.serialdata)
-        self.serialdata = b''
+        self.led_on()
+        # print('buffer: ', self.serialdata)
+        # self.serialdata = b''
 
 
     def _parse_serial_data(self, data):
@@ -170,9 +171,9 @@ class Microcontroller:
             if cmd == SerialCommands.SensorData:
                 offset = PREFIX_LEN
                 crc_size = 2
-                sensors_size = 4*4 + crc_size  # todo retrieve from Sensors class?
-                end = offset+sensors_size
-                if len(data[offset:]) >= sensors_size:
+                packet_size = Sensors.size() + crc_size
+                end = PREFIX_LEN+packet_size
+                if len(data[offset:]) >= packet_size:
                     sensor_data = data[offset:end-crc_size]
                     crc_buffer = data[end-crc_size:end]
                     if len(crc_buffer) == 2:
@@ -193,7 +194,7 @@ class Microcontroller:
                         self.serial_retry = 0
                 else:
                     self.serial_retry += 1
-                    print("1. not enough data: {}/{} bytes".format(len(data[offset:]), sensors_size))
+                    print("1. not enough data: {}/{} bytes".format(len(data[offset:]), packet_size))
                     if self.serial_retry >= UART_MAX_RETRIES:
                         print("No luck after retries: delete data ", len(data[offset:]))
                         print('databuffer contents:',  binascii.hexlify(data))

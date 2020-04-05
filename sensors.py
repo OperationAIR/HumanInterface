@@ -12,18 +12,27 @@ class Sensors:
     #     int32_t pressure_1_pa;
     #     int32_t pressure_2_pa;
     #     int32_t oxygen;
+    #     int32_t cycle_state;
     # };
     """
-    def __init__(self, flow, pressure1, pressure2, oxygen):
+    def __init__(self, flow, pressure1, pressure2, oxygen, cycle):
         self.timestamp = datetime.datetime.now()
         self.flow = flow
         self.pressure_1_pa = pressure_to_cm_h2o(pressure1)
         self.pressure_2_pa = pressure_to_cm_h2o(pressure2)
         self.oxygen = oxygen
+        self.cycle_state = cycle
+
+    @classmethod
+    def size(cls):
+        num_properties = 5
+        prop_size = 4
+        return num_properties*prop_size
 
     def __repr__(self):
-        repr = 'Sensor data: t={}, flow {}, pressure1 {} [pa], pressure2 {} [pa], oxygen: {} %'.format(
+        repr = 'Sensor data: t={}, cycle = {}, flow {}, pressure1 {} [pa], pressure2 {} [pa], oxygen: {} %'.format(
             self.timestamp,
+            self.cycle_state,
             self.flow,
             self.pressure_1_pa,
             self.pressure_2_pa,
@@ -34,6 +43,6 @@ class Sensors:
         return self.__repr__()
 
 def sensors_from_binary(packed_data):
-    unpacked = struct.unpack('=iiii', packed_data)
+    unpacked = struct.unpack('=iiiii', packed_data)
     return Sensors(*unpacked)
 

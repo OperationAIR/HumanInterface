@@ -9,6 +9,7 @@ verify_ssl = true
 matplotlib = "*"
 pyserial = "*"
 crcmod = "*"
+pygame = "*"
 
 [requires]
 python_version = "'>3.5"

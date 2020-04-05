@@ -17,6 +17,11 @@ def settings_from_binary(packed_data):
         *unpacked[8:-1], max_peep=0, min_peep=0)
 
 class Settings():
+
+    @classmethod
+    def size(cls):
+        return (12*2)
+
     def __init__(self, start, peep, freq, ratio, pressure, oxygen, max_pressure, min_pressure, max_tv, min_tv, max_fio2, min_fio2, max_peep, min_peep):
         self.start = int(start)
         self.peep = int(peep)
