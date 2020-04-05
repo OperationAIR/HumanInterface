@@ -1,20 +1,7 @@
 import struct
 from tools import pressure_to_pa, pressure_to_cm_h2o
 
-def settings_from_binary(packed_data):
-    unpacked = struct.unpack('H H H H H H H H H H H H H', packed_data)
-    crc = [unpacked[-1]]
-    start = unpacked[0]
-    peep = pressure_to_cm_h2o(unpacked[1])
-    freq = unpacked[2]
-    ratio = unpacked[3]
-    pressure = pressure_to_cm_h2o(unpacked[4])
-    oxygen = unpacked[5]
-    max_pressure = pressure_to_cm_h2o(unpacked[6])
-    min_pressure = pressure_to_cm_h2o(unpacked[7])
 
-    return Settings(start, peep, freq, ratio, pressure, oxygen, max_pressure, min_pressure,
-        *unpacked[8:-1], max_peep=0, min_peep=0)
 
 class Settings():
 
@@ -83,3 +70,20 @@ class Settings():
 
     def __str__(self):
         return self.__repr__()
+
+
+    @classmethod
+    def from_binary(cls, packed_data):
+        unpacked = struct.unpack('H H H H H H H H H H H H H', packed_data)
+        crc = [unpacked[-1]]
+        start = unpacked[0]
+        peep = pressure_to_cm_h2o(unpacked[1])
+        freq = unpacked[2]
+        ratio = unpacked[3]
+        pressure = pressure_to_cm_h2o(unpacked[4])
+        oxygen = unpacked[5]
+        max_pressure = pressure_to_cm_h2o(unpacked[6])
+        min_pressure = pressure_to_cm_h2o(unpacked[7])
+
+        return cls(start, peep, freq, ratio, pressure, oxygen, max_pressure, min_pressure,
+            *unpacked[8:-1], max_peep=0, min_peep=0)

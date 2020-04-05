@@ -12,8 +12,8 @@ import random
 import binascii
 
 import crcmod
-from settings import Settings, settings_from_binary
-from sensors import Sensors, sensors_from_binary
+from settings import Settings
+from sensors import Sensors
 
 PREFIX_LEN = 4
 
@@ -185,7 +185,7 @@ class Microcontroller:
                         crc_check = self.crc(sensor_data)
 
                         if crc == crc_check:
-                            sensors = sensors_from_binary(sensor_data)
+                            sensors = Sensors.from_binary(sensor_data)
                             self.sensor_queue.put(sensors)
                         else:
                             print('sensor crc check failed',  binascii.hexlify(sensor_data))
@@ -223,7 +223,7 @@ class Microcontroller:
                 offset = PREFIX_LEN
                 end = offset+settings_size
                 if len(data[offset:]) >= settings_size:
-                    settings = settings_from_binary(data[offset:end])
+                    settings = Settings.from_binary(data[offset:end])
                     self.settings_queue.put(settings)
                     data = data[end:]
                     if self.serial_retry:

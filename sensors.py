@@ -42,7 +42,8 @@ class Sensors:
     def __str__(self):
         return self.__repr__()
 
-def sensors_from_binary(packed_data):
-    unpacked = struct.unpack('=iiiii', packed_data)
-    return Sensors(*unpacked)
+    @classmethod
+    def from_binary(cls, packed_data):
+        unpacked = struct.unpack('=iiiii', packed_data)
+        return cls(*unpacked)
 
