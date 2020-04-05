@@ -18,8 +18,8 @@ def settings_from_binary(packed_data):
 
 class Settings():
 
-    @classmethod
-    def size(cls):
+    @staticmethod
+    def size():
         return (12*2)
 
     def __init__(self, start, peep, freq, ratio, pressure, oxygen, max_pressure, min_pressure, max_tv, min_tv, max_fio2, min_fio2, max_peep, min_peep):

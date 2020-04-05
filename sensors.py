@@ -23,8 +23,8 @@ class Sensors:
         self.oxygen = oxygen
         self.cycle_state = cycle
 
-    @classmethod
-    def size(cls):
+    @staticmethod
+    def size():
         num_properties = 5
         prop_size = 4
         return num_properties*prop_size

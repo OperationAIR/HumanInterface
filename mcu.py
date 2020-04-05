@@ -1,4 +1,5 @@
 
+import sys
 import serial
 import threading
 import time
@@ -14,10 +15,9 @@ import crcmod
 from settings import Settings, settings_from_binary
 from sensors import Sensors, sensors_from_binary
 
-import sys
 PREFIX_LEN = 4
 
-class SerialCommands(Enum):
+class SerialCommand(Enum):
     NOP         = 0
     NewSettings = 0x41424344
     SensorData  = 0x0D15EA5E
@@ -31,6 +31,10 @@ class SerialCommands(Enum):
 
     def format(self):
         return self.value.to_bytes(4, sys.byteorder)
+
+    @staticmethod
+    def size():
+        return 4
 
 UART_MAX_RETRIES = 10
 
@@ -114,15 +118,15 @@ class Microcontroller:
 
     def led_on(self):
         """Send Led On command to microcontroller"""
-        self._send_buffer(SerialCommands.LedOn.format())
+        self._send_buffer(SerialCommand.LedOn.format())
 
     def led_off(self):
         """Send Led Off command to microcontroller"""
-        self._send_buffer(SerialCommands.LedOff.format())
+        self._send_buffer(SerialCommand.LedOff.format())
 
     def send_settings(self, settings: Settings):
         """Send new settings to microcontroller"""
-        cmd = SerialCommands.NewSettings.format()
+        cmd = SerialCommand.NewSettings.format()
         settings_buffer = settings.get_bit_string()
         checksum = self.crc(settings_buffer).to_bytes(2, byteorder='little')
         msg = cmd + settings_buffer + checksum
@@ -130,22 +134,22 @@ class Microcontroller:
 
     def request_sensor_data(self):
         """Send command to request latest sensor data from microcontroller"""
-        self._send_buffer(SerialCommands.SensorData.format())
+        self._send_buffer(SerialCommand.SensorData.format())
 
 
     def _match_prefix(self, data):
 
         if len(data) < PREFIX_LEN:
-            return (SerialCommands.NOP, data)
+            return (SerialCommand.NOP, data)
 
-        command = SerialCommands.NOP
-        while command == SerialCommands.NOP:
-            if data.startswith(SerialCommands.SensorData.format()):
-                command = SerialCommands.SensorData
-            elif data.startswith(SerialCommands.LogPrint.format()):
-                command = SerialCommands.LogPrint
-            elif data.startswith(SerialCommands.NewSettings.format()):
-                command = SerialCommands.NewSettings
+        command = SerialCommand.NOP
+        while command == SerialCommand.NOP:
+            if data.startswith(SerialCommand.SensorData.format()):
+                command = SerialCommand.SensorData
+            elif data.startswith(SerialCommand.LogPrint.format()):
+                command = SerialCommand.LogPrint
+            elif data.startswith(SerialCommand.NewSettings.format()):
+                command = SerialCommand.NewSettings
             else:
                 if len(data) < PREFIX_LEN:
                     break
@@ -166,9 +170,9 @@ class Microcontroller:
     def _parse_serial_data(self, data):
         cmd, data = self._match_prefix(data)
 
-        while cmd is not SerialCommands.NOP:
+        while cmd is not SerialCommand.NOP:
 
-            if cmd == SerialCommands.SensorData:
+            if cmd == SerialCommand.SensorData:
                 offset = PREFIX_LEN
                 crc_size = 2
                 packet_size = Sensors.size() + crc_size
@@ -201,7 +205,7 @@ class Microcontroller:
                         data = data[PREFIX_LEN:]
                         self.serial_retry = 0
                     break
-            elif cmd == SerialCommands.LogPrint:
+            elif cmd == SerialCommand.LogPrint:
                 try:
                     i = data.index(b'\n')
                     print(data[PREFIX_LEN:i].decode("utf-8"))
@@ -214,7 +218,7 @@ class Microcontroller:
                 except Exception as e:
                     data = data[PREFIX_LEN:]
                     print('unknown exception', e)
-            elif cmd == SerialCommands.NewSettings:
+            elif cmd == SerialCommand.NewSettings:
                 settings_size = 26 # todo retrieve from Settings class?
                 offset = PREFIX_LEN
                 end = offset+settings_size
