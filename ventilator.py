@@ -334,7 +334,7 @@ class App(tk.Tk):
             if not self.settings.start:
                 return line,
             # Add y to list
-            ys.append(self.latest_sensor_data.pressure_1_pa)
+            ys.append(self.latest_sensor_data.pressure)
 
             # Limit y list to set number of items
             ys = ys[-x_len:]
@@ -354,29 +354,33 @@ class App(tk.Tk):
 
 
     def checkAllAlarms(self, settings: Settings, sensors: Sensors):
-        if sensors.pressure_1_pa > settings.max_pressure:
+        if (not sensors.peep) and sensors.pressure > settings.max_pressure:
             self.pres_btn.configure(background="#FF0749")
             playAlarm()
 
-        elif sensors.pressure_1_pa < settings.min_peep: #peep
-            #self.peep_btn.configure(background="#FF0749")
-            #playAlarm()
-            pass
+        elif (not sensors.peep) and sensors.pressure < settings.min_pressure:
+            self.pres_btn.configure(background="#FF0749")
+            playAlarm()
+
+        else:
+            self.pres_btn.configure(background="#263655")
+
+        if sensors.peep and sensors.peep > settings.min_peep:
+            self.pres_btn.configure(background="#FF0749")
+            playAlarm()
 
         else:
             self.peep_btn.configure(background="#263655")
 
-            #if valueTida > MaxTV:
-            #   lbl7.configure(foreground="red")
-            #    giveAlarm()
-            #else:
-            #    lbl7.configure(foreground="black")
+        if sensors.tidal_volume > settings.max_tv:
+            self.tv_btn.configure(background="#FF0749")
+            playAlarm()
 
-            #if valueTida < MinTV:
-            #    lbl8.configure(foreground="red")
-            #    giveAlarm()
-            #else:
-            #    lbl8.configure(foreground="black")
+        elif sensors.tidal_volume < settings.min_tv:
+            self.tv_btn.configure(background="#FF0749")
+            playAlarm()
+        else:
+            self.tv_btn.configure(background="#263655")
 
         if sensors.oxygen > settings.max_fio2:
             self.oxy_btn.configure(background="#FF0749")
@@ -526,6 +530,7 @@ class App(tk.Tk):
 
         if self.settings.start:
             self.req_sensors()
+            self.checkAllAlarms(self.settings, self.latest_sensor_data)
 
         if not self.sensor_queue.empty():
             sensors = self.sensor_queue.get()
@@ -536,9 +541,6 @@ class App(tk.Tk):
             if not self.settings.equals(settings):
                 print("MISMATCH SETTINGS: RESEND")
                 self.send_settings()
-
-        self.checkAllAlarms(self.settings, self.latest_sensor_data)
-        time.sleep(0.05)
 
         if self._thread_alive:
             self.after(100,self.asyncio)

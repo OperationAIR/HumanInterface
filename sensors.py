@@ -28,6 +28,7 @@ class Sensors:
             tidal_volume, minute_volume,
             cycle_state, power_status):
 
+        self.timestamp = "now"
         self.flow_inhale = flow_inhale,
         self.flow_exhale = flow_exhale,
         self.pressure_inhale = pressure_to_cm_h2o(pressure_inhale)
@@ -37,8 +38,12 @@ class Sensors:
         self.oxygen = oxygen
         self.tidal_volume = tidal_volume
         self.minute_volume = minute_volume
-        self.cycle_state = cycle_state
+        self.cycle_state = cycle_state # 0 -> stopped 1 -> peak pressure 2 -> peep pressure
         self.power_status = power_status
+
+    @property
+    def peep(self):
+        return self.cycle_state >= 2
 
     @property
     def flow(self):
