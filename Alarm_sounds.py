@@ -1,13 +1,16 @@
 import pygame
 
+
 pygame.mixer.init()
 
-mediumAlarm = pygame.mixer.Sound("alarm_medium_priority.wav")
-highAlarm = pygame.mixer.Sound("alarm_high_priority.wav")
+mediumAlarm = pygame.mixer.Sound("/home/pi/Desktop/ProjectAIR/HumanInterface/vent.wav")
+#highAlarm = pygame.mixer.Sound("alarm_high_priority.wav")
 
 def playAlarm():
 
-    if mediumAlarm.get_busy() == 1:
+    if pygame.mixer.get_busy() == 1:
         pass
     else:
+        pygame.time.wait(1000)
         mediumAlarm.play()
+

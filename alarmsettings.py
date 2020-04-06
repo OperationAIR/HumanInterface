@@ -52,7 +52,7 @@ def PeepAlarm(self, settings, text1):
     label1.pack(side="top", fill="x", pady=10)
 
     text2 = StringVar(popup)
-    text2.set("PEEP\n\n"+"Max value: "+str(settings.max_pressure)+"\nMin value: "+str(settings.min_pressure))
+    text2.set("PEEP\n\n"+"Max value: "+str(settings.max_peep)+"\nMin value: "+str(settings.min_peep))
     text_btn = Button(popup, textvariable=text2,background='#263655',foreground='white',command=lambda: close(popup))
     text_btn.config(height=15, width=15, state="normal")
     text_btn.pack(side="left", expand = True) 

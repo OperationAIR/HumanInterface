@@ -18,6 +18,7 @@ from tkinter import StringVar, Button, Tk, font
 from settings import Settings
 from sensors import Sensors
 from Alarm_sounds import playAlarm
+from alarmOverview import alarm_overview
 from alarmsettings import AlarmPop
 from mcu import Microcontroller
 
@@ -70,9 +71,9 @@ class App(tk.Tk):
 
         self._thread_alive = True
         self.io_thread = None
-        self.io_thread = Thread(target=self.asyncio)
-        self.io_thread.daemon = True
-        self.io_thread.start()
+        #self.io_thread = Thread(target=self.asyncio)
+        #self.io_thread.daemon = True
+        #self.io_thread.start()
         print(self.req_sensors())
 
     def giveAlarm(self):
@@ -355,11 +356,13 @@ class App(tk.Tk):
     def checkAllAlarms(self, settings: Settings, sensors: Sensors):
         if sensors.pressure_1_pa > settings.max_pressure:
             self.pres_btn.configure(background="#FF0749")
-            self.PlayAlarm()
+            playAlarm()
 
-        elif sensors.pressure_1_pa < settings.min_pressure: #peep
-            self.peep_btn.configure(background="#FF0749")
-            self.PlayAlarm()
+        elif sensors.pressure_1_pa < settings.min_peep: #peep
+            #self.peep_btn.configure(background="#FF0749")
+            #playAlarm()
+            pass
+
         else:
             self.peep_btn.configure(background="#263655")
 
@@ -377,10 +380,10 @@ class App(tk.Tk):
 
         if sensors.oxygen > settings.max_fio2:
             self.oxy_btn.configure(background="#FF0749")
-            self.giveAlarm()
+            playAlarm()
         elif sensors.oxygen < settings.min_fio2:
             self.oxy_btn.configure(background="#FF0749")
-            self.giveAlarm()
+            playAlarm()
         else:
             self.oxy_btn.configure(background="#263655")
 
@@ -436,8 +439,8 @@ class App(tk.Tk):
         self.alarm_btn.place(x=0, y=0, relwidth=1,relheight=1)
 
         self.alarm_name_btn_text = StringVar()
-        self.alarm_name_btn_text.set("No alarms")
-        self.alarm_name_btn = Button(f3, textvariable=self.alarm_name_btn_text,background='#263655',highlightbackground='#161E2E',foreground='white')
+        self.alarm_name_btn_text.set("Alarm overview")
+        self.alarm_name_btn = Button(f3, textvariable=self.alarm_name_btn_text,background='#263655',highlightbackground='#161E2E',foreground='white',command = lambda: alarm_overview(self,self.settings))
         self.alarm_name_btn.place(x=0, y=0, relwidth=1,relheight=1)
 
         self.patient_btn_text = StringVar()
@@ -519,24 +522,27 @@ class App(tk.Tk):
         print("Send settings:", self.settings)
 
     def asyncio(self):
-        while self._thread_alive:
+        #while self._thread_alive:
 
-            if self.settings.start:
-                self.req_sensors()
+        if self.settings.start:
+            self.req_sensors()
 
-            if not self.sensor_queue.empty():
-                sensors = self.sensor_queue.get()
-                self.latest_sensor_data = sensors
+        if not self.sensor_queue.empty():
+            sensors = self.sensor_queue.get()
+            self.latest_sensor_data = sensors
 
-            if not self.settings_queue.empty():
-                settings = self.settings_queue.get()
-                if not self.settings.equals(settings):
-                    print("MISMATCH SETTINGS: RESEND")
-                    self.send_settings()
+        if not self.settings_queue.empty():
+            settings = self.settings_queue.get()
+            if not self.settings.equals(settings):
+                print("MISMATCH SETTINGS: RESEND")
+                self.send_settings()
 
-            self.checkAllAlarms(self.settings, self.latest_sensor_data)
-            time.sleep(0.05)
-        print ('exit app thread')
+        self.checkAllAlarms(self.settings, self.latest_sensor_data)
+        time.sleep(0.05)
+
+        if self._thread_alive:
+            self.after(100,self.asyncio)
+        #print ('exit app thread')
 
 
 
@@ -548,6 +554,7 @@ if __name__ == "__main__":
     signal.signal(signal.SIGINT, app.quit)
     app.attributes('-fullscreen', FULLSCREEN)
     gut.center(app)
+    app.asyncio()
     app.mainloop()
 
     print ('bye')
