@@ -45,12 +45,7 @@ class App(tk.Tk):
         self.ys_f = []
         self.pressure_animation_ref = None
 
-        self.latest_sensor_data = Sensors(
-            flow=30,
-            pressure1=45,
-            pressure2=45,
-            oxygen=40,
-            cycle=0)
+        self.latest_sensor_data = Sensors.default()
 
         self.settings = Settings(
             start=0,

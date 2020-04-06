@@ -7,35 +7,64 @@ class Sensors:
     """
     Sensors represents the sensor data that is sent as the following c struct:
 
-    # struct SensorsAllData {
-    #     int32_t flow;
-    #     int32_t pressure_1_pa;
-    #     int32_t pressure_2_pa;
-    #     int32_t oxygen;
-    #     int32_t cycle_state;
-    # };
+    struct SensorsAllData {
+        int32_t flow_inhale;        // Unknonwn (only average flow / total volume MFC)
+        int32_t flow_exhale;        // ml / minute ?
+        int32_t pressure_inhale;
+        int32_t pressure_exhale;
+        int32_t pressure_patient;
+        int32_t pressure_mfc;
+        int32_t oxygen;             // 21-100 (should never be below 21)
+        int32_t tidal_volume;       // mL
+        int32_t minute_volume;      // L / minute
+        int32_t cycle_state;        // PeeP / Peak / None
+        int32_t power_status;
+    };
     """
-    def __init__(self, flow, pressure1, pressure2, oxygen, cycle):
-        self.timestamp = datetime.datetime.now()
-        self.flow = flow
-        self.pressure_1_pa = pressure_to_cm_h2o(pressure1)
-        self.pressure_2_pa = pressure_to_cm_h2o(pressure2)
-        self.oxygen = oxygen
-        self.cycle_state = cycle
+    def __init__(self,
+            flow_inhale, flow_exhale,
+            pressure_inhale, pressure_exhale, pressure_patient, pressure_mfc,
+            oxygen,
+            tidal_volume, minute_volume,
+            cycle_state, power_status):
 
-    @staticmethod
-    def size():
-        num_properties = 5
+        self.flow_inhale = flow_inhale,
+        self.flow_exhale = flow_exhale,
+        self.pressure_inhale = pressure_to_cm_h2o(pressure_inhale)
+        self.pressure_exhale = pressure_to_cm_h2o(pressure_exhale)
+        self.pressure_patient = pressure_to_cm_h2o(pressure_patient)
+        self.pressure_mfc = pressure_to_cm_h2o(pressure_mfc)
+        self.oxygen = oxygen
+        self.tidal_volume = tidal_volume
+        self.minute_volume = minute_volume
+        self.cycle_state = cycle_state
+        self.power_status = power_status
+
+    @property
+    def flow(self):
+        return self.flow_exhale
+
+    @property
+    def pressure(self):
+        """ Returns average pressure between inhale and exhale"""
+        return (self.pressure_inhale + self.pressure_exhale) / 2.0
+
+    @classmethod
+    def num_properties(cls):
+        return 11
+
+    @classmethod
+    def size(cls):
         prop_size = 4
-        return num_properties*prop_size
+        return cls.num_properties()*prop_size
 
     def __repr__(self):
-        repr = 'Sensor data: t={}, cycle = {}, flow {}, pressure1 {} [pa], pressure2 {} [pa], oxygen: {} %'.format(
+        repr = 'Sensor data: t={}, cycle = {}, flow {}, pressure {} [cm H2O], tidal volume {} [mL], oxygen: {} %'.format(
             self.timestamp,
             self.cycle_state,
-            self.flow,
-            self.pressure_1_pa,
-            self.pressure_2_pa,
+            self.flow_exhale,
+            self.pressure_exhale,
+            self.tidal_volume,
             self.oxygen)
         return repr
 
@@ -44,6 +73,22 @@ class Sensors:
 
     @classmethod
     def from_binary(cls, packed_data):
-        unpacked = struct.unpack('=iiiii', packed_data)
+        unpacked = struct.unpack('=' + 'i'*cls.num_properties(), packed_data)
         return cls(*unpacked)
+
+    @classmethod
+    def default(cls):
+        return cls(
+            flow_inhale=30,
+            flow_exhale=30,
+            pressure_inhale=45,
+            pressure_exhale=45,
+            pressure_patient=45,
+            pressure_mfc=45,
+            oxygen=40,
+            tidal_volume=0,
+            minute_volume=0,
+            cycle_state=0,
+            power_status=1
+        )
 
