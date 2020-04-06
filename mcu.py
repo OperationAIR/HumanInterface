@@ -18,16 +18,21 @@ from sensors import Sensors
 PREFIX_LEN = 4
 
 class SerialCommand(Enum):
-    NOP         = 0
-    NewSettings = 0x41424344
-    SensorData  = 0x0D15EA5E
-    LedOn       = 0x55551111
-    LedOff      = 0x66661111
-    Switch1On   = 0x55552222
-    Switch1Off  = 0x66662222
-    Switch2On   = 0x55553333
-    Switch2Off  = 0x66663333
-    LogPrint    = 0x23232323 # '####' comment
+    NOP                         = 0
+    NewSettings                 = 0x41424344
+    RequestSettings             = 0x45464748
+    SensorData                  = 0x0D15EA5E
+    LedOn                       = 0x55551111
+    LedOff                      = 0x55661111
+    ErrorLedOn                  = 0x55552222
+    ErrorLedOff                 = 0x55662222
+    Switch1On                   = 0x66663333
+    Switch1Off                  = 0x66773333
+    Switch2On                   = 0x66664444
+    Switch2Off                  = 0x66774444
+    LogPrint                    = 0x23232323 # '####' comment
+    TriggerInspiratoryHold      = 0x99998888
+    StopInspiratoryHold         = 0x99999999
 
     def format(self):
         return self.value.to_bytes(4, sys.byteorder)
@@ -136,6 +141,12 @@ class Microcontroller:
         """Send command to request latest sensor data from microcontroller"""
         self._send_buffer(SerialCommand.SensorData.format())
 
+
+    def try_start_inspiratroy_hold(self):
+        self._send_buffer(SerialCommand.TriggerInspiratoryHold.format())
+
+    def stop_inspiratroy_hold(self):
+        self._send_buffer(SerialCommand.StopInspiratoryHold.format())
 
     def _match_prefix(self, data):
 
