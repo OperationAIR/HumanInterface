@@ -105,9 +105,9 @@ class App(tk.Tk):
     def update_buttons(self):
         self.freq_btn_text.set("Frequency"+'\n'+str(self.settings.freq)+" [1/min]")
         self.peep_btn_text.set("PEEP"+'\n'+str(self.settings.peep)+" [cm H2O]")
-        #self.tv_btn_text.set("Tidal Volume"+'\n'+str(self.settings.tidal_vol)+" [L/min]")
+        self.tv_btn_text.set("Tidal Volume"+'\n'+str(self.latest_sensor_data.tidal_volume)+" [L/min]")
         self.pres_btn_text.set("Pressure"+'\n'+str(self.settings.pressure)+" [cm H2O]")
-        self.oxy_btn_text.set("Oxygen (02)"+'\n'+str(self.settings.oxygen)+" [%]")
+        self.oxy_btn_text.set("Oxygen (02)"+'\n'+str(self.settings.oxygen)+" [%]"+'\n'+"Current: "+str(self.latest_sensor_data.oxygen)+" [%]")
 
     def FreqPop(self, settings):
         popup = Tk()
@@ -530,7 +530,9 @@ class App(tk.Tk):
 
         if self.settings.start:
             self.req_sensors()
-            self.checkAllAlarms(self.settings, self.latest_sensor_data)
+            if self.latest_sensor_data.cycle_state:
+                self.checkAllAlarms(self.settings, self.latest_sensor_data)
+            self.update_buttons()
 
         if not self.sensor_queue.empty():
             sensors = self.sensor_queue.get()
