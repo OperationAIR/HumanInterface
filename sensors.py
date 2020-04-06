@@ -29,8 +29,8 @@ class Sensors:
             cycle_state, power_status):
 
         self.timestamp = "now"
-        self.flow_inhale = flow_inhale,
-        self.flow_exhale = flow_exhale,
+        self.flow_inhale = flow_inhale
+        self.flow_exhale = flow_exhale
         self.pressure_inhale = pressure_to_cm_h2o(pressure_inhale)
         self.pressure_exhale = pressure_to_cm_h2o(pressure_exhale)
         self.pressure_patient = pressure_to_cm_h2o(pressure_patient)
