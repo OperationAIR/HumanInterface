@@ -143,6 +143,7 @@ class Microcontroller:
 
 
     def try_start_inspiratroy_hold(self):
+        print('try start inspiratory hold')
         self._send_buffer(SerialCommand.TriggerInspiratoryHold.format())
 
     def stop_inspiratroy_hold(self):

@@ -26,14 +26,14 @@ import gui_utils as gut
 
 BAUDRATE = 500000
 
-FULLSCREEN = False
+FULLSCREEN = True
 SIMULATE = False
 # for RPi
-# TTY = '/dev/ttyS0'
+TTY = '/dev/ttyS0'
 # for Mac
 #TTY = '/dev/cu.usbmodemC1DDCDF83'
 # for Ubuntu
-TTY = '/dev/ttyUSB0'
+#TTY = '/dev/ttyUSB0'
 
 class App(tk.Tk):
     def __init__(self):
@@ -449,7 +449,7 @@ class App(tk.Tk):
 
         self.patient_btn_text = StringVar()
         self.patient_btn_text.set("Patient")
-        self.patient_btn = Button(f4, textvariable=self.patient_btn_text,background='#263655',highlightbackground='#161E2E',foreground='white', comman = lambda:  self.mcu.debug() )
+        self.patient_btn = Button(f4, textvariable=self.patient_btn_text,background='#263655',highlightbackground='#161E2E',foreground='white', comman = lambda:  self.mcu.try_start_inspiratroy_hold() )
         self.patient_btn.place(x=0, y=0, relwidth=1,relheight=1)
 
         self.switch_btn_text = StringVar()
