@@ -3,7 +3,7 @@ import pygame
 
 pygame.mixer.init()
 
-mediumAlarm = pygame.mixer.Sound("/home/pi/Desktop/ProjectAIR/HumanInterface/vent.wav")
+mediumAlarm = pygame.mixer.Sound("/home/pi/Desktop/HumanInterface/vent.wav")
 #highAlarm = pygame.mixer.Sound("alarm_high_priority.wav")
 
 def playAlarm():

@@ -210,7 +210,7 @@ def setAlarmValues(self, settings, popup, valuetype, value, text1, text2):
         text2.set("Confirm Alarms \n\n"+"Max value: "+str(settings.max_tv)+"\nMin value: "+str(settings.min_tv))
         return
     if valuetype == "MinTV":  
-        if value >= 200 and value < settings.max_tv:
+        if value >= 50 and value < settings.max_tv:
             settings.min_tv = value
         text1.set("Tidal Volume \n\n"+"Max value: "+str(settings.max_tv)+"\nMin value: "+str(settings.min_tv))
         text2.set("Confirm Alarms \n\n"+"Max value: "+str(settings.max_tv)+"\nMin value: "+str(settings.min_tv))
