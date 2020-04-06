@@ -29,15 +29,15 @@ class Sensors:
             cycle_state, power_status):
 
         self.timestamp = "now"
-        self.flow_inhale = flow_inhale
-        self.flow_exhale = flow_exhale
+        self.flow_inhale = flow_inhale / 1000
+        self.flow_exhale = flow_exhale / 1000
         self.pressure_inhale = pressure_to_cm_h2o(pressure_inhale)
         self.pressure_exhale = pressure_to_cm_h2o(pressure_exhale)
         self.pressure_patient = pressure_to_cm_h2o(pressure_patient)
         self.pressure_mfc = pressure_to_cm_h2o(pressure_mfc)
         self.oxygen = oxygen
         self.tidal_volume = tidal_volume
-        self.minute_volume = minute_volume
+        self.minute_volume = minute_volume / 1000
         self.cycle_state = cycle_state # 0 -> stopped 1 -> peak pressure 2 -> peep pressure
         self.power_status = power_status
 
