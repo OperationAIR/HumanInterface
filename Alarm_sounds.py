@@ -1,10 +1,10 @@
 import pygame
-
+import os
 
 pygame.mixer.init()
 
-mediumAlarm = pygame.mixer.Sound("/home/pi/Desktop/HumanInterface/vent.wav")
-#highAlarm = pygame.mixer.Sound("alarm_high_priority.wav")
+median_alarm_path = os.path.abspath('assets/medium_alarm.wav')
+mediumAlarm = pygame.mixer.Sound(median_alarm_path)
 
 def playAlarm():
 

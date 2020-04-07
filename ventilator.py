@@ -29,7 +29,7 @@ import logger
 BAUDRATE = 500000
 
 LOGGING_ENABLED = True
-LOGDIR = '.'
+LOGDIR = 'sensorlogs'
 
 FULLSCREEN = True
 SIMULATE = False
