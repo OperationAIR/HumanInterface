@@ -109,27 +109,27 @@ class App(tk.Tk):
         popup.attributes('-fullscreen', True)
         popup.wm_title("Frequency")
         popup.geometry('800x480')
-        popup.configure(bg= '#161E2E')
+        popup.configure(bg= BACKGROUND_COLOR)
         label1 = ttk.Label(popup, text="Select New Frequency value", font=("Helvetica", 20))
         label1.pack(side="top", fill="x", pady=10)
 
         text = StringVar(popup)
         text.set("Frequency"+'\n'+str(settings.freq))
-        text_btn = Button(popup, textvariable=text,background='#263655',foreground='white',command=lambda: self.send_settings(popup))
+        text_btn = Button(popup, textvariable=text,background=BUTTON_COLOR,foreground='white',command=lambda: self.send_settings(popup))
         text_btn.config(height=15, width=20, state="normal")
         text_btn.pack(side="left")
 
-        btn2 = Button(popup, text="+",background='#263655',foreground='white', command=lambda: self.setValues(settings, popup,"freq", settings.freq+FREQ_RANGE.step, text)) # todo should be model based
+        btn2 = Button(popup, text="+",background=BUTTON_COLOR,foreground='white', command=lambda: self.setValues(settings, popup,"freq", settings.freq+FREQ_RANGE.step, text)) # todo should be model based
         btn2.config(height=15, width=20, state="normal")
         btn2.pack(side="left")
 
-        btn3 = Button(popup, text="-",background='#263655',foreground='white', command=lambda: self.setValues(settings, popup,"freq", settings.freq-FREQ_RANGE.step, text))
+        btn3 = Button(popup, text="-",background=BUTTON_COLOR,foreground='white', command=lambda: self.setValues(settings, popup,"freq", settings.freq-FREQ_RANGE.step, text))
         btn3.config(height=15, width=20, state="normal")
         btn3.pack(side="left")
 
         textR = StringVar(popup)
         textR.set("Ratio"+'\n'+'1:2')
-        btn4 = Button(popup, textvariable=textR,background='#263655',foreground='white', command=lambda: self.setRatio(settings, textR))
+        btn4 = Button(popup, textvariable=textR,background=BUTTON_COLOR,foreground='white', command=lambda: self.setRatio(settings, textR))
         btn4.config(height=15, width=30, state="normal")
         btn4.pack(side="left")
 
@@ -152,21 +152,21 @@ class App(tk.Tk):
         popup.wm_title("Peep")
         popup.attributes('-fullscreen', True)
         popup.geometry('800x480')
-        popup.configure(bg= '#161E2E')
+        popup.configure(bg= BACKGROUND_COLOR)
         label1 = ttk.Label(popup, text="Select New PEEP value", font=("Helvetica", 20))
         label1.pack(side="top", fill="x", pady=10)
 
         text = StringVar(popup)
         text.set("Peep"+'\n'+str(settings.peep))
-        text_btn = Button(popup, textvariable=text,background='#263655',foreground='white',command=lambda: self.send_settings(popup))
+        text_btn = Button(popup, textvariable=text,background=BUTTON_COLOR,foreground='white',command=lambda: self.send_settings(popup))
         text_btn.config(height=15, width=30, state="normal")
         text_btn.pack(side="left")
 
-        btn2 = Button(popup, text="+",background='#263655',foreground='white', command=lambda: self.setValues(settings, popup,"peep", settings.peep+PEEP_RANGE.step, text))
+        btn2 = Button(popup, text="+",background=BUTTON_COLOR,foreground='white', command=lambda: self.setValues(settings, popup,"peep", settings.peep+PEEP_RANGE.step, text))
         btn2.config(height=15, width=30, state="normal")
         btn2.pack(side="left",fill="x")
 
-        btn3 = Button(popup, text="-",background='#263655',foreground='white', command=lambda: self.setValues(settings, popup,"peep", settings.peep-PEEP_RANGE.step, text))
+        btn3 = Button(popup, text="-",background=BUTTON_COLOR,foreground='white', command=lambda: self.setValues(settings, popup,"peep", settings.peep-PEEP_RANGE.step, text))
         btn3.config(height=15, width=30, state="normal")
         btn3.pack(side="left",fill="x")
 
@@ -178,21 +178,21 @@ class App(tk.Tk):
         popup.wm_title("Pressure")
         popup.attributes('-fullscreen', True)
         popup.geometry('800x480')
-        popup.configure(bg= '#161E2E')
+        popup.configure(bg= BACKGROUND_COLOR)
         label1 = ttk.Label(popup, text="Select New Pressure value", font=("Helvetica", 20))
         label1.pack(side="top", fill="x", pady=10)
 
         text = StringVar(popup)
         text.set("Pressure"+'\n'+str(settings.pressure))
-        text_btn = Button(popup, textvariable=text,background='#263655',foreground='white',command=lambda: self.send_settings(popup))
+        text_btn = Button(popup, textvariable=text,background=BUTTON_COLOR,foreground='white',command=lambda: self.send_settings(popup))
         text_btn.config(height=15, width=30, state="normal")
         text_btn.pack(side="left")
 
-        btn2 = Button(popup, text="+",background='#263655',foreground='white', command=lambda: self.setValues(settings, popup,"pres", settings.pressure+PRESSURE_RANGE.step, text))
+        btn2 = Button(popup, text="+",background=BUTTON_COLOR,foreground='white', command=lambda: self.setValues(settings, popup,"pres", settings.pressure+PRESSURE_RANGE.step, text))
         btn2.config(height=15, width=30, state="normal")
         btn2.pack(side="left",fill="x")
 
-        btn3 = Button(popup, text="-",background='#263655',foreground='white', command=lambda: self.setValues(settings, popup,"pres", settings.pressure-PRESSURE_RANGE.step, text))
+        btn3 = Button(popup, text="-",background=BUTTON_COLOR,foreground='white', command=lambda: self.setValues(settings, popup,"pres", settings.pressure-PRESSURE_RANGE.step, text))
         btn3.config(height=15, width=30, state="normal")
         btn3.pack(side="left",fill="x")
 
@@ -204,21 +204,21 @@ class App(tk.Tk):
         popup.wm_title("Oxygen")
         popup.geometry('800x480')
         popup.attributes('-fullscreen', True)
-        popup.configure(bg= '#161E2E')
+        popup.configure(bg= BACKGROUND_COLOR)
         label1 = ttk.Label(popup, text="Select New Oxygen percentage value", font=("Helvetica", 20))
         label1.pack(side="top", fill="x", pady=10)
 
         text = StringVar(popup)
         text.set("Oxygen [%]"+'\n'+str(settings.oxygen))
-        text_btn = Button(popup, textvariable=text,background='#263655',foreground='white',command=lambda: self.send_settings(popup))
+        text_btn = Button(popup, textvariable=text,background=BUTTON_COLOR,foreground='white',command=lambda: self.send_settings(popup))
         text_btn.config(height=15, width=30, state="normal")
         text_btn.pack(side="left")
 
-        btn2 = Button(popup, text="+",background='#263655',foreground='white', command=lambda: self.setValues(settings, popup,"oxygen", settings.oxygen+OXYGEN_RANGE.step, text))
+        btn2 = Button(popup, text="+",background=BUTTON_COLOR,foreground='white', command=lambda: self.setValues(settings, popup,"oxygen", settings.oxygen+OXYGEN_RANGE.step, text))
         btn2.config(height=15, width=30, state="normal")
         btn2.pack(side="left",fill="x")
 
-        btn3 = Button(popup, text="-",background='#263655',foreground='white', command=lambda: self.setValues(settings, popup,"oxygen", settings.oxygen-OXYGEN_RANGE.step, text))
+        btn3 = Button(popup, text="-",background=BUTTON_COLOR,foreground='white', command=lambda: self.setValues(settings, popup,"oxygen", settings.oxygen-OXYGEN_RANGE.step, text))
         btn3.config(height=15, width=30, state="normal")
         btn3.pack(side="left",fill="x")
 
@@ -233,8 +233,8 @@ class App(tk.Tk):
 
         # Create figure for plotting
         self.fig = plt.figure()
-        self.fig.patch.set_facecolor('#263655')
-        ax = self.fig.add_subplot(1, 1, 1, facecolor='#263655')
+        self.fig.patch.set_facecolor(BUTTON_COLOR)
+        ax = self.fig.add_subplot(1, 1, 1, facecolor=BUTTON_COLOR)
         #ax.spines['bottom'].set_color('gray')
 
         xs = list(range(0, x_len))
@@ -294,8 +294,8 @@ class App(tk.Tk):
 
         # Create figure for plotting
         self.fig = plt.figure()
-        self.fig.patch.set_facecolor('#263655')
-        ax = self.fig.add_subplot(1, 1, 1, facecolor='#263655')
+        self.fig.patch.set_facecolor(BUTTON_COLOR)
+        ax = self.fig.add_subplot(1, 1, 1, facecolor=BUTTON_COLOR)
         #ax.spines['bottom'].set_color('gray')
 
         xs = list(range(0, x_len))
@@ -350,65 +350,65 @@ class App(tk.Tk):
 
     def checkAllAlarms(self, settings: Settings, sensors: Sensors):
         if (not sensors.peep) and sensors.pressure > settings.max_pressure:
-            self.pres_btn.configure(background="#FF0749")
+            self.pres_btn.configure(background=ALARM_COLOR)
             playAlarm()
 
         elif (not sensors.peep) and sensors.pressure < settings.min_pressure:
-            self.pres_btn.configure(background="#FF0749")
+            self.pres_btn.configure(background=ALARM_COLOR)
             playAlarm()
 
         else:
-            self.pres_btn.configure(background="#263655")
+            self.pres_btn.configure(background=BUTTON_COLOR)
 
         if sensors.peep and sensors.peep > settings.min_peep:
-            self.pres_btn.configure(background="#FF0749")
+            self.pres_btn.configure(background=ALARM_COLOR)
             playAlarm()
 
         else:
-            self.peep_btn.configure(background="#263655")
+            self.peep_btn.configure(background=BUTTON_COLOR)
 
         if sensors.tidal_volume > settings.max_tv:
-            self.tv_btn.configure(background="#FF0749")
+            self.tv_btn.configure(background=ALARM_COLOR)
             playAlarm()
 
         elif sensors.tidal_volume < settings.min_tv:
-            self.tv_btn.configure(background="#FF0749")
+            self.tv_btn.configure(background=ALARM_COLOR)
             playAlarm()
         else:
-            self.tv_btn.configure(background="#263655")
+            self.tv_btn.configure(background=BUTTON_COLOR)
 
         if sensors.oxygen > settings.max_fio2:
-            self.oxy_btn.configure(background="#FF0749")
+            self.oxy_btn.configure(background=ALARM_COLOR)
             playAlarm()
         elif sensors.oxygen < settings.min_fio2:
-            self.oxy_btn.configure(background="#FF0749")
+            self.oxy_btn.configure(background=ALARM_COLOR)
             playAlarm()
         else:
-            self.oxy_btn.configure(background="#263655")
+            self.oxy_btn.configure(background=BUTTON_COLOR)
 
     def BuildGui(self):
-        self.configure(bg= '#161E2E')
+        self.configure(bg= BACKGROUND_COLOR)
         style = ttk.Style()
-        style.configure("style.TButton",background='#263655')
-        ttk.Style().configure("TButton", padding=6, relief="flat",background='#263655',foreground='#FFFFFF')
+        style.configure("style.TButton",background=BUTTON_COLOR)
+        ttk.Style().configure("TButton", padding=6, relief="flat",background=BUTTON_COLOR,foreground='#FFFFFF')
         default_font = tk.font.nametofont("TkDefaultFont")
         default_font.configure(size=13, family="Helvetica Neue")
 
 
         #define grid sizes and frames
-        f1 = tk.Frame(self, width=160, height=60, borderwidth=1, bg='#161E2E')
-        f2 = tk.Frame(self, width=60, height=60, borderwidth=1, bg='#161E2E')
-        f3 = tk.Frame(self, width=340, height=60, borderwidth=1, bg='#161E2E')
-        f4 = tk.Frame(self, width=120, height=60, borderwidth=1, bg='#161E2E')
-        f5 = tk.Frame(self, width=120, height=60, borderwidth=1, bg='#161E2E')
-        f6 = tk.Frame(self, width=220, height=84, borderwidth=1, bg='#161E2E') #160
-        f7 = tk.Frame(self, width=220, height=84, borderwidth=1, bg='#161E2E') #160
-        f8 = tk.Frame(self, width=580, height=504, borderwidth=1, bg='#161E2E') #dual frame
-        self.f9 = tk.Frame(f8, width=576, height=208, borderwidth=0, bg='#161E2E')
-        f10 = tk.Frame(self, width=220, height=84, borderwidth=1, bg='#161E2E')
-        f11 = tk.Frame(self, width=220, height=84, borderwidth=1, bg='#161E2E')
-        f12 = tk.Frame(self, width=220, height=84, borderwidth=1, bg='#161E2E')
-        self.f13 = tk.Frame(f8, width=576, height=208, borderwidth=0, bg='#161E2E')
+        f1 = tk.Frame(self, width=160, height=60, borderwidth=1, bg=BACKGROUND_COLOR)
+        f2 = tk.Frame(self, width=60, height=60, borderwidth=1, bg=BACKGROUND_COLOR)
+        f3 = tk.Frame(self, width=340, height=60, borderwidth=1, bg=BACKGROUND_COLOR)
+        f4 = tk.Frame(self, width=120, height=60, borderwidth=1, bg=BACKGROUND_COLOR)
+        f5 = tk.Frame(self, width=120, height=60, borderwidth=1, bg=BACKGROUND_COLOR)
+        f6 = tk.Frame(self, width=220, height=84, borderwidth=1, bg=BACKGROUND_COLOR) #160
+        f7 = tk.Frame(self, width=220, height=84, borderwidth=1, bg=BACKGROUND_COLOR) #160
+        f8 = tk.Frame(self, width=580, height=504, borderwidth=1, bg=BACKGROUND_COLOR) #dual frame
+        self.f9 = tk.Frame(f8, width=576, height=208, borderwidth=0, bg=BACKGROUND_COLOR)
+        f10 = tk.Frame(self, width=220, height=84, borderwidth=1, bg=BACKGROUND_COLOR)
+        f11 = tk.Frame(self, width=220, height=84, borderwidth=1, bg=BACKGROUND_COLOR)
+        f12 = tk.Frame(self, width=220, height=84, borderwidth=1, bg=BACKGROUND_COLOR)
+        self.f13 = tk.Frame(f8, width=576, height=208, borderwidth=0, bg=BACKGROUND_COLOR)
 
         f1.grid(row=0, column=0)
         f2.grid(row=0, column=1)
@@ -429,52 +429,52 @@ class App(tk.Tk):
 
         air_btn_text = StringVar()
         air_btn_text.set("OperationAir")
-        air_btn = Button(f1, textvariable=air_btn_text,background='#263655',highlightbackground='#161E2E', foreground='white',command = lambda: self.quit())
+        air_btn = Button(f1, textvariable=air_btn_text,background=BUTTON_COLOR,highlightbackground=BACKGROUND_COLOR, foreground='white',command = lambda: self.quit())
         air_btn.place(x=0, y=0, relwidth=1,relheight=1)
 
         self.alarm_btn_text = StringVar()
         self.alarm_btn_text.set("Alarm")
-        self.alarm_btn = Button(f2, textvariable=self.alarm_btn_text,background='#263655',highlightbackground='#161E2E',foreground='white',command = lambda: AlarmPop(self,self.settings))
+        self.alarm_btn = Button(f2, textvariable=self.alarm_btn_text,background=BUTTON_COLOR,highlightbackground=BACKGROUND_COLOR,foreground='white',command = lambda: AlarmPop(self,self.settings))
         self.alarm_btn.place(x=0, y=0, relwidth=1,relheight=1)
 
         self.alarm_name_btn_text = StringVar()
         self.alarm_name_btn_text.set("Alarm overview")
-        self.alarm_name_btn = Button(f3, textvariable=self.alarm_name_btn_text,background='#263655',highlightbackground='#161E2E',foreground='white',command = lambda: alarm_overview(self,self.settings))
+        self.alarm_name_btn = Button(f3, textvariable=self.alarm_name_btn_text,background=BUTTON_COLOR,highlightbackground=BACKGROUND_COLOR,foreground='white',command = lambda: alarm_overview(self,self.settings))
         self.alarm_name_btn.place(x=0, y=0, relwidth=1,relheight=1)
 
         self.patient_btn_text = StringVar()
         self.patient_btn_text.set("Patient")
-        self.patient_btn = Button(f4, textvariable=self.patient_btn_text,background='#263655',highlightbackground='#161E2E',foreground='white', comman = lambda:  self.mcu.try_start_inspiratroy_hold() )
+        self.patient_btn = Button(f4, textvariable=self.patient_btn_text,background=BUTTON_COLOR,highlightbackground=BACKGROUND_COLOR,foreground='white', comman = lambda:  self.mcu.try_start_inspiratroy_hold() )
         self.patient_btn.place(x=0, y=0, relwidth=1,relheight=1)
 
         self.switch_btn_text = StringVar()
         self.switch_btn_text.set("Start")
-        self.switch_btn = Button(f5, textvariable=self.switch_btn_text,background='#263655',highlightbackground='#161E2E',foreground='white',command = lambda: self.start())
+        self.switch_btn = Button(f5, textvariable=self.switch_btn_text,background=BUTTON_COLOR,highlightbackground=BACKGROUND_COLOR,foreground='white',command = lambda: self.start())
         self.switch_btn.place(x=0, y=0, relwidth=1,relheight=1)
 
         self.freq_btn_text = StringVar()
         self.freq_btn_text.set("Frequency"+'\n'+str(self.settings.freq)+" [1/min]")
-        self.freq_btn = Button(f7, textvariable=self.freq_btn_text,background='#263655',highlightbackground='#161E2E',foreground='white',command = lambda: self.FreqPop(self.settings))
+        self.freq_btn = Button(f7, textvariable=self.freq_btn_text,background=BUTTON_COLOR,highlightbackground=BACKGROUND_COLOR,foreground='white',command = lambda: self.FreqPop(self.settings))
         self.freq_btn.place(x=0, y=0, relwidth=1,relheight=1)
 
         self.peep_btn_text = StringVar()
         self.peep_btn_text.set("PEEP"+'\n'+str(self.settings.peep)+" [cm H2O]")
-        self.peep_btn = Button(f6, textvariable=self.peep_btn_text,background='#263655',highlightbackground='#161E2E',foreground='white',command = lambda: self.PeepPop(self.settings))
+        self.peep_btn = Button(f6, textvariable=self.peep_btn_text,background=BUTTON_COLOR,highlightbackground=BACKGROUND_COLOR,foreground='white',command = lambda: self.PeepPop(self.settings))
         self.peep_btn.place(x=0, y=0, relwidth=1,relheight=1)
 
         self.tv_btn_text = StringVar()
         self.tv_btn_text.set("Tidal Volume"+'\n'+str()+" [mL]")
-        self.tv_btn = Button(f10, textvariable=self.tv_btn_text,background='#263655',highlightbackground='#161E2E',foreground='white')
+        self.tv_btn = Button(f10, textvariable=self.tv_btn_text,background=BUTTON_COLOR,highlightbackground=BACKGROUND_COLOR,foreground='white')
         self.tv_btn.place(x=0, y=0, relwidth=1,relheight=1)
 
         self.pres_btn_text = StringVar()
         self.pres_btn_text.set("Pressure"+'\n'+str(self.settings.pressure)+" [cm H2O]")
-        self.pres_btn = Button(f11, textvariable=self.pres_btn_text,background='#263655',highlightbackground='#161E2E',foreground='white',command = lambda: self.PresPop(self.settings) )
+        self.pres_btn = Button(f11, textvariable=self.pres_btn_text,background=BUTTON_COLOR,highlightbackground=BACKGROUND_COLOR,foreground='white',command = lambda: self.PresPop(self.settings) )
         self.pres_btn.place(x=0, y=0, relwidth=1,relheight=1)
 
         self.oxy_btn_text = StringVar()
         self.oxy_btn_text.set("Oxygen (02)"+'\n'+str(self.settings.oxygen)+" [%]")
-        self.oxy_btn = Button(f12, textvariable=self.oxy_btn_text,background='#263655',highlightbackground='#161E2E',foreground='white', command = lambda: self.O2Pop(self.settings) )
+        self.oxy_btn = Button(f12, textvariable=self.oxy_btn_text,background=BUTTON_COLOR,highlightbackground=BACKGROUND_COLOR,foreground='white', command = lambda: self.O2Pop(self.settings) )
         self.oxy_btn.place(x=0, y=0, relwidth=1,relheight=1)
 
         self.GraphPlotFlow()

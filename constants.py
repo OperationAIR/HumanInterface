@@ -32,4 +32,8 @@ OXYGEN_RANGE =      ValidSettingsRange(min=20, max=100, step=5)
 
 # colors
 
-# TODO
+BACKGROUND_COLOR = '#161E2E'
+BUTTON_COLOR = '#263655'
+ALARM_COLOR = '#FF0749'
+WARNING_COLOR = '#FFFF00' # todo add correct color
+TEXT_COLOR = 'white'
