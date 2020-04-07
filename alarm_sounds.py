@@ -11,6 +11,5 @@ def playAlarm():
     if pygame.mixer.get_busy() == 1:
         pass
     else:
-        pygame.time.wait(1000)
         mediumAlarm.play()
 
