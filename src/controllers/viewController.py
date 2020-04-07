@@ -123,13 +123,25 @@ class ViewController(tk.Tk):
             self.settingsView.fill_frame()
         elif action == MainViewActions.FREQ:
             print("Freq")
-            self.FreqPop(self.settings)
+            self.settingsView = ChangeAlarmSettingsView(AlarmType.PEEP, self.settings.min_peep, 0, 45,
+                                                        self.settings.max_peep, 5, 50, 5, "PEEP [cm H2O]",
+                                                        self.changeValueViewCallback)
+            self.settingsView.place(x=0, y=0, width=self.winfo_width(), height=self.winfo_height())
+            self.settingsView.fill_frame()
         elif action == MainViewActions.PRESSURE:
             print("Pressure")
-            self.PresPop(self.settings)
+            self.settingsView = ChangeAlarmSettingsView(AlarmType.PEEP, self.settings.min_peep, 0, 45,
+                                                        self.settings.max_peep, 5, 50, 5, "PEEP [cm H2O]",
+                                                        self.changeValueViewCallback)
+            self.settingsView.place(x=0, y=0, width=self.winfo_width(), height=self.winfo_height())
+            self.settingsView.fill_frame()
         elif action == MainViewActions.OXYGEN:
             print("Oxygen")
-            self.O2Pop(self.settings)
+            self.settingsView = ChangeAlarmSettingsView(AlarmType.PEEP, self.settings.min_peep, 0, 45,
+                                                        self.settings.max_peep, 5, 50, 5, "PEEP [cm H2O]",
+                                                        self.changeValueViewCallback)
+            self.settingsView.place(x=0, y=0, width=self.winfo_width(), height=self.winfo_height())
+            self.settingsView.fill_frame()
         else:
             print("Unknown action")
 

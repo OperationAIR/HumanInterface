@@ -48,8 +48,8 @@ class ChangeAlarmSettingsView(Frame):
 
         self.fill_frame()
 
-    def confirmSetting(self, event):
-        self.callback(self.type, self.min_current, self.max_current)
+    def confirmSetting(self, type):
+        self.callback(type, self.min_current, self.max_current)
 
     def valueChange(self, action):
         if action == ChangeAlarmViewActions.MINMINUS and self.min_current - self.step >= self.min_min:
@@ -118,7 +118,7 @@ class ChangeAlarmSettingsView(Frame):
         self.max_value_btn.setText(self.max_current)
         self.max_value_btn.grid(row=2, column=3, sticky=N + S + E + W)
 
-        confirm_btn = FlatButton(self, self.confirmSetting, None, self.config.values['colors']['green'], fontSize=40)
+        confirm_btn = FlatButton(self, self.confirmSetting, self.type, self.config.values['colors']['green'], fontSize=40)
         confirm_btn.setText("Confirm", "white")
         confirm_btn.grid(row=3, column=0, columnspan=4, sticky=N + S + E + W, padx=20, pady=(60, 20))
 
