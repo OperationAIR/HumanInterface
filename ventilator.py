@@ -552,7 +552,9 @@ class App(tk.Tk):
             self.latest_sensor_data = sensors
 
             if self.log_handle:
-                logger.write_csv(self.log_handle, self.latest_sensor_data.as_list())
+                logline = self.latest_sensor_data.as_list()
+                print('log: ', logline)
+                logger.write_csv(self.log_handle, logline)
 
         if not self.settings_queue.empty():
             settings = self.settings_queue.get()

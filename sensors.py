@@ -77,7 +77,7 @@ class Sensors:
         return self.__repr__()
 
     def as_list(self):
-        return [self.timestamp, self.pressure, self.flow, self.tidal_volume,  self.oxygen]
+        return [[self.timestamp, self.pressure, self.flow, self.tidal_volume,  self.oxygen]]
 
     @classmethod
     def from_binary(cls, packed_data):
