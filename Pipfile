@@ -10,6 +10,7 @@ matplotlib = "*"
 pyserial = "*"
 crcmod = "*"
 pygame = "*"
+pyyaml = "*"
 
 [requires]
-python_version = "'>3.5"
+python_version = "3.6"
