@@ -14,9 +14,12 @@ from tkinter import StringVar, Button, Tk, Label
 from models.mcuSettingsModel import Settings
 from models.mcuSensorModel import Sensors
 from controllers.alarmController import playAlarm
+from controllers.communicationController import Microcontroller
+
+from views.mainView import MainView, MainViewActions
+from views.changeValueView import ChangeValueView, ChangeValueViewActions
 from views.activeAlarmView import alarm_overview
 from views.alarmSettingsView import AlarmPop
-from controllers.communicationController import Microcontroller
 
 
 from utils import logger
@@ -63,8 +66,13 @@ class ViewController(tk.Tk):
 
         self.latest_sensor_data = Sensors.default()
 
+        self.setStyle()
 
-        self.BuildGui()
+        self.mainView = MainView(self.winfo_width(), self.winfo_height(), self.settings, self.mainViewCallback)
+        self.settingsView = ChangeValueView(self.winfo_width(), self.winfo_height(), self.settings,
+                                            self.changeValueViewCallback)
+
+        self.mainView.pack(fill=BOTH, expand=True)
         # self.io_thread = Thread(target=self.asyncio)
         # self.io_thread.daemon = True
         # self.io_thread.start()
@@ -72,6 +80,42 @@ class ViewController(tk.Tk):
 
     def updateSettings(self, settings):
         self.settings = settings
+
+    def changeValueViewCallback(self, action):
+        if action == ChangeValueViewActions.BACK:
+            self.settingsView.place_forget()
+
+    def mainViewCallback(self, action):
+        if action == MainViewActions.QUIT:
+            print("Quitting")
+            self.quit()
+        elif action == MainViewActions.ALARM:
+            print("Alarm")
+        elif action == MainViewActions.VIEW_ALARMS:
+            print("Alarm Overview")
+            alarm_overview(self, self.settings)
+        elif action == MainViewActions.PATIENT:
+            print("Patient")
+            self.mcu.try_start_inspiratroy_hold()
+        elif action == MainViewActions.STARTSTOP:
+            print("Startstop")
+            self.start()
+        elif action == MainViewActions.PEEP:
+            print("PEEP")
+            #self.PeepPop(self.settings)
+            self.settingsView.place(x=10, y=10, width=self.winfo_width() - 20, height=self.winfo_height() - 20)
+        elif action == MainViewActions.FREQ:
+            print("Freq")
+            self.FreqPop(self.settings)
+        elif action == MainViewActions.PRESSURE:
+            print("Pressure")
+            self.PresPop(self.settings)
+        elif action == MainViewActions.OXYGEN:
+            print("Oxygen")
+            self.O2Pop(self.settings)
+        else:
+            print("Unknown action")
+
 
     def center(self):
         """
@@ -405,7 +449,7 @@ class ViewController(tk.Tk):
         else:
             self.oxy_btn.configure(background="#263655")
 
-    def BuildGui(self):
+    def setStyle(self):
         self.configure(bg= '#161E2E')
         style = ttk.Style()
         style.configure("style.TButton",background='#263655')
@@ -413,106 +457,6 @@ class ViewController(tk.Tk):
         default_font = tk.font.nametofont("TkDefaultFont")
         default_font.configure(size=13, family="Helvetica Neue")
 
-        self.f0 = tk.Frame(self, width=self.winfo_width(), height=self.winfo_height(), bg="black")
-
-        # #define grid sizes and frames
-        # f1 = tk.Frame(self, width=160, height=60, borderwidth=1, bg='#161E2E')
-        # f2 = tk.Frame(self, width=60, height=60, borderwidth=1, bg='#161E2E')
-        # f3 = tk.Frame(self, width=340, height=60, borderwidth=1, bg='#161E2E')
-        # f4 = tk.Frame(self, width=120, height=60, borderwidth=1, bg='#161E2E')
-        # f5 = tk.Frame(self, width=120, height=60, borderwidth=1, bg='#161E2E')
-        # f6 = tk.Frame(self, width=220, height=84, borderwidth=1, bg='#161E2E') #160
-        # f7 = tk.Frame(self, width=220, height=84, borderwidth=1, bg='#161E2E') #160
-        # f8 = tk.Frame(self, width=580, height=504, borderwidth=1, bg='#161E2E') #dual frame
-        # self.f9 = tk.Frame(f8, width=576, height=208, borderwidth=0, bg='#161E2E')
-        # f10 = tk.Frame(self, width=220, height=84, borderwidth=1, bg='#161E2E')
-        # f11 = tk.Frame(self, width=220, height=84, borderwidth=1, bg='#161E2E')
-        # f12 = tk.Frame(self, width=220, height=84, borderwidth=1, bg='#161E2E')
-        # self.f13 = tk.Frame(f8, width=576, height=208, borderwidth=0, bg='#161E2E')
-        #
-        # f1.grid(row=0, column=0)
-        # f2.grid(row=0, column=1)
-        # f3.grid(row=0, column=2)
-        # f4.grid(row=0, column=3)
-        # f5.grid(row=0, column=5)
-        # f6.grid(row=1, column=0, columnspan=2)
-        # f7.grid(row=2, column=0, columnspan =2)
-        # f8.grid(row=1, column=2,rowspan=6,columnspan=4)
-         #self.f9.grid(row=1, column=2, columnspan=4, rowspan=3)
-        # self.f9.grid(row=0, column=0)
-        # f10.grid(row=3, column=0, columnspan=2)
-        # f11.grid(row=4, column=0, columnspan=2)
-        # f12.grid(row=5, column=0, columnspan=2)
-        # self.f13.grid(row=1,column=0)
-        # #self.f13.grid(row=4, column=2, columnspan=4, rowspan=3)
-        #
-        #
-
-        air_btn_text = StringVar()
-        air_btn_text.set("OperationAir")
-        air_btn = Button(self.f0, textvariable=air_btn_text,background='#263655',highlightbackground='#161E2E', foreground='white',command = lambda: self.quit())
-        air_btn.grid(row=0, column=0, sticky=N+S+E+W)
-        #
-        self.alarm_btn_text = StringVar()
-        self.alarm_btn_text.set("Alarm")
-        self.alarm_btn = Button(self.f0, textvariable=self.alarm_btn_text,background='#263655',highlightbackground='#161E2E',foreground='white',command = lambda: AlarmPop(self,self.settings))
-        self.alarm_btn.grid(row=0, column=1, sticky=N+S+E+W)
-
-        self.alarm_name_btn_text = StringVar()
-        self.alarm_name_btn_text.set("Alarm overview")
-        self.alarm_name_btn = Button(self.f0, textvariable=self.alarm_name_btn_text,background='#263655',highlightbackground='#161E2E',foreground='white',command = lambda: alarm_overview(self,self.settings))
-        self.alarm_name_btn.grid(row=0, column=2, sticky=N+S+E+W)
-
-        self.patient_btn_text = StringVar()
-        self.patient_btn_text.set("Patient")
-        self.patient_btn = Button(self.f0, textvariable=self.patient_btn_text,background='#263655',highlightbackground='#161E2E',foreground='white', comman = lambda:  self.mcu.try_start_inspiratroy_hold() )
-        self.patient_btn.grid(row=0, column=3, sticky=N+S+E+W)
-
-        self.switch_btn_text = StringVar()
-        self.switch_btn_text.set("Start")
-        self.switch_btn = Button(self.f0, textvariable=self.switch_btn_text,background='#263655',highlightbackground='#161E2E',foreground='white',command = lambda: self.start())
-        self.switch_btn.grid(row=0, column=4, sticky=N+S+E+W)
-
-        self.peep_btn_text = StringVar()
-        self.peep_btn_text.set("PEEP"+'\n'+str(self.settings.peep)+" [cm H2O]")
-        self.peep_btn = Button(self.f0, textvariable=self.peep_btn_text,background='#263655',highlightbackground='#161E2E',foreground='white',command = lambda: self.PeepPop(self.settings))
-        self.peep_btn.grid(row=1, column=0, sticky=N+S+E+W)
-
-        self.freq_btn_text = StringVar()
-        self.freq_btn_text.set("Frequency"+'\n'+str(self.settings.freq)+" [1/min]")
-        self.freq_btn = Button(self.f0, textvariable=self.freq_btn_text,background='#263655',highlightbackground='#161E2E',foreground='white',command = lambda: self.FreqPop(self.settings))
-        self.freq_btn.grid(row=2, column=0, sticky=N+S+E+W)
-
-        self.tv_btn_text = StringVar()
-        self.tv_btn_text.set("Tidal Volume"+'\n'+str()+" [mL]")
-        self.tv_btn = Button(self.f0, textvariable=self.tv_btn_text,background='#263655',highlightbackground='#161E2E',foreground='white')
-        self.tv_btn.grid(row=3, column=0, sticky=N+S+E+W)
-
-        self.pres_btn_text = StringVar()
-        self.pres_btn_text.set("Pressure"+'\n'+str(self.settings.pressure)+" [cm H2O]")
-        self.pres_btn = Button(self.f0, textvariable=self.pres_btn_text,background='#263655',highlightbackground='#161E2E',foreground='white',command = lambda: self.PresPop(self.settings) )
-        self.pres_btn.grid(row=4, column=0, sticky=N+S+E+W)
-
-        self.oxy_btn_text = StringVar()
-        self.oxy_btn_text.set("Oxygen (02)"+'\n'+str(self.settings.oxygen)+" [%]")
-        self.oxy_btn = Button(self.f0, textvariable=self.oxy_btn_text,background='#263655',highlightbackground='#161E2E',foreground='white', command = lambda: self.O2Pop(self.settings) )
-        self.oxy_btn.grid(row=5, column=0, sticky=N+S+E+W)
-
-        self.f0.rowconfigure(0, weight=1)
-        self.f0.rowconfigure(1, weight=1)
-        self.f0.rowconfigure(2, weight=1)
-        self.f0.rowconfigure(3, weight=1)
-        self.f0.rowconfigure(4, weight=1)
-        self.f0.rowconfigure(5, weight=1)
-        self.f0.columnconfigure(0, weight=1)
-        self.f0.columnconfigure(1, weight=1)
-        self.f0.columnconfigure(2, weight=1)
-        self.f0.columnconfigure(3, weight=1)
-        self.f0.columnconfigure(4, weight=1)
-
-        #self.GraphPlotFlow()
-        #self.GraphPlotPressure()
-        self.f0.pack(fill=BOTH, expand=True)
 
     def quit(self, _signal=None, _=None):
         print('ventilator.quit()')
