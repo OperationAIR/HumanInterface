@@ -26,7 +26,7 @@ class Settings():
         self.min_peep = int(min_peep)
 
     @classmethod
-    def fomConfig(cls):
+    def fromConfig(cls):
         config = ConfigValues()
 
         start = config.values["defaultSettings"]["start"]

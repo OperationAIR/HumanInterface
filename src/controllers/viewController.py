@@ -9,8 +9,8 @@ import tkinter as tk
 matplotlib.use("TkAgg")
 from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg)
 from queue import Queue
-from tkinter import ttk
-from tkinter import StringVar, Button, Tk
+from tkinter import ttk, BOTH, N, S, E, W
+from tkinter import StringVar, Button, Tk, Label
 from models.mcuSettingsModel import Settings
 from models.mcuSensorModel import Sensors
 from controllers.alarmController import playAlarm
@@ -23,17 +23,27 @@ from utils import logger
 
 class ViewController(tk.Tk):
 
-    def __init__(self, settings, mcu):
+    def __init__(self):
         super().__init__()
 
-        self.settings = settings
-        self.mcu = mcu
+        self.settings = Settings.fromConfig()
 
         config = ConfigValues()
 
-        # for RPi
+        self._thread_alive = True
+        self.io_thread = None
+
+        self.SIMULATE = config.values["developer"]["simulate"]
+        self.TTY = config.values['developer']['commPort']
+        self.BAUDRATE = config.values['developer']['baudrate']
         self.LOGGING_ENABLED = config.values['developer']['logEnabled']
         self.LOGDIR = config.values['developer']['logDir']
+
+        self.sensor_queue = Queue()
+        self.settings_queue = Queue()
+        self.mcu = Microcontroller(self.TTY, self.BAUDRATE, self.settings_queue, self.sensor_queue, simulate=self.SIMULATE)
+
+        # for RPi
 
         self.protocol("WM_DELETE_WINDOW", self.quit)
         self.title("Operation Air Ventilator")
@@ -287,8 +297,8 @@ class ViewController(tk.Tk):
             return line,
         # Set up plot to call animate() function periodically
 
-        canvas = FigureCanvasTkAgg(self.fig, master=self.f9)
-        canvas.get_tk_widget().place(x=0, y=0, relwidth=1,relheight=1)
+        canvas = FigureCanvasTkAgg(self.fig, master=self.f0)
+        canvas.get_tk_widget().grid(row=1, column=1, rowspan=2, columnspan=4)
         self.flow_animation_ref = animation.FuncAnimation(self.fig,
            animate,
            fargs=(ys,),
@@ -403,91 +413,106 @@ class ViewController(tk.Tk):
         default_font = tk.font.nametofont("TkDefaultFont")
         default_font.configure(size=13, family="Helvetica Neue")
 
+        self.f0 = tk.Frame(self, width=self.winfo_width(), height=self.winfo_height(), bg="black")
 
-        #define grid sizes and frames
-        f1 = tk.Frame(self, width=160, height=60, borderwidth=1, bg='#161E2E')
-        f2 = tk.Frame(self, width=60, height=60, borderwidth=1, bg='#161E2E')
-        f3 = tk.Frame(self, width=340, height=60, borderwidth=1, bg='#161E2E')
-        f4 = tk.Frame(self, width=120, height=60, borderwidth=1, bg='#161E2E')
-        f5 = tk.Frame(self, width=120, height=60, borderwidth=1, bg='#161E2E')
-        f6 = tk.Frame(self, width=220, height=84, borderwidth=1, bg='#161E2E') #160
-        f7 = tk.Frame(self, width=220, height=84, borderwidth=1, bg='#161E2E') #160
-        f8 = tk.Frame(self, width=580, height=504, borderwidth=1, bg='#161E2E') #dual frame
-        self.f9 = tk.Frame(f8, width=576, height=208, borderwidth=0, bg='#161E2E')
-        f10 = tk.Frame(self, width=220, height=84, borderwidth=1, bg='#161E2E')
-        f11 = tk.Frame(self, width=220, height=84, borderwidth=1, bg='#161E2E')
-        f12 = tk.Frame(self, width=220, height=84, borderwidth=1, bg='#161E2E')
-        self.f13 = tk.Frame(f8, width=576, height=208, borderwidth=0, bg='#161E2E')
-
-        f1.grid(row=0, column=0)
-        f2.grid(row=0, column=1)
-        f3.grid(row=0, column=2)
-        f4.grid(row=0, column=3)
-        f5.grid(row=0, column=5)
-        f6.grid(row=1, column=0, columnspan=2)
-        f7.grid(row=2, column=0, columnspan =2)
-        f8.grid(row=1, column=2,rowspan=6,columnspan=4)
-        #self.f9.grid(row=1, column=2, columnspan=4, rowspan=3)
-        self.f9.grid(row=0, column=0)
-        f10.grid(row=3, column=0, columnspan=2)
-        f11.grid(row=4, column=0, columnspan=2)
-        f12.grid(row=5, column=0, columnspan=2)
-        self.f13.grid(row=1,column=0)
-        #self.f13.grid(row=4, column=2, columnspan=4, rowspan=3)
-
+        # #define grid sizes and frames
+        # f1 = tk.Frame(self, width=160, height=60, borderwidth=1, bg='#161E2E')
+        # f2 = tk.Frame(self, width=60, height=60, borderwidth=1, bg='#161E2E')
+        # f3 = tk.Frame(self, width=340, height=60, borderwidth=1, bg='#161E2E')
+        # f4 = tk.Frame(self, width=120, height=60, borderwidth=1, bg='#161E2E')
+        # f5 = tk.Frame(self, width=120, height=60, borderwidth=1, bg='#161E2E')
+        # f6 = tk.Frame(self, width=220, height=84, borderwidth=1, bg='#161E2E') #160
+        # f7 = tk.Frame(self, width=220, height=84, borderwidth=1, bg='#161E2E') #160
+        # f8 = tk.Frame(self, width=580, height=504, borderwidth=1, bg='#161E2E') #dual frame
+        # self.f9 = tk.Frame(f8, width=576, height=208, borderwidth=0, bg='#161E2E')
+        # f10 = tk.Frame(self, width=220, height=84, borderwidth=1, bg='#161E2E')
+        # f11 = tk.Frame(self, width=220, height=84, borderwidth=1, bg='#161E2E')
+        # f12 = tk.Frame(self, width=220, height=84, borderwidth=1, bg='#161E2E')
+        # self.f13 = tk.Frame(f8, width=576, height=208, borderwidth=0, bg='#161E2E')
+        #
+        # f1.grid(row=0, column=0)
+        # f2.grid(row=0, column=1)
+        # f3.grid(row=0, column=2)
+        # f4.grid(row=0, column=3)
+        # f5.grid(row=0, column=5)
+        # f6.grid(row=1, column=0, columnspan=2)
+        # f7.grid(row=2, column=0, columnspan =2)
+        # f8.grid(row=1, column=2,rowspan=6,columnspan=4)
+         #self.f9.grid(row=1, column=2, columnspan=4, rowspan=3)
+        # self.f9.grid(row=0, column=0)
+        # f10.grid(row=3, column=0, columnspan=2)
+        # f11.grid(row=4, column=0, columnspan=2)
+        # f12.grid(row=5, column=0, columnspan=2)
+        # self.f13.grid(row=1,column=0)
+        # #self.f13.grid(row=4, column=2, columnspan=4, rowspan=3)
+        #
+        #
 
         air_btn_text = StringVar()
         air_btn_text.set("OperationAir")
-        air_btn = Button(f1, textvariable=air_btn_text,background='#263655',highlightbackground='#161E2E', foreground='white',command = lambda: self.quit())
-        air_btn.place(x=0, y=0, relwidth=1,relheight=1)
-
+        air_btn = Button(self.f0, textvariable=air_btn_text,background='#263655',highlightbackground='#161E2E', foreground='white',command = lambda: self.quit())
+        air_btn.grid(row=0, column=0, sticky=N+S+E+W)
+        #
         self.alarm_btn_text = StringVar()
         self.alarm_btn_text.set("Alarm")
-        self.alarm_btn = Button(f2, textvariable=self.alarm_btn_text,background='#263655',highlightbackground='#161E2E',foreground='white',command = lambda: AlarmPop(self,self.settings))
-        self.alarm_btn.place(x=0, y=0, relwidth=1,relheight=1)
+        self.alarm_btn = Button(self.f0, textvariable=self.alarm_btn_text,background='#263655',highlightbackground='#161E2E',foreground='white',command = lambda: AlarmPop(self,self.settings))
+        self.alarm_btn.grid(row=0, column=1, sticky=N+S+E+W)
 
         self.alarm_name_btn_text = StringVar()
         self.alarm_name_btn_text.set("Alarm overview")
-        self.alarm_name_btn = Button(f3, textvariable=self.alarm_name_btn_text,background='#263655',highlightbackground='#161E2E',foreground='white',command = lambda: alarm_overview(self,self.settings))
-        self.alarm_name_btn.place(x=0, y=0, relwidth=1,relheight=1)
+        self.alarm_name_btn = Button(self.f0, textvariable=self.alarm_name_btn_text,background='#263655',highlightbackground='#161E2E',foreground='white',command = lambda: alarm_overview(self,self.settings))
+        self.alarm_name_btn.grid(row=0, column=2, sticky=N+S+E+W)
 
         self.patient_btn_text = StringVar()
         self.patient_btn_text.set("Patient")
-        self.patient_btn = Button(f4, textvariable=self.patient_btn_text,background='#263655',highlightbackground='#161E2E',foreground='white', comman = lambda:  self.mcu.try_start_inspiratroy_hold() )
-        self.patient_btn.place(x=0, y=0, relwidth=1,relheight=1)
+        self.patient_btn = Button(self.f0, textvariable=self.patient_btn_text,background='#263655',highlightbackground='#161E2E',foreground='white', comman = lambda:  self.mcu.try_start_inspiratroy_hold() )
+        self.patient_btn.grid(row=0, column=3, sticky=N+S+E+W)
 
         self.switch_btn_text = StringVar()
         self.switch_btn_text.set("Start")
-        self.switch_btn = Button(f5, textvariable=self.switch_btn_text,background='#263655',highlightbackground='#161E2E',foreground='white',command = lambda: self.start())
-        self.switch_btn.place(x=0, y=0, relwidth=1,relheight=1)
-
-        self.freq_btn_text = StringVar()
-        self.freq_btn_text.set("Frequency"+'\n'+str(self.settings.freq)+" [1/min]")
-        self.freq_btn = Button(f7, textvariable=self.freq_btn_text,background='#263655',highlightbackground='#161E2E',foreground='white',command = lambda: self.FreqPop(self.settings))
-        self.freq_btn.place(x=0, y=0, relwidth=1,relheight=1)
+        self.switch_btn = Button(self.f0, textvariable=self.switch_btn_text,background='#263655',highlightbackground='#161E2E',foreground='white',command = lambda: self.start())
+        self.switch_btn.grid(row=0, column=4, sticky=N+S+E+W)
 
         self.peep_btn_text = StringVar()
         self.peep_btn_text.set("PEEP"+'\n'+str(self.settings.peep)+" [cm H2O]")
-        self.peep_btn = Button(f6, textvariable=self.peep_btn_text,background='#263655',highlightbackground='#161E2E',foreground='white',command = lambda: self.PeepPop(self.settings))
-        self.peep_btn.place(x=0, y=0, relwidth=1,relheight=1)
+        self.peep_btn = Button(self.f0, textvariable=self.peep_btn_text,background='#263655',highlightbackground='#161E2E',foreground='white',command = lambda: self.PeepPop(self.settings))
+        self.peep_btn.grid(row=1, column=0, sticky=N+S+E+W)
+
+        self.freq_btn_text = StringVar()
+        self.freq_btn_text.set("Frequency"+'\n'+str(self.settings.freq)+" [1/min]")
+        self.freq_btn = Button(self.f0, textvariable=self.freq_btn_text,background='#263655',highlightbackground='#161E2E',foreground='white',command = lambda: self.FreqPop(self.settings))
+        self.freq_btn.grid(row=2, column=0, sticky=N+S+E+W)
 
         self.tv_btn_text = StringVar()
         self.tv_btn_text.set("Tidal Volume"+'\n'+str()+" [mL]")
-        self.tv_btn = Button(f10, textvariable=self.tv_btn_text,background='#263655',highlightbackground='#161E2E',foreground='white')
-        self.tv_btn.place(x=0, y=0, relwidth=1,relheight=1)
+        self.tv_btn = Button(self.f0, textvariable=self.tv_btn_text,background='#263655',highlightbackground='#161E2E',foreground='white')
+        self.tv_btn.grid(row=3, column=0, sticky=N+S+E+W)
 
         self.pres_btn_text = StringVar()
         self.pres_btn_text.set("Pressure"+'\n'+str(self.settings.pressure)+" [cm H2O]")
-        self.pres_btn = Button(f11, textvariable=self.pres_btn_text,background='#263655',highlightbackground='#161E2E',foreground='white',command = lambda: self.PresPop(self.settings) )
-        self.pres_btn.place(x=0, y=0, relwidth=1,relheight=1)
+        self.pres_btn = Button(self.f0, textvariable=self.pres_btn_text,background='#263655',highlightbackground='#161E2E',foreground='white',command = lambda: self.PresPop(self.settings) )
+        self.pres_btn.grid(row=4, column=0, sticky=N+S+E+W)
 
         self.oxy_btn_text = StringVar()
         self.oxy_btn_text.set("Oxygen (02)"+'\n'+str(self.settings.oxygen)+" [%]")
-        self.oxy_btn = Button(f12, textvariable=self.oxy_btn_text,background='#263655',highlightbackground='#161E2E',foreground='white', command = lambda: self.O2Pop(self.settings) )
-        self.oxy_btn.place(x=0, y=0, relwidth=1,relheight=1)
+        self.oxy_btn = Button(self.f0, textvariable=self.oxy_btn_text,background='#263655',highlightbackground='#161E2E',foreground='white', command = lambda: self.O2Pop(self.settings) )
+        self.oxy_btn.grid(row=5, column=0, sticky=N+S+E+W)
 
-        self.GraphPlotFlow()
-        self.GraphPlotPressure()
+        self.f0.rowconfigure(0, weight=1)
+        self.f0.rowconfigure(1, weight=1)
+        self.f0.rowconfigure(2, weight=1)
+        self.f0.rowconfigure(3, weight=1)
+        self.f0.rowconfigure(4, weight=1)
+        self.f0.rowconfigure(5, weight=1)
+        self.f0.columnconfigure(0, weight=1)
+        self.f0.columnconfigure(1, weight=1)
+        self.f0.columnconfigure(2, weight=1)
+        self.f0.columnconfigure(3, weight=1)
+        self.f0.columnconfigure(4, weight=1)
+
+        #self.GraphPlotFlow()
+        #self.GraphPlotPressure()
+        self.f0.pack(fill=BOTH, expand=True)
 
     def quit(self, _signal=None, _=None):
         print('ventilator.quit()')
@@ -535,3 +560,27 @@ class ViewController(tk.Tk):
         if popup:
             popup.destroy()
         print("Send settings:", self.settings)
+
+
+    def asyncio(self):
+        if self.settings.start:
+            self.req_sensors()
+            if self.latest_sensor_data.cycle_state:
+                self.checkAllAlarms(self.settings, self.latest_sensor_data)
+            self.update_buttons()
+
+        if not self.sensor_queue.empty():
+            sensors = self.sensor_queue.get()
+            self.latest_sensor_data = sensors
+
+            if self.log_handle:
+                logger.write_csv(self.log_handle, self.latest_sensor_data.as_list())
+
+        if not self.settings_queue.empty():
+            settings = self.settings_queue.get()
+            if not self.settings.equals(settings):
+                print("MISMATCH SETTINGS: RESEND")
+                self.send_settings()
+
+                # if self._thread_alive:
+                #    self.after(100,self.asyncio)
