@@ -76,6 +76,9 @@ class Sensors:
     def __str__(self):
         return self.__repr__()
 
+    def as_list(self):
+        return [self.timestamp, self.pressure, self.flow, self.tidal_volume,  self.oxygen]
+
     @classmethod
     def from_binary(cls, packed_data):
         unpacked = struct.unpack('=' + 'i'*cls.num_properties(), packed_data)

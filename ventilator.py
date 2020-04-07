@@ -24,7 +24,12 @@ from mcu import Microcontroller
 
 import gui_utils as gut
 
+import logger
+
 BAUDRATE = 500000
+
+LOGGING_ENABLED = True
+LOGDIR = '.'
 
 FULLSCREEN = True
 SIMULATE = False
@@ -45,6 +50,8 @@ class App(tk.Tk):
         self.ys_p = []
         self.ys_f = []
         self.pressure_animation_ref = None
+
+        self.log_handle = None
 
         self.latest_sensor_data = Sensors.default()
 
@@ -500,11 +507,18 @@ class App(tk.Tk):
     def start(self):
 
         if self.settings.start == 1:
+            # send stop
             self.settings.start = 0
             self.switch_btn_text.set("Start")
+            if self.log_handle:
+                logger.close_session(self.log_handle)
+                self.log_handle = None
         else:
+            # send start
             self.settings.start = 1
             self.switch_btn_text.set("Stop")
+            if LOGGING_ENABLED:
+                self.log_handle = logger.start_new_session(directory=LOGDIR, file_prefix='sensors', csv=True)
         self.send_settings()
 
     def say_hello(self):
@@ -526,7 +540,6 @@ class App(tk.Tk):
         print("Send settings:", self.settings)
 
     def asyncio(self):
-        #while self._thread_alive:
 
         if self.settings.start:
             self.req_sensors()
@@ -538,6 +551,9 @@ class App(tk.Tk):
             sensors = self.sensor_queue.get()
             self.latest_sensor_data = sensors
 
+            if self.log_handle:
+                logger.write_csv(self.log_handle, self.latest_sensor_data.as_list())
+
         if not self.settings_queue.empty():
             settings = self.settings_queue.get()
             if not self.settings.equals(settings):
@@ -546,7 +562,6 @@ class App(tk.Tk):
 
         if self._thread_alive:
             self.after(100,self.asyncio)
-        #print ('exit app thread')
 
 
 
