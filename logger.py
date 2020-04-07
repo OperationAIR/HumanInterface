@@ -12,7 +12,7 @@ from pathlib import Path
 
 LogHandle = typing.NamedTuple('loghandle', [('file', typing.TextIO), ('writer', csv.writer)])
 
-def start_new_session(directory, file_prefix: str, csv: bool):
+def start_new_session(directory, file_prefix: str, use_csv: bool):
     """
     Parameters
     ----------
@@ -37,7 +37,7 @@ def start_new_session(directory, file_prefix: str, csv: bool):
     None if there was a problem
     """
 
-    ext = 'csv' if csv else 'txt'
+    ext = 'csv' if use_csv else 'txt'
     p = Path(directory)
     if not p.exists():
         try:
@@ -57,7 +57,7 @@ def start_new_session(directory, file_prefix: str, csv: bool):
     try:
         fname = p / '{}_{}.{}'.format(file_prefix, max_i+1, ext)
         csvfile = open(str(fname), 'w', newline='')
-        writer = csv.writer(csvfile, delimiter=',') if csv else None
+        writer = csv.writer(csvfile, delimiter=',') if use_csv else None
         print('starting new logging session with file:', str(fname))
         return LogHandle(file=csvfile, writer=writer)
     except Exception as e:

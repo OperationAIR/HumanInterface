@@ -518,7 +518,7 @@ class App(tk.Tk):
             self.settings.start = 1
             self.switch_btn_text.set("Stop")
             if LOGGING_ENABLED:
-                self.log_handle = logger.start_new_session(directory=LOGDIR, file_prefix='sensors', csv=True)
+                self.log_handle = logger.start_new_session(directory=LOGDIR, file_prefix='sensors', use_csv=True)
         self.send_settings()
 
     def say_hello(self):
