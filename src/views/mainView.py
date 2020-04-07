@@ -12,6 +12,9 @@ from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg)
 from queue import Queue
 from tkinter import ttk, BOTH, N, S, E, W
 
+from utils.config import ConfigValues
+from utils.flatButton import FlatButton
+
 
 import enum
 
@@ -34,6 +37,8 @@ class MainView(Frame):
         self.settings = settings
         self.callback = callback
 
+        self.config = ConfigValues()
+
         self.fill_frame()
 
     def update(self, settings):
@@ -43,10 +48,13 @@ class MainView(Frame):
         return self.frame
 
     def fill_frame(self):
-        air_btn_text = StringVar()
-        air_btn_text.set("OperationAir")
-        air_btn = Button(self, textvariable=air_btn_text, background='#263655', highlightbackground='#161E2E',
-                         foreground='white', command=lambda: self.callback(MainViewActions.QUIT))
+        air_btn = FlatButton(self, self.callback, MainViewActions.QUIT,
+                             self.config.values['colors']['lightBlue'])
+        air_btn.setText("OperationAIR", "white")
+        # air_btn_text = StringVar()
+        # air_btn_text.set("OperationAir")
+        # air_btn = Button(self, textvariable=air_btn_text, background='#263655', highlightbackground='#161E2E',
+        #                  foreground='white', command=lambda: self.callback(MainViewActions.QUIT))
         air_btn.grid(row=0, column=0, sticky=N + S + E + W)
         #
         self.alarm_btn_text = StringVar()

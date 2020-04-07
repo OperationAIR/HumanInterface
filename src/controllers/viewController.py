@@ -17,7 +17,7 @@ from controllers.alarmController import playAlarm
 from controllers.communicationController import Microcontroller
 
 from views.mainView import MainView, MainViewActions
-from views.changeValueView import ChangeValueView, ChangeValueViewActions
+from views.changeAlarmSettingView import ChangeAlarmSettingsView, ChangeAlarmViewActions, AlarmType
 from views.activeAlarmView import alarm_overview
 from views.alarmSettingsView import AlarmPop
 
@@ -69,8 +69,6 @@ class ViewController(tk.Tk):
         self.setStyle()
 
         self.mainView = MainView(self.winfo_width(), self.winfo_height(), self.settings, self.mainViewCallback)
-        self.settingsView = ChangeValueView(self.winfo_width(), self.winfo_height(), self.settings,
-                                            self.changeValueViewCallback)
 
         self.mainView.pack(fill=BOTH, expand=True)
         # self.io_thread = Thread(target=self.asyncio)
@@ -81,9 +79,25 @@ class ViewController(tk.Tk):
     def updateSettings(self, settings):
         self.settings = settings
 
-    def changeValueViewCallback(self, action):
-        if action == ChangeValueViewActions.BACK:
-            self.settingsView.place_forget()
+    def changeValueViewCallback(self, type, min, max):
+        if type == AlarmType.PEEP:
+            self.settings.min_peep = min
+            self.settings.max_peep = max
+
+            print(min)
+            print(max)
+        elif type == AlarmType.OXYGEN:
+            self.settings.min_fio2 = min
+            self.settings.max_fio2 = max
+        elif type == AlarmType.PRESSURE:
+            self.settings.min_pressure = min
+            self.settings.max_pressure = max
+        elif type == AlarmType.TIDAL:
+            self.settings.min_tv = min
+            self.settings.max_tv = max
+        self.settingsView.place_forget()
+
+
 
     def mainViewCallback(self, action):
         if action == MainViewActions.QUIT:
@@ -103,7 +117,10 @@ class ViewController(tk.Tk):
         elif action == MainViewActions.PEEP:
             print("PEEP")
             #self.PeepPop(self.settings)
-            self.settingsView.place(x=10, y=10, width=self.winfo_width() - 20, height=self.winfo_height() - 20)
+            self.settingsView = ChangeAlarmSettingsView(AlarmType.PEEP, self.settings.min_peep, 0, 45, self.settings.max_peep, 5, 50, 5, "PEEP [cm H2O]",
+                                                        self.changeValueViewCallback)
+            self.settingsView.place(x=0, y=0, width=self.winfo_width(), height=self.winfo_height())
+            self.settingsView.fill_frame()
         elif action == MainViewActions.FREQ:
             print("Freq")
             self.FreqPop(self.settings)

@@ -3,6 +3,10 @@ window:
 
 colors:
   backgroundColor: "#000000"
+  green: "#43dba8"
+  lightBlue: "#263755"
+  mediumBlue: "#1e2a42"
+  darkBlue: "#161d2d"
 
 defaultSettings:
   start: 0
