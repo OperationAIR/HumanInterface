@@ -5,7 +5,6 @@ import random
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import matplotlib
-from time import sleep
 matplotlib.use("TkAgg")
 from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg, NavigationToolbar2Tk)
 from matplotlib.figure import Figure
@@ -17,8 +16,8 @@ from tkinter import messagebox
 from tkinter import StringVar, Button, Tk, font
 from settings import Settings
 from sensors import Sensors
-from Alarm_sounds import playAlarm
-from alarmOverview import alarm_overview
+from alarm_sounds import playAlarm
+from alarm_overview import alarm_overview
 from alarmsettings import AlarmPop
 from mcu import Microcontroller
 
@@ -26,19 +25,8 @@ import gui_utils as gut
 
 import logger
 
-BAUDRATE = 500000
+from constants import *
 
-LOGGING_ENABLED = True
-LOGDIR = 'sensorlogs'
-
-FULLSCREEN = True
-SIMULATE = False
-# for RPi
-TTY = '/dev/ttyS0'
-# for Mac
-#TTY = '/dev/cu.usbmodemC1DDCDF83'
-# for Ubuntu
-#TTY = '/dev/ttyUSB0'
 
 class App(tk.Tk):
     def __init__(self):
@@ -88,22 +76,22 @@ class App(tk.Tk):
 
     def setValues(self, settings, popup, valuetype, value, text):
         if valuetype == "peep":
-            if value <= 35 and value >= 5:
+            if value <= PEEP_RANGE.max and value >= PEEP_RANGE.min:
                 settings.peep = value
             text.set("Confirm \n PEEP"+'\n'+str(settings.peep))
             return
         if valuetype == "freq":
-            if value <= 30 and value >= 5:
+            if value <= FREQ_RANGE.max and value >= FREQ_RANGE.min:
                 settings.freq = value
             text.set("Confirm \n Frequency"+'\n'+str(settings.freq))
             return
         if valuetype == "pres":
-            if value <= 70 and value >= 10:
+            if value <= PRESSURE_RANGE.max and value >= PRESSURE_RANGE.min:
                 settings.pressure = value
             text.set("Confirm \n Pressure"+'\n'+str(settings.pressure))
             return
         if valuetype == "oxygen":
-            if value <= 100 and value >= 20:
+            if value <= OXYGEN_RANGE.max and value >= OXYGEN_RANGE.min:
                 settings.oxygen = value
             text.set("Confirm \n Oxygen"+'\n'+str(settings.oxygen))
             return
@@ -131,11 +119,11 @@ class App(tk.Tk):
         text_btn.config(height=15, width=20, state="normal")
         text_btn.pack(side="left")
 
-        btn2 = Button(popup, text="+",background='#263655',foreground='white', command=lambda: self.setValues(settings, popup,"freq", settings.freq+1, text))
+        btn2 = Button(popup, text="+",background='#263655',foreground='white', command=lambda: self.setValues(settings, popup,"freq", settings.freq+FREQ_RANGE.step, text)) # todo should be model based
         btn2.config(height=15, width=20, state="normal")
         btn2.pack(side="left")
 
-        btn3 = Button(popup, text="-",background='#263655',foreground='white', command=lambda: self.setValues(settings, popup,"freq", settings.freq-1, text))
+        btn3 = Button(popup, text="-",background='#263655',foreground='white', command=lambda: self.setValues(settings, popup,"freq", settings.freq-FREQ_RANGE.step, text))
         btn3.config(height=15, width=20, state="normal")
         btn3.pack(side="left")
 
@@ -174,11 +162,11 @@ class App(tk.Tk):
         text_btn.config(height=15, width=30, state="normal")
         text_btn.pack(side="left")
 
-        btn2 = Button(popup, text="+",background='#263655',foreground='white', command=lambda: self.setValues(settings, popup,"peep", settings.peep+5, text))
+        btn2 = Button(popup, text="+",background='#263655',foreground='white', command=lambda: self.setValues(settings, popup,"peep", settings.peep+PEEP_RANGE.step, text))
         btn2.config(height=15, width=30, state="normal")
         btn2.pack(side="left",fill="x")
 
-        btn3 = Button(popup, text="-",background='#263655',foreground='white', command=lambda: self.setValues(settings, popup,"peep", settings.peep-5, text))
+        btn3 = Button(popup, text="-",background='#263655',foreground='white', command=lambda: self.setValues(settings, popup,"peep", settings.peep-PEEP_RANGE.step, text))
         btn3.config(height=15, width=30, state="normal")
         btn3.pack(side="left",fill="x")
 
@@ -200,11 +188,11 @@ class App(tk.Tk):
         text_btn.config(height=15, width=30, state="normal")
         text_btn.pack(side="left")
 
-        btn2 = Button(popup, text="+",background='#263655',foreground='white', command=lambda: self.setValues(settings, popup,"pres", settings.pressure+5, text))
+        btn2 = Button(popup, text="+",background='#263655',foreground='white', command=lambda: self.setValues(settings, popup,"pres", settings.pressure+PRESSURE_RANGE.step, text))
         btn2.config(height=15, width=30, state="normal")
         btn2.pack(side="left",fill="x")
 
-        btn3 = Button(popup, text="-",background='#263655',foreground='white', command=lambda: self.setValues(settings, popup,"pres", settings.pressure-5, text))
+        btn3 = Button(popup, text="-",background='#263655',foreground='white', command=lambda: self.setValues(settings, popup,"pres", settings.pressure-PRESSURE_RANGE.step, text))
         btn3.config(height=15, width=30, state="normal")
         btn3.pack(side="left",fill="x")
 
@@ -226,11 +214,11 @@ class App(tk.Tk):
         text_btn.config(height=15, width=30, state="normal")
         text_btn.pack(side="left")
 
-        btn2 = Button(popup, text="+",background='#263655',foreground='white', command=lambda: self.setValues(settings, popup,"oxygen", settings.oxygen+5, text))
+        btn2 = Button(popup, text="+",background='#263655',foreground='white', command=lambda: self.setValues(settings, popup,"oxygen", settings.oxygen+OXYGEN_RANGE.step, text))
         btn2.config(height=15, width=30, state="normal")
         btn2.pack(side="left",fill="x")
 
-        btn3 = Button(popup, text="-",background='#263655',foreground='white', command=lambda: self.setValues(settings, popup,"oxygen", settings.oxygen-5, text))
+        btn3 = Button(popup, text="-",background='#263655',foreground='white', command=lambda: self.setValues(settings, popup,"oxygen", settings.oxygen-OXYGEN_RANGE.step, text))
         btn3.config(height=15, width=30, state="normal")
         btn3.pack(side="left",fill="x")
 
