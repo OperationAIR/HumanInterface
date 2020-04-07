@@ -54,9 +54,9 @@ class ChangeAlarmSettingsView(Frame):
     def valueChange(self, action):
         if action == ChangeAlarmViewActions.MINMINUS and self.min_current - self.step >= self.min_min:
             self.min_current = self.min_current - self.step
-        elif action == ChangeAlarmViewActions.MINPLUS and self.min_current + self.step <= self.min_max:
+        elif action == ChangeAlarmViewActions.MINPLUS and self.min_current + self.step <= self.min_max and self.max_current - self.min_current > self.step:
             self.min_current = self.min_current + self.step
-        elif action == ChangeAlarmViewActions.MAXMINUS and self.max_current - self.step >= self.max_min:
+        elif action == ChangeAlarmViewActions.MAXMINUS and self.max_current - self.step >= self.max_min and self.max_current - self.min_current > self.step:
             self.max_current = self.max_current - self.step
         elif action == ChangeAlarmViewActions.MAXPLUS and self.max_current + self.step <= self.max_max:
             self.max_current = self.max_current + self.step

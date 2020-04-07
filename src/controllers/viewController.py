@@ -17,9 +17,10 @@ from controllers.alarmController import playAlarm
 from controllers.communicationController import Microcontroller
 
 from views.mainView import MainView, MainViewActions
+from views.alarmSettingsView import AlarmSettingsView
 from views.changeAlarmSettingView import ChangeAlarmSettingsView, ChangeAlarmViewActions, AlarmType
 from views.activeAlarmView import alarm_overview
-from views.alarmSettingsView import AlarmPop
+from views.oldAlarmSettingsView import AlarmPop
 
 
 from utils import logger
@@ -79,13 +80,38 @@ class ViewController(tk.Tk):
     def updateSettings(self, settings):
         self.settings = settings
 
+    def alarmOverviewCallback(self, type):
+        if type == AlarmType.PEEP:
+            self.settingsView = ChangeAlarmSettingsView(AlarmType.PEEP, self.settings.min_peep, 0, 45,
+                                                        self.settings.max_peep, 5, 50, 5, "PEEP [cm H2O]",
+                                                        self.changeValueViewCallback)
+            self.settingsView.place(x=0, y=0, width=self.winfo_width(), height=self.winfo_height())
+            self.settingsView.fill_frame()
+        elif type == AlarmType.OXYGEN:
+            self.settingsView = ChangeAlarmSettingsView(AlarmType.OXYGEN, self.settings.min_fio2, 0, 45,
+                                                        self.settings.max_fio2, 5, 50, 5, "PEEP [cm H2O]",
+                                                        self.changeValueViewCallback)
+            self.settingsView.place(x=0, y=0, width=self.winfo_width(), height=self.winfo_height())
+            self.settingsView.fill_frame()
+        elif type == AlarmType.TIDAL:
+            self.settingsView = ChangeAlarmSettingsView(AlarmType.TIDAL, self.settings.min_tv, 0, 45,
+                                                        self.settings.max_tv, 5, 50, 5, "PEEP [cm H2O]",
+                                                        self.changeValueViewCallback)
+            self.settingsView.place(x=0, y=0, width=self.winfo_width(), height=self.winfo_height())
+            self.settingsView.fill_frame()
+        elif type == AlarmType.PRESSURE:
+            self.settingsView = ChangeAlarmSettingsView(AlarmType.PRESSURE, self.settings.min_pressure, 0, 45,
+                                                        self.settings.max_pressure, 5, 50, 5, "PEEP [cm H2O]",
+                                                        self.changeValueViewCallback)
+            self.settingsView.place(x=0, y=0, width=self.winfo_width(), height=self.winfo_height())
+            self.settingsView.fill_frame()
+
+        self.alarmOverview.place_forget()
+
     def changeValueViewCallback(self, type, min, max):
         if type == AlarmType.PEEP:
             self.settings.min_peep = min
             self.settings.max_peep = max
-
-            print(min)
-            print(max)
         elif type == AlarmType.OXYGEN:
             self.settings.min_fio2 = min
             self.settings.max_fio2 = max
@@ -95,6 +121,10 @@ class ViewController(tk.Tk):
         elif type == AlarmType.TIDAL:
             self.settings.min_tv = min
             self.settings.max_tv = max
+
+        self.alarmOverview = AlarmSettingsView(self.settings, self.alarmOverviewCallback)
+        self.alarmOverview.place(x=0, y=0, width=self.winfo_width(), height=self.winfo_height())
+        self.alarmOverview.fill_frame()
         self.settingsView.place_forget()
 
 
@@ -104,6 +134,9 @@ class ViewController(tk.Tk):
             print("Quitting")
             self.quit()
         elif action == MainViewActions.ALARM:
+            self.alarmOverview = AlarmSettingsView(self.settings, self.alarmOverviewCallback)
+            self.alarmOverview.place(x=0, y=0, width=self.winfo_width(), height=self.winfo_height())
+            self.alarmOverview.fill_frame()
             print("Alarm")
         elif action == MainViewActions.VIEW_ALARMS:
             print("Alarm Overview")
@@ -117,31 +150,12 @@ class ViewController(tk.Tk):
         elif action == MainViewActions.PEEP:
             print("PEEP")
             #self.PeepPop(self.settings)
-            self.settingsView = ChangeAlarmSettingsView(AlarmType.PEEP, self.settings.min_peep, 0, 45, self.settings.max_peep, 5, 50, 5, "PEEP [cm H2O]",
-                                                        self.changeValueViewCallback)
-            self.settingsView.place(x=0, y=0, width=self.winfo_width(), height=self.winfo_height())
-            self.settingsView.fill_frame()
         elif action == MainViewActions.FREQ:
             print("Freq")
-            self.settingsView = ChangeAlarmSettingsView(AlarmType.PEEP, self.settings.min_peep, 0, 45,
-                                                        self.settings.max_peep, 5, 50, 5, "PEEP [cm H2O]",
-                                                        self.changeValueViewCallback)
-            self.settingsView.place(x=0, y=0, width=self.winfo_width(), height=self.winfo_height())
-            self.settingsView.fill_frame()
         elif action == MainViewActions.PRESSURE:
             print("Pressure")
-            self.settingsView = ChangeAlarmSettingsView(AlarmType.PEEP, self.settings.min_peep, 0, 45,
-                                                        self.settings.max_peep, 5, 50, 5, "PEEP [cm H2O]",
-                                                        self.changeValueViewCallback)
-            self.settingsView.place(x=0, y=0, width=self.winfo_width(), height=self.winfo_height())
-            self.settingsView.fill_frame()
         elif action == MainViewActions.OXYGEN:
             print("Oxygen")
-            self.settingsView = ChangeAlarmSettingsView(AlarmType.PEEP, self.settings.min_peep, 0, 45,
-                                                        self.settings.max_peep, 5, 50, 5, "PEEP [cm H2O]",
-                                                        self.changeValueViewCallback)
-            self.settingsView.place(x=0, y=0, width=self.winfo_width(), height=self.winfo_height())
-            self.settingsView.fill_frame()
         else:
             print("Unknown action")
 
