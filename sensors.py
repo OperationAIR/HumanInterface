@@ -28,7 +28,7 @@ class Sensors:
             tidal_volume, minute_volume,
             cycle_state, power_status):
 
-        self.timestamp = "now"
+        self.timestamp = datetime.datetime.now()
         self.flow_inhale = flow_inhale / 1000
         self.flow_exhale = flow_exhale / 1000
         self.pressure_inhale = pressure_to_cm_h2o(pressure_inhale)
