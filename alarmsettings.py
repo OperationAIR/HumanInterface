@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import StringVar, Button, Tk, font
 from tkinter import ttk
+from constants import *
 
 def AlarmPop(self, settings):
     popup = Tk()

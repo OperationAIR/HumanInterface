@@ -257,7 +257,7 @@ class App(tk.Tk):
         plt.tick_params(axis="both", which="both", bottom="off", top="off",
                 labelbottom="on", left="off", right="off", labelleft="on")
         # Create a blank line. We will update the line in animate
-        line, = ax.plot(xs, ys, color= '#43DBA7')
+        line, = ax.plot(xs, ys, color=FLOW_PLOT_COLOR)
 
         # Add labels
         plt.title('Flow', fontsize= 13, color="white")
@@ -318,7 +318,7 @@ class App(tk.Tk):
         plt.tick_params(axis="both", which="both", bottom="off", top="off",
                 labelbottom="on", left="off", right="off", labelleft="on")
         # Create a blank line. We will update the line in animate
-        line, = ax.plot(xs, ys, color= '#EBE1D0')
+        line, = ax.plot(xs, ys, color=PRESSURE_PLOT_COLOR)
 
         # Add labels
         plt.title('Pressure', fontsize= 13, color="white")
