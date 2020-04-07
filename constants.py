@@ -4,6 +4,8 @@ from collections import namedtuple
 FULLSCREEN = True
 SIMULATE = False
 
+WINDOW_DIMENSIONS = '800x480'
+
 # Serial Settings
 BAUDRATE = 500000
 # for RPi

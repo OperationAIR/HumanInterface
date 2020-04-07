@@ -6,7 +6,7 @@ def alarm_overview(self, settings):
     popup = Tk()
     popup.attributes('-fullscreen', True)
     popup.wm_title("Alarm settings")
-    popup.geometry('800x480')
+    popup.geometry(WINDOW_DIMENSIONS)
     popup.configure(bg= BACKGROUND_COLOR)
 
 
