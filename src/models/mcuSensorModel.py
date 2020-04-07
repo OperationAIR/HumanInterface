@@ -1,7 +1,9 @@
-
-import datetime
 import struct
-from tools import pressure_to_cm_h2o
+from utils.math import pressure_to_cm_h2o
+import struct
+
+from utils.math import pressure_to_cm_h2o
+
 
 class Sensors:
     """

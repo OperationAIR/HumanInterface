@@ -1,50 +1,48 @@
-import tkinter as tk
 import signal
-import time
-import random
-import matplotlib.pyplot as plt
-import matplotlib.animation as animation
+import tkinter as tk
+from utils.config import ConfigValues
 import matplotlib
-from time import sleep
+import matplotlib.animation as animation
+import matplotlib.pyplot as plt
+import tkinter as tk
+
 matplotlib.use("TkAgg")
-from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg, NavigationToolbar2Tk)
-from matplotlib.figure import Figure
-from types import SimpleNamespace
-from threading import Thread
+from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg)
 from queue import Queue
 from tkinter import ttk
-from tkinter import messagebox
-from tkinter import StringVar, Button, Tk, font
-from settings import Settings
-from sensors import Sensors
-from Alarm_sounds import playAlarm
-from alarmOverview import alarm_overview
-from alarmsettings import AlarmPop
-from mcu import Microcontroller
+from tkinter import StringVar, Button, Tk
+from models.mcuSettingsModel import Settings
+from models.mcuSensorModel import Sensors
+from controllers.alarmController import playAlarm
+from views.activeAlarmView import alarm_overview
+from views.alarmSettingsView import AlarmPop
+from controllers.communicationController import Microcontroller
 
-import gui_utils as gut
 
-import logger
+from utils import logger
 
-BAUDRATE = 500000
+class ViewController(tk.Tk):
 
-LOGGING_ENABLED = True
-LOGDIR = '.'
-
-FULLSCREEN = True
-SIMULATE = False
-# for RPi
-TTY = '/dev/ttyS0'
-# for Mac
-#TTY = '/dev/cu.usbmodemC1DDCDF83'
-# for Ubuntu
-#TTY = '/dev/ttyUSB0'
-
-class App(tk.Tk):
-    def __init__(self):
+    def __init__(self, settings, mcu):
         super().__init__()
 
-        #For plotting
+        self.settings = settings
+        self.mcu = mcu
+
+        config = ConfigValues()
+
+        # for RPi
+        self.LOGGING_ENABLED = config.values['developer']['logEnabled']
+        self.LOGDIR = config.values['developer']['logDir']
+
+        self.protocol("WM_DELETE_WINDOW", self.quit)
+        self.title("Operation Air Ventilator")
+        self.geometry('800x480')
+        signal.signal(signal.SIGINT, self.quit)
+        self.attributes('-fullscreen', config.values['window']['fullscreen'])
+        self.center()
+
+        # For plotting
         self.line_pressure = None
         self.line_flow = None
         self.ys_p = []
@@ -55,33 +53,32 @@ class App(tk.Tk):
 
         self.latest_sensor_data = Sensors.default()
 
-        self.settings = Settings(
-            start=0,
-            peep=5,
-            freq=20,
-            ratio=2,
-            pressure=30,
-            oxygen = 25,
-            max_pressure=50,
-            min_pressure=20,
-            max_tv=800,
-            min_tv=50,
-            max_fio2=50,
-            min_fio2=20,
-            max_peep = 35,
-            min_peep = 5)
 
         self.BuildGui()
-        self.sensor_queue = Queue()
-        self.settings_queue = Queue()
-        self.mcu = Microcontroller(TTY, BAUDRATE, self.settings_queue, self.sensor_queue, simulate=SIMULATE)
-
-        self._thread_alive = True
-        self.io_thread = None
-        #self.io_thread = Thread(target=self.asyncio)
-        #self.io_thread.daemon = True
-        #self.io_thread.start()
+        # self.io_thread = Thread(target=self.asyncio)
+        # self.io_thread.daemon = True
+        # self.io_thread.start()
         print(self.req_sensors())
+
+    def updateSettings(self, settings):
+        self.settings = settings
+
+    def center(self):
+        """
+        centers a tkinter window
+        :param win: the root or Toplevel window to center
+        """
+        self.update_idletasks()
+        width = self.winfo_width()
+        frm_width = self.winfo_rootx() - self.winfo_x()
+        win_width = width + 2 * frm_width
+        height = self.winfo_height()
+        titlebar_height = self.winfo_rooty() - self.winfo_y()
+        win_height = height + titlebar_height + frm_width
+        x = self.winfo_screenwidth() // 2 - win_width // 2
+        y = self.winfo_screenheight() // 2 - win_height // 2
+        self.geometry('{}x{}+{}+{}'.format(width, height, x, y))
+        self.deiconify()
 
     def giveAlarm(self):
         pass # print("alarm!!")
@@ -517,8 +514,8 @@ class App(tk.Tk):
             # send start
             self.settings.start = 1
             self.switch_btn_text.set("Stop")
-            if LOGGING_ENABLED:
-                self.log_handle = logger.start_new_session(directory=LOGDIR, file_prefix='sensors', csv=True)
+            if self.LOGGING_ENABLED:
+                self.log_handle = logger.start_new_session(directory=self.LOGDIR, file_prefix='sensors', csv=True)
         self.send_settings()
 
     def say_hello(self):
@@ -538,42 +535,3 @@ class App(tk.Tk):
         if popup:
             popup.destroy()
         print("Send settings:", self.settings)
-
-    def asyncio(self):
-
-        if self.settings.start:
-            self.req_sensors()
-            if self.latest_sensor_data.cycle_state:
-                self.checkAllAlarms(self.settings, self.latest_sensor_data)
-            self.update_buttons()
-
-        if not self.sensor_queue.empty():
-            sensors = self.sensor_queue.get()
-            self.latest_sensor_data = sensors
-
-            if self.log_handle:
-                logger.write_csv(self.log_handle, self.latest_sensor_data.as_list())
-
-        if not self.settings_queue.empty():
-            settings = self.settings_queue.get()
-            if not self.settings.equals(settings):
-                print("MISMATCH SETTINGS: RESEND")
-                self.send_settings()
-
-        if self._thread_alive:
-            self.after(100,self.asyncio)
-
-
-
-if __name__ == "__main__":
-    app = App()
-    app.protocol("WM_DELETE_WINDOW", app.quit)
-    app.title("Operation Air Ventilator")
-    app.geometry('800x480')
-    signal.signal(signal.SIGINT, app.quit)
-    app.attributes('-fullscreen', FULLSCREEN)
-    gut.center(app)
-    app.asyncio()
-    app.mainloop()
-
-    print ('bye')

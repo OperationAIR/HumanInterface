@@ -1,19 +1,18 @@
 
-import sys
-import serial
-import threading
-import time
+import binascii
+import random
 import signal
 import struct
-from serial.tools import list_ports
-from queue import Queue
-from enum import Enum
-import random
-import binascii
+import sys
+import time
 
 import crcmod
-from settings import Settings
-from sensors import Sensors
+from enum import Enum
+from queue import Queue
+from serial.tools import list_ports
+
+from models.mcuSettingsModel import Settings
+from models.mcuSensorModel import Sensors
 
 PREFIX_LEN = 4
 
@@ -60,7 +59,7 @@ class Microcontroller:
         self.serialdata = b''
         self.serial_retry = 0
 
-        self.connect()
+        #self.connect()
         self.simulate_thread = None
         if simulate:
             self._simulation_alive = True
@@ -282,7 +281,6 @@ class Microcontroller:
 if __name__ == "__main__":
     import serial
     import threading
-    from settings import Settings
 
     BAUDRATE = 500000
     TTY = '/dev/cu.usbmodemC1DDCDF83'
