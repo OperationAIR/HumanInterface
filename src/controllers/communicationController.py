@@ -61,13 +61,14 @@ class Microcontroller:
         self.serialdata = b''
         self.serial_retry = 0
 
-        #self.connect()
         self.simulate_thread = None
         if simulate:
             self._simulation_alive = True
             self.simulate_thread = threading.Thread(target=self._simulate_sensor_data, name='simulate')
             self.simulate_thread.daemon = True
             self.simulate_thread.start()
+        else:
+            self.connect()
 
     def _simulate_sensor_data(self):
         while self._simulation_alive:
