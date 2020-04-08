@@ -210,7 +210,6 @@ class Microcontroller:
                         self.serial_retry = 0
                 else:
                     self.serial_retry += 1
-                    print("1. not enough data: {}/{} bytes".format(len(data[offset:]), packet_size))
                     if self.serial_retry >= UART_MAX_RETRIES:
                         print("No luck after retries: delete data ", len(data[offset:]))
                         print('databuffer contents:',  binascii.hexlify(data))

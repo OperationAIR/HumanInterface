@@ -102,7 +102,7 @@ class App(tk.Tk):
     def update_buttons(self):
         self.freq_btn_text.set("Frequency"+'\n'+str(self.settings.freq)+" [1/min]")
         self.peep_btn_text.set("PEEP"+'\n'+str(self.settings.peep)+" [cm H2O]")
-        self.tv_btn_text.set("Tidal Volume\n"+str(self.latest_sensor_data.minute_volume)+" [L/min]\n"+str(self.latest_sensor_data.tidal_volume)+" [mL]")
+        self.tv_btn_text.set("Tidal Volume\n"+str(self.latest_sensor_data.minute_volume)+" [L/min]\n"+str(self.latest_sensor_data.tidal_volume_exhale)+" [mL]")
         self.pres_btn_text.set("Pressure"+'\n'+str(self.settings.pressure)+" [cm H2O]")
         self.oxy_btn_text.set("Oxygen (02)"+'\n'+str(self.settings.oxygen)+" [%]"+'\n'+"Current: "+str(self.latest_sensor_data.oxygen)+" [%]")
 
@@ -369,11 +369,11 @@ class App(tk.Tk):
         else:
             self.peep_btn.configure(background=BUTTON_COLOR)
 
-        if sensors.tidal_volume > settings.max_tv:
+        if sensors.tidal_volume_exhale > settings.max_tv:
             self.tv_btn.configure(background=ALARM_COLOR)
             playAlarm()
 
-        elif sensors.tidal_volume < settings.min_tv:
+        elif sensors.tidal_volume_exhale < settings.min_tv:
             self.tv_btn.configure(background=ALARM_COLOR)
             playAlarm()
         else:
