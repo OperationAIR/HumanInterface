@@ -17,10 +17,12 @@ from controllers.alarmController import playAlarm
 from controllers.communicationController import Microcontroller
 
 from views.mainView import MainView, MainViewActions
-from views.alarmSettingsView import AlarmSettingsView
-from views.changeAlarmSettingView import ChangeAlarmSettingsView, ChangeAlarmViewActions, AlarmType
+from views.changeSingleSettingView import ChangeSingleSettingView
+from views.alarmSettingsOverview import AlarmSettingsOverview
+from views.changeAlarmSettingView import ChangeAlarmSettingView, ChangeAlarmViewActions
 from views.activeAlarmView import alarm_overview
-from views.oldAlarmSettingsView import AlarmPop
+
+from utils.constants import SettingType
 
 
 from utils import logger
@@ -32,16 +34,16 @@ class ViewController(tk.Tk):
 
         self.settings = Settings.fromConfig()
 
-        config = ConfigValues()
+        self.config = ConfigValues()
 
         self._thread_alive = True
         self.io_thread = None
 
-        self.SIMULATE = config.values["developer"]["simulate"]
-        self.TTY = config.values['developer']['commPort']
-        self.BAUDRATE = config.values['developer']['baudrate']
-        self.LOGGING_ENABLED = config.values['developer']['logEnabled']
-        self.LOGDIR = config.values['developer']['logDir']
+        self.SIMULATE = self.config.values["developer"]["simulate"]
+        self.TTY = self.config.values['developer']['commPort']
+        self.BAUDRATE = self.config.values['developer']['baudrate']
+        self.LOGGING_ENABLED = self.config.values['developer']['logEnabled']
+        self.LOGDIR = self.config.values['developer']['logDir']
 
         self.sensor_queue = Queue()
         self.settings_queue = Queue()
@@ -53,7 +55,7 @@ class ViewController(tk.Tk):
         self.title("Operation Air Ventilator")
         self.geometry('800x480')
         signal.signal(signal.SIGINT, self.quit)
-        self.attributes('-fullscreen', config.values['window']['fullscreen'])
+        self.attributes('-fullscreen', self.config.values['window']['fullscreen'])
         self.center()
 
         # For plotting
@@ -81,60 +83,80 @@ class ViewController(tk.Tk):
         self.settings = settings
 
     def alarmOverviewCallback(self, type):
-        if type == AlarmType.PEEP:
-            self.settingsView = ChangeAlarmSettingsView(AlarmType.PEEP, self.settings.min_peep, 0, 45,
-                                                        self.settings.max_peep, 5, 50, 5, "PEEP [cm H2O]",
-                                                        self.changeValueViewCallback)
+        if type == SettingType.PEEP:
+            min_peep = self.config.values['defaultSettings']['min_peep']
+            max_peep = self.config.values['defaultSettings']['max_peep']
+            self.settingsView = ChangeAlarmSettingView(SettingType.PEEP, self.settings.min_peep, min_peep, max_peep,
+                                                       self.settings.max_peep, min_peep, max_peep, 5, "PEEP [cm H2O]",
+                                                       self.changeValueViewCallback)
             self.settingsView.place(x=0, y=0, width=self.winfo_width(), height=self.winfo_height())
             self.settingsView.fill_frame()
-        elif type == AlarmType.OXYGEN:
-            self.settingsView = ChangeAlarmSettingsView(AlarmType.OXYGEN, self.settings.min_fio2, 0, 45,
-                                                        self.settings.max_fio2, 5, 50, 5, "PEEP [cm H2O]",
-                                                        self.changeValueViewCallback)
+        elif type == SettingType.OXYGEN:
+            min_fio2 = self.config.values['defaultSettings']['min_fio2']
+            max_fio2 = self.config.values['defaultSettings']['max_fio2']
+            self.settingsView = ChangeAlarmSettingView(SettingType.OXYGEN, self.settings.min_fio2, min_fio2, max_fio2,
+                                                       self.settings.max_fio2, min_fio2, max_fio2, 5, "Oxygen [O2]",
+                                                       self.changeValueViewCallback)
             self.settingsView.place(x=0, y=0, width=self.winfo_width(), height=self.winfo_height())
             self.settingsView.fill_frame()
-        elif type == AlarmType.TIDAL:
-            self.settingsView = ChangeAlarmSettingsView(AlarmType.TIDAL, self.settings.min_tv, 0, 45,
-                                                        self.settings.max_tv, 5, 50, 5, "PEEP [cm H2O]",
-                                                        self.changeValueViewCallback)
+        elif type == SettingType.TIDAL:
+            min_tv = self.config.values['defaultSettings']['min_tv']
+            max_tv = self.config.values['defaultSettings']['max_tv']
+            self.settingsView = ChangeAlarmSettingView(SettingType.TIDAL, self.settings.min_tv, min_tv, max_tv,
+                                                       self.settings.max_tv, min_tv, max_tv, 50, "Tidal Volume",
+                                                       self.changeValueViewCallback)
             self.settingsView.place(x=0, y=0, width=self.winfo_width(), height=self.winfo_height())
             self.settingsView.fill_frame()
-        elif type == AlarmType.PRESSURE:
-            self.settingsView = ChangeAlarmSettingsView(AlarmType.PRESSURE, self.settings.min_pressure, 0, 45,
-                                                        self.settings.max_pressure, 5, 50, 5, "PEEP [cm H2O]",
-                                                        self.changeValueViewCallback)
+        elif type == SettingType.PRESSURE:
+            min_press = self.config.values['defaultSettings']['min_pressure']
+            max_press = self.config.values['defaultSettings']['max_pressure']
+            self.settingsView = ChangeAlarmSettingView(SettingType.PRESSURE, self.settings.min_pressure, min_press, max_press,
+                                                       self.settings.max_pressure, min_press, max_press, 5, "Pressure [cm H2O]",
+                                                       self.changeValueViewCallback)
             self.settingsView.place(x=0, y=0, width=self.winfo_width(), height=self.winfo_height())
             self.settingsView.fill_frame()
 
         self.alarmOverview.place_forget()
 
     def changeValueViewCallback(self, type, min, max):
-        if type == AlarmType.PEEP:
+        if type == SettingType.PEEP:
             self.settings.min_peep = min
             self.settings.max_peep = max
-        elif type == AlarmType.OXYGEN:
+        elif type == SettingType.OXYGEN:
             self.settings.min_fio2 = min
             self.settings.max_fio2 = max
-        elif type == AlarmType.PRESSURE:
+        elif type == SettingType.PRESSURE:
             self.settings.min_pressure = min
             self.settings.max_pressure = max
-        elif type == AlarmType.TIDAL:
+        elif type == SettingType.TIDAL:
             self.settings.min_tv = min
             self.settings.max_tv = max
 
-        self.alarmOverview = AlarmSettingsView(self.settings, self.alarmOverviewCallback)
+        self.alarmOverview = AlarmSettingsOverview(self.settings, self.alarmOverviewCallback)
         self.alarmOverview.place(x=0, y=0, width=self.winfo_width(), height=self.winfo_height())
         self.alarmOverview.fill_frame()
         self.settingsView.place_forget()
 
+    def changeSingleSettingCallback(self, type, value):
+        if type == SettingType.PEEP:
+            self.settings.peep = value
+        if type == SettingType.OXYGEN:
+            self.settings.oxygen = value
+        if type == SettingType.PRESSURE:
+            self.settings.pressure = value
+        if type == SettingType.PEEP:
+            self.settings.peep = value
 
+        self.changeSettingView.place_forget()
+        self.mainView.update(self.settings)
+        self.mainView.fill_frame()
 
     def mainViewCallback(self, action):
         if action == MainViewActions.QUIT:
             print("Quitting")
             self.quit()
         elif action == MainViewActions.ALARM:
-            self.alarmOverview = AlarmSettingsView(self.settings, self.alarmOverviewCallback)
+            self.alarmOverview = AlarmSettingsOverview(self.settings, self.alarmOverviewCallback)
             self.alarmOverview.place(x=0, y=0, width=self.winfo_width(), height=self.winfo_height())
             self.alarmOverview.fill_frame()
             print("Alarm")
@@ -149,13 +171,36 @@ class ViewController(tk.Tk):
             self.start()
         elif action == MainViewActions.PEEP:
             print("PEEP")
-            #self.PeepPop(self.settings)
+            self.changeSettingView = ChangeSingleSettingView(SettingType.PEEP, self.settings.peep, self.settings.min_peep,
+                                                             self.settings.max_peep, 5, "PEEP [cm H2O]", self.changeSingleSettingCallback)
+            self.changeSettingView.place(x=0, y=0, width=self.winfo_width(), height=self.winfo_height())
+            self.changeSettingView.fill_frame()
         elif action == MainViewActions.FREQ:
             print("Freq")
+            min_freq = self.config.values['defaultSettings']['min_freq']
+            max_freq = self.config.values['defaultSettings']['max_freq']
+            self.changeSettingView = ChangeSingleSettingView(SettingType.FREQ, self.settings.freq,
+                                                             min_freq,
+                                                             max_freq, 1, "Frequency [1/min]",
+                                                             self.changeSingleSettingCallback)
+            self.changeSettingView.place(x=0, y=0, width=self.winfo_width(), height=self.winfo_height())
+            self.changeSettingView.fill_frame()
         elif action == MainViewActions.PRESSURE:
             print("Pressure")
+            self.changeSettingView = ChangeSingleSettingView(SettingType.PRESSURE, self.settings.pressure,
+                                                             self.settings.min_pressure,
+                                                             self.settings.max_pressure, 1, "Pressure [cm H2O]",
+                                                             self.changeSingleSettingCallback)
+            self.changeSettingView.place(x=0, y=0, width=self.winfo_width(), height=self.winfo_height())
+            self.changeSettingView.fill_frame()
         elif action == MainViewActions.OXYGEN:
             print("Oxygen")
+            self.changeSettingView = ChangeSingleSettingView(SettingType.OXYGEN, self.settings.oxygen,
+                                                             self.settings.min_fio2,
+                                                             self.settings.max_fio2, 5, "Oxygen [O2]",
+                                                             self.changeSingleSettingCallback)
+            self.changeSettingView.place(x=0, y=0, width=self.winfo_width(), height=self.winfo_height())
+            self.changeSettingView.fill_frame()
         else:
             print("Unknown action")
 

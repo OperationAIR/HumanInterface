@@ -9,16 +9,9 @@ import tkinter.font as tkFont
 
 from utils.config import ConfigValues
 from utils.flatButton import FlatButton
-
+from utils.constants import SettingType
 
 import enum
-
-class AlarmType(enum.Enum):
-    NONE = 0
-    PEEP = 1
-    PRESSURE = 2
-    TIDAL = 3
-    OXYGEN = 4
 
 class ChangeAlarmViewActions(enum.Enum):
     CONFIRM = 2
@@ -27,7 +20,7 @@ class ChangeAlarmViewActions(enum.Enum):
     MAXMINUS = 5
     MAXPLUS = 6
 
-class ChangeAlarmSettingsView(Frame):
+class ChangeAlarmSettingView(Frame):
 
     def __init__(self, type, min_current, min_min, min_max, max_current, max_min, max_max, step, description, callback, parent=None):
         self.config = ConfigValues()
@@ -73,7 +66,7 @@ class ChangeAlarmSettingsView(Frame):
         desc_btn.setText(self.description)
         desc_btn.grid(row=0, column=1, columnspan=2, sticky=N + S + E + W)
 
-        close_btn = FlatButton(self, self.confirmSetting, AlarmType.NONE,
+        close_btn = FlatButton(self, self.confirmSetting, SettingType.NONE,
                                self.config.values['colors']['lightBlue'], fontSize=20)
         close_btn.setText("Close")
         close_btn.grid(row=0, column=3, sticky=N+S+E+W, padx=10, pady=10)

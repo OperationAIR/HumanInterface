@@ -23,7 +23,8 @@ defaultSettings:
   min_fio2: 20
   max_peep: 35
   min_peep: 5
-
+  min_freq: 0
+  max_freq: 30
 developer:
   simulate: False
   commPort: '/dev/ttyS0'
