@@ -71,7 +71,7 @@ class ViewController(tk.Tk):
 
         self.setStyle()
 
-        self.mainView = MainView(self.winfo_width(), self.winfo_height(), self.settings, self.mainViewCallback)
+        self.mainView = MainView(self.winfo_width(), self.winfo_height(), self.settings, self.latest_sensor_data, self.mainViewCallback)
 
         self.mainView.pack(fill=BOTH, expand=True)
         # self.io_thread = Thread(target=self.asyncio)
@@ -148,8 +148,8 @@ class ViewController(tk.Tk):
             self.settings.peep = value
 
         self.changeSettingView.place_forget()
-        self.mainView.update(self.settings)
-        self.mainView.fill_frame()
+        self.mainView.update(self.settings, self.latest_sensor_data)
+        self.mcu.send_settings(self.settings)
 
     def mainViewCallback(self, action):
         if action == MainViewActions.QUIT:
@@ -297,84 +297,6 @@ class ViewController(tk.Tk):
         else:
             settings.ratio = 2
             textR.set("Ratio"+'\n'+'1:2')
-
-    def PeepPop(self, settings):
-        popup = Tk()
-        popup.wm_title("Peep")
-        popup.attributes('-fullscreen', True)
-        popup.geometry('800x480')
-        popup.configure(bg= '#161E2E')
-        label1 = ttk.Label(popup, text="Select New PEEP value", font=("Helvetica", 20))
-        label1.pack(side="top", fill="x", pady=10)
-
-        text = StringVar(popup)
-        text.set("Peep"+'\n'+str(settings.peep))
-        text_btn = Button(popup, textvariable=text,background='#263655',foreground='white',command=lambda: self.send_settings(popup))
-        text_btn.config(height=15, width=30, state="normal")
-        text_btn.pack(side="left")
-
-        btn2 = Button(popup, text="+",background='#263655',foreground='white', command=lambda: self.setValues(settings, popup,"peep", settings.peep+5, text))
-        btn2.config(height=15, width=30, state="normal")
-        btn2.pack(side="left",fill="x")
-
-        btn3 = Button(popup, text="-",background='#263655',foreground='white', command=lambda: self.setValues(settings, popup,"peep", settings.peep-5, text))
-        btn3.config(height=15, width=30, state="normal")
-        btn3.pack(side="left",fill="x")
-
-        popup.mainloop()
-        return
-
-    def PresPop(self, settings):
-        popup = Tk()
-        popup.wm_title("Pressure")
-        popup.attributes('-fullscreen', True)
-        popup.geometry('800x480')
-        popup.configure(bg= '#161E2E')
-        label1 = ttk.Label(popup, text="Select New Pressure value", font=("Helvetica", 20))
-        label1.pack(side="top", fill="x", pady=10)
-
-        text = StringVar(popup)
-        text.set("Pressure"+'\n'+str(settings.pressure))
-        text_btn = Button(popup, textvariable=text,background='#263655',foreground='white',command=lambda: self.send_settings(popup))
-        text_btn.config(height=15, width=30, state="normal")
-        text_btn.pack(side="left")
-
-        btn2 = Button(popup, text="+",background='#263655',foreground='white', command=lambda: self.setValues(settings, popup,"pres", settings.pressure+5, text))
-        btn2.config(height=15, width=30, state="normal")
-        btn2.pack(side="left",fill="x")
-
-        btn3 = Button(popup, text="-",background='#263655',foreground='white', command=lambda: self.setValues(settings, popup,"pres", settings.pressure-5, text))
-        btn3.config(height=15, width=30, state="normal")
-        btn3.pack(side="left",fill="x")
-
-        popup.mainloop()
-        return
-
-    def O2Pop(self, settings):
-        popup = Tk()
-        popup.wm_title("Oxygen")
-        popup.geometry('800x480')
-        popup.attributes('-fullscreen', True)
-        popup.configure(bg= '#161E2E')
-        label1 = ttk.Label(popup, text="Select New Oxygen percentage value", font=("Helvetica", 20))
-        label1.pack(side="top", fill="x", pady=10)
-
-        text = StringVar(popup)
-        text.set("Oxygen [%]"+'\n'+str(settings.oxygen))
-        text_btn = Button(popup, textvariable=text,background='#263655',foreground='white',command=lambda: self.send_settings(popup))
-        text_btn.config(height=15, width=30, state="normal")
-        text_btn.pack(side="left")
-
-        btn2 = Button(popup, text="+",background='#263655',foreground='white', command=lambda: self.setValues(settings, popup,"oxygen", settings.oxygen+5, text))
-        btn2.config(height=15, width=30, state="normal")
-        btn2.pack(side="left",fill="x")
-
-        btn3 = Button(popup, text="-",background='#263655',foreground='white', command=lambda: self.setValues(settings, popup,"oxygen", settings.oxygen-5, text))
-        btn3.config(height=15, width=30, state="normal")
-        btn3.pack(side="left",fill="x")
-
-        popup.mainloop()
-        return
 
     def GraphPlotFlow(self):
 
@@ -604,6 +526,7 @@ class ViewController(tk.Tk):
         if not self.sensor_queue.empty():
             sensors = self.sensor_queue.get()
             self.latest_sensor_data = sensors
+            self.mainView.update(self.settings, self.latest_sensor_data)
 
             if self.log_handle:
                 logger.write_csv(self.log_handle, self.latest_sensor_data.as_list())
@@ -614,5 +537,5 @@ class ViewController(tk.Tk):
                 print("MISMATCH SETTINGS: RESEND")
                 self.send_settings()
 
-                # if self._thread_alive:
-                #    self.after(100,self.asyncio)
+        if self._thread_alive:
+           self.after(100,self.asyncio)

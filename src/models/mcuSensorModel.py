@@ -38,7 +38,7 @@ class Sensors:
         self.pressure_patient = pressure_to_cm_h2o(pressure_patient)
         self.pressure_mfc = pressure_to_cm_h2o(pressure_mfc)
         self.oxygen = oxygen
-        self.tidal_volume = tidal_volume
+        self.tidal_volume = int(tidal_volume)
         self.minute_volume = minute_volume / 1000
         self.cycle_state = cycle_state # 0 -> stopped 1 -> peak pressure 2 -> peep pressure
         self.power_status = power_status
