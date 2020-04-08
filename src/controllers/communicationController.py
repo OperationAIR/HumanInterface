@@ -60,7 +60,7 @@ class Microcontroller:
         self.serialdata = b''
         self.serial_retry = 0
 
-        #self.connect()
+        self.connect()
         self.simulate_thread = None
         if simulate:
             self._simulation_alive = True
@@ -74,7 +74,7 @@ class Microcontroller:
                               random.random() * 10, random.random() * 40, random.random() * 40, random.random() * 500,
                               random.random() * 10, random.random() * 40, random.random() * 40)
             self.sensor_queue.put(sensors)
-            time.sleep(1)
+            time.sleep(0.1)
 
         print ('exit simulation thread')
 
