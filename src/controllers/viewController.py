@@ -6,6 +6,8 @@ import matplotlib.animation as animation
 import matplotlib.pyplot as plt
 import tkinter as tk
 
+from threading import Thread
+
 matplotlib.use("TkAgg")
 from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg)
 from queue import Queue
@@ -13,12 +15,14 @@ from tkinter import ttk, BOTH, N, S, E, W
 from tkinter import StringVar, Button, Tk, Label
 from models.mcuSettingsModel import Settings
 from models.mcuSensorModel import Sensors
-from controllers.alarmController import playAlarm
+from controllers.alarmController import registerAlarm
 from controllers.communicationController import Microcontroller
+from controllers.alarmController import AlarmController
 
 from views.mainView import MainView, MainViewActions
 from views.changeSingleSettingView import ChangeSingleSettingView
 from views.alarmSettingsOverview import AlarmSettingsOverview
+from views.alarmOverview import AlarmOverview
 from views.changeAlarmSettingView import ChangeAlarmSettingView, ChangeAlarmViewActions
 from views.activeAlarmView import alarm_overview
 
@@ -48,7 +52,7 @@ class ViewController(tk.Tk):
         self.sensor_queue = Queue()
         self.settings_queue = Queue()
         self.mcu = Microcontroller(self.TTY, self.BAUDRATE, self.settings_queue, self.sensor_queue, simulate=self.SIMULATE)
-
+        self.alarms = AlarmController()
         # for RPi
 
         self.protocol("WM_DELETE_WINDOW", self.quit)
@@ -74,15 +78,15 @@ class ViewController(tk.Tk):
         self.mainView = MainView(self.winfo_width(), self.winfo_height(), self.settings, self.latest_sensor_data, self.mainViewCallback)
 
         self.mainView.pack(fill=BOTH, expand=True)
-        # self.io_thread = Thread(target=self.asyncio)
-        # self.io_thread.daemon = True
-        # self.io_thread.start()
+        self.io_thread = Thread(target=self.asyncio)
+        self.io_thread.daemon = True
+        self.io_thread.start()
         print(self.req_sensors())
 
     def updateSettings(self, settings):
         self.settings = settings
 
-    def alarmOverviewCallback(self, type):
+    def alarmSettingsOverviewCallback(self, type):
         if type == SettingType.PEEP:
             min_peep = self.config.values['defaultSettings']['min_peep']
             max_peep = self.config.values['defaultSettings']['max_peep']
@@ -116,7 +120,7 @@ class ViewController(tk.Tk):
             self.settingsView.place(x=0, y=0, width=self.winfo_width(), height=self.winfo_height())
             self.settingsView.fill_frame()
 
-        self.alarmOverview.place_forget()
+        self.alarmSettingsOverview.place_forget()
 
     def changeValueViewCallback(self, type, min, max):
         if type == SettingType.PEEP:
@@ -132,9 +136,9 @@ class ViewController(tk.Tk):
             self.settings.min_tv = min
             self.settings.max_tv = max
 
-        self.alarmOverview = AlarmSettingsOverview(self.settings, self.alarmOverviewCallback)
-        self.alarmOverview.place(x=0, y=0, width=self.winfo_width(), height=self.winfo_height())
-        self.alarmOverview.fill_frame()
+        self.alarmSettingsOverview = AlarmSettingsOverview(self.settings, self.alarmSettingsOverviewCallback)
+        self.alarmSettingsOverview.place(x=0, y=0, width=self.winfo_width(), height=self.winfo_height())
+        self.alarmSettingsOverview.fill_frame()
         self.settingsView.place_forget()
 
     def changeSingleSettingCallback(self, type, value):
@@ -151,32 +155,38 @@ class ViewController(tk.Tk):
         self.mainView.update(self.settings, self.latest_sensor_data)
         self.mcu.send_settings(self.settings)
 
+    def alarmOverviewCallback(self, e):
+        self.alarmOverview.place_forget()
+
     def mainViewCallback(self, action):
         if action == MainViewActions.QUIT:
-            print("Quitting")
+            print("Clicked Quitting")
             self.quit()
         elif action == MainViewActions.ALARM:
-            self.alarmOverview = AlarmSettingsOverview(self.settings, self.alarmOverviewCallback)
+            self.alarmSettingsOverview = AlarmSettingsOverview(self.settings, self.alarmSettingsOverviewCallback)
+            self.alarmSettingsOverview.place(x=0, y=0, width=self.winfo_width(), height=self.winfo_height())
+            self.alarmSettingsOverview.fill_frame()
+            print("Clicked Alarm")
+        elif action == MainViewActions.VIEW_ALARMS:
+            print("Clicked Alarm Overview")
+            self.alarmOverview = AlarmOverview(self.alarmOverviewCallback)
             self.alarmOverview.place(x=0, y=0, width=self.winfo_width(), height=self.winfo_height())
             self.alarmOverview.fill_frame()
-            print("Alarm")
-        elif action == MainViewActions.VIEW_ALARMS:
-            print("Alarm Overview")
-            alarm_overview(self, self.settings)
+
         elif action == MainViewActions.PATIENT:
-            print("Patient")
+            print("Clicked Patient")
             self.mcu.try_start_inspiratroy_hold()
         elif action == MainViewActions.STARTSTOP:
-            print("Startstop")
+            print("Clicked Startstop")
             self.start()
         elif action == MainViewActions.PEEP:
-            print("PEEP")
+            print("Clicked PEEP")
             self.changeSettingView = ChangeSingleSettingView(SettingType.PEEP, self.settings.peep, self.settings.min_peep,
                                                              self.settings.max_peep, 5, "PEEP [cm H2O]", self.changeSingleSettingCallback)
             self.changeSettingView.place(x=0, y=0, width=self.winfo_width(), height=self.winfo_height())
             self.changeSettingView.fill_frame()
         elif action == MainViewActions.FREQ:
-            print("Freq")
+            print("Clicked Freq")
             min_freq = self.config.values['defaultSettings']['min_freq']
             max_freq = self.config.values['defaultSettings']['max_freq']
             self.changeSettingView = ChangeSingleSettingView(SettingType.FREQ, self.settings.freq,
@@ -186,7 +196,7 @@ class ViewController(tk.Tk):
             self.changeSettingView.place(x=0, y=0, width=self.winfo_width(), height=self.winfo_height())
             self.changeSettingView.fill_frame()
         elif action == MainViewActions.PRESSURE:
-            print("Pressure")
+            print("Clicked Pressure")
             self.changeSettingView = ChangeSingleSettingView(SettingType.PRESSURE, self.settings.pressure,
                                                              self.settings.min_pressure,
                                                              self.settings.max_pressure, 1, "Pressure [cm H2O]",
@@ -194,7 +204,7 @@ class ViewController(tk.Tk):
             self.changeSettingView.place(x=0, y=0, width=self.winfo_width(), height=self.winfo_height())
             self.changeSettingView.fill_frame()
         elif action == MainViewActions.OXYGEN:
-            print("Oxygen")
+            print("Clicked Oxygen")
             self.changeSettingView = ChangeSingleSettingView(SettingType.OXYGEN, self.settings.oxygen,
                                                              self.settings.min_fio2,
                                                              self.settings.max_fio2, 5, "Oxygen [O2]",
@@ -221,71 +231,6 @@ class ViewController(tk.Tk):
         y = self.winfo_screenheight() // 2 - win_height // 2
         self.geometry('{}x{}+{}+{}'.format(width, height, x, y))
         self.deiconify()
-
-    def giveAlarm(self):
-        pass # print("alarm!!")
-
-    def setValues(self, settings, popup, valuetype, value, text):
-        if valuetype == "peep":
-            if value <= 35 and value >= 5:
-                settings.peep = value
-            text.set("Confirm \n PEEP"+'\n'+str(settings.peep))
-            return
-        if valuetype == "freq":
-            if value <= 30 and value >= 5:
-                settings.freq = value
-            text.set("Confirm \n Frequency"+'\n'+str(settings.freq))
-            return
-        if valuetype == "pres":
-            if value <= 70 and value >= 10:
-                settings.pressure = value
-            text.set("Confirm \n Pressure"+'\n'+str(settings.pressure))
-            return
-        if valuetype == "oxygen":
-            if value <= 100 and value >= 20:
-                settings.oxygen = value
-            text.set("Confirm \n Oxygen"+'\n'+str(settings.oxygen))
-            return
-        popup.destroy()
-
-    def update_buttons(self):
-        self.freq_btn_text.set("Frequency"+'\n'+str(self.settings.freq)+" [1/min]")
-        self.peep_btn_text.set("PEEP"+'\n'+str(self.settings.peep)+" [cm H2O]")
-        self.tv_btn_text.set("Tidal Volume\n"+str(self.latest_sensor_data.minute_volume)+" [L/min]\n"+str(self.latest_sensor_data.tidal_volume)+" [mL]")
-        self.pres_btn_text.set("Pressure"+'\n'+str(self.settings.pressure)+" [cm H2O]")
-        self.oxy_btn_text.set("Oxygen (02)"+'\n'+str(self.settings.oxygen)+" [%]"+'\n'+"Current: "+str(self.latest_sensor_data.oxygen)+" [%]")
-
-    def FreqPop(self, settings):
-        popup = Tk()
-        popup.attributes('-fullscreen', True)
-        popup.wm_title("Frequency")
-        popup.geometry('800x480')
-        popup.configure(bg= '#161E2E')
-        label1 = ttk.Label(popup, text="Select New Frequency value", font=("Helvetica", 20))
-        label1.pack(side="top", fill="x", pady=10)
-
-        text = StringVar(popup)
-        text.set("Frequency"+'\n'+str(settings.freq))
-        text_btn = Button(popup, textvariable=text,background='#263655',foreground='white',command=lambda: self.send_settings(popup))
-        text_btn.config(height=15, width=20, state="normal")
-        text_btn.pack(side="left")
-
-        btn2 = Button(popup, text="+",background='#263655',foreground='white', command=lambda: self.setValues(settings, popup,"freq", settings.freq+1, text))
-        btn2.config(height=15, width=20, state="normal")
-        btn2.pack(side="left")
-
-        btn3 = Button(popup, text="-",background='#263655',foreground='white', command=lambda: self.setValues(settings, popup,"freq", settings.freq-1, text))
-        btn3.config(height=15, width=20, state="normal")
-        btn3.pack(side="left")
-
-        textR = StringVar(popup)
-        textR.set("Ratio"+'\n'+'1:2')
-        btn4 = Button(popup, textvariable=textR,background='#263655',foreground='white', command=lambda: self.setRatio(settings, textR))
-        btn4.config(height=15, width=30, state="normal")
-        btn4.pack(side="left")
-
-        popup.mainloop()
-        return
 
     def setRatio(self, settings, textR):
         if settings.ratio == 2:
@@ -421,43 +366,8 @@ class ViewController(tk.Tk):
             blit=True)
 
 
-    def checkAllAlarms(self, settings: Settings, sensors: Sensors):
-        if (not sensors.peep) and sensors.pressure > settings.max_pressure:
-            self.pres_btn.configure(background="#FF0749")
-            playAlarm()
-
-        elif (not sensors.peep) and sensors.pressure < settings.min_pressure:
-            self.pres_btn.configure(background="#FF0749")
-            playAlarm()
-
-        else:
-            self.pres_btn.configure(background="#263655")
-
-        if sensors.peep and sensors.peep > settings.min_peep:
-            self.pres_btn.configure(background="#FF0749")
-            playAlarm()
-
-        else:
-            self.peep_btn.configure(background="#263655")
-
-        if sensors.tidal_volume > settings.max_tv:
-            self.tv_btn.configure(background="#FF0749")
-            playAlarm()
-
-        elif sensors.tidal_volume < settings.min_tv:
-            self.tv_btn.configure(background="#FF0749")
-            playAlarm()
-        else:
-            self.tv_btn.configure(background="#263655")
-
-        if sensors.oxygen > settings.max_fio2:
-            self.oxy_btn.configure(background="#FF0749")
-            playAlarm()
-        elif sensors.oxygen < settings.min_fio2:
-            self.oxy_btn.configure(background="#FF0749")
-            playAlarm()
-        else:
-            self.oxy_btn.configure(background="#263655")
+    def checkAllAlarms(self, settings, sensors):
+        self.alarms.checkForNewAlarms(settings, sensors)
 
     def setStyle(self):
         self.configure(bg= '#161E2E')
@@ -481,20 +391,18 @@ class ViewController(tk.Tk):
         self.destroy()
 
     def start(self):
-
         if self.settings.start == 1:
             # send stop
             self.settings.start = 0
-            self.switch_btn_text.set("Start")
             if self.log_handle:
                 logger.close_session(self.log_handle)
                 self.log_handle = None
         else:
             # send start
             self.settings.start = 1
-            self.switch_btn_text.set("Stop")
             if self.LOGGING_ENABLED:
                 self.log_handle = logger.start_new_session(directory=self.LOGDIR, file_prefix='sensors', csv=True)
+        self.mainView.update(self.settings, self.latest_sensor_data)
         self.send_settings()
 
     def say_hello(self):
@@ -510,9 +418,6 @@ class ViewController(tk.Tk):
 
     def send_settings(self, popup=None):
         self.mcu.send_settings(self.settings)
-        self.update_buttons()
-        if popup:
-            popup.destroy()
         print("Send settings:", self.settings)
 
 
@@ -521,12 +426,10 @@ class ViewController(tk.Tk):
             self.req_sensors()
             if self.latest_sensor_data.cycle_state:
                 self.checkAllAlarms(self.settings, self.latest_sensor_data)
-            self.update_buttons()
 
         if not self.sensor_queue.empty():
             sensors = self.sensor_queue.get()
             self.latest_sensor_data = sensors
-            self.mainView.update(self.settings, self.latest_sensor_data)
 
             if self.log_handle:
                 logger.write_csv(self.log_handle, self.latest_sensor_data.as_list())
@@ -536,6 +439,8 @@ class ViewController(tk.Tk):
             if not self.settings.equals(settings):
                 print("MISMATCH SETTINGS: RESEND")
                 self.send_settings()
+
+        self.mainView.update(self.settings, self.latest_sensor_data)
 
         if self._thread_alive:
            self.after(100,self.asyncio)
