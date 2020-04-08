@@ -1,7 +1,7 @@
 from collections import namedtuple
 
 # Dev settings
-FULLSCREEN = True
+FULLSCREEN = False
 SIMULATE = False
 
 WINDOW_DIMENSIONS = '800x480'
@@ -9,9 +9,9 @@ WINDOW_DIMENSIONS = '800x480'
 # Serial Settings
 BAUDRATE = 500000
 # for RPi
-TTY = '/dev/ttyS0'
+#TTY = '/dev/ttyS0'
 # for Mac
-#TTY = '/dev/cu.usbmodemC1DDCDF83'
+TTY = '/dev/tty.usbmodemHTK321'
 # for Ubuntu
 #TTY = '/dev/ttyUSB0'
 

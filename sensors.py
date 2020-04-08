@@ -80,6 +80,11 @@ class Sensors:
         return [[self.timestamp, self.cycle_state, self.pressure, self.flow, self.tidal_volume,  self.oxygen]]
 
     @classmethod
+    def from_list(cls, list_data):
+        sensors = Sensors(0.0, float(list_data[3]), float(list_data[2]), float(list_data[2]), 0.0, 0.0, int(list_data[5]), int(list_data[4]), 0.0, int(list_data[1]), 0)
+        return sensors
+
+    @classmethod
     def from_binary(cls, packed_data):
         unpacked = struct.unpack('=' + 'i'*cls.num_properties(), packed_data)
         return cls(*unpacked)
