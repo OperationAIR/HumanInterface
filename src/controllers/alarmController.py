@@ -92,7 +92,7 @@ class AlarmController:
 
         def checkForNewAlarms(self, settings, sensordata):
             self.checkAlarm(sensordata.peep, settings.min_peep, settings.max_peep, AlarmType.PEEP_TOO_LOW, AlarmType.PEEP_TOO_HIGH)
-            self.checkAlarm(sensordata.tidal_volume, settings.min_tv, settings.max_tv, AlarmType.TIDAL_TOO_LOW,
+            self.checkAlarm(sensordata.tidal_volume_exhale, settings.min_tv, settings.max_tv, AlarmType.TIDAL_TOO_LOW,
                             AlarmType.TIDAL_TOO_HIGH)
             self.checkAlarm(sensordata.pressure, settings.min_pressure, settings.max_pressure, AlarmType.PRESSURE_TOO_LOW,
                             AlarmType.PRESSURE_TOO_HIGH)

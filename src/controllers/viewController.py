@@ -401,7 +401,7 @@ class ViewController(tk.Tk):
             # send start
             self.settings.start = 1
             if self.LOGGING_ENABLED:
-                self.log_handle = logger.start_new_session(directory=self.LOGDIR, file_prefix='sensors', csv=True)
+                self.log_handle = logger.start_new_session(directory=self.LOGDIR, file_prefix='sensors', use_csv=True)
         self.mainView.update(self.settings, self.latest_sensor_data)
         self.send_settings()
 

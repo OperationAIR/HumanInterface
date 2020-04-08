@@ -66,18 +66,17 @@ class MainView(Frame):
             self.alarm_overview_btn.setBackground()
 
         self.switch_btn.setText(start_stop_text)
-        self.tv_btn.setText("Tidal Volume" + '\n' + str(self.sensordata.tidal_volume) + " [mL]")
         self.peep_btn.setText("PEEP" + '\n' + str(self.settings.peep) + " [cm H2O]")
         self.freq_btn.setText("Frequency" + '\n' + str(self.settings.freq) + " [1/min]")
-        self.tv_btn.setText("Tidal Volume" + '\n' + str(self.sensordata.tidal_volume) + " [mL]")
+        self.tv_btn.setText("Tidal Volume\n"+str(self.sensordata.minute_volume)+" [L/min]\n"+str(self.sensordata.tidal_volume_exhale)+" [mL]")
         self.pres_btn.setText("Pressure" + '\n' + str(self.settings.pressure) + " [cm H2O]")
         self.oxy_btn.setText("Oxygen (02)" + '\n' + str(self.settings.oxygen) + " [%]")
 
-        self.checkAlarm(self.tv_btn, self.sensordata.tidal_volume, self.settings.min_tv, self.settings.max_tv)
+        self.checkAlarm(self.tv_btn, self.sensordata.tidal_volume_exhale, self.settings.min_tv, self.settings.max_tv)
 
         self.flowgraph.update(-1 * self.sensordata.flow)
         self.pressuregraph.update(self.sensordata.pressure)
-        self.tidalgraph.update(self.sensordata.tidal_volume)
+        self.tidalgraph.update(self.sensordata.tidal_volume_exhale)
 
     def checkAlarm(self, button, actual_value, min_value, max_value):
         if min_value < actual_value < max_value:
@@ -109,7 +108,7 @@ class MainView(Frame):
         tidal_x_len = 400  # Number of points to display
         tidal_y_range = [0, 80]  # Range of possible Y values to display
 
-        self.tidalgraph = GraphView("Tidal Volume", "[mL]", self.sensordata.tidal_volume, tidal_y_range,
+        self.tidalgraph = GraphView("Tidal Volume", "[mL]", self.sensordata.tidal_volume_exhale, tidal_y_range,
                                tidal_x_len, self.config.values['colors']['green'], self)
         self.tidalgraph.getPlot().grid(row=11, column=2, rowspan=5, columnspan=3, sticky=N + S + E + W)
 
@@ -137,23 +136,18 @@ class MainView(Frame):
         self.switch_btn.grid(row=0, column=4, sticky=N + S + E + W, padx=(0,2), pady=(2, 0))
 
         self.peep_btn = FlatButton(self, self.callback, MainViewActions.PEEP, self.config.values['colors']['lightBlue'])
-        self.peep_btn.setText("PEEP" + '\n' + str(self.settings.peep) + " [cm H2O]")
         self.peep_btn.grid(row=1, column=0, columnspan=2, rowspan=3, sticky=N + S + E + W, padx=(0,2), pady=(2,0))
 
         self.freq_btn = FlatButton(self, self.callback, MainViewActions.FREQ, self.config.values['colors']['lightBlue'])
-        self.freq_btn.setText("Frequency" + '\n' + str(self.settings.freq) + " [1/min]")
         self.freq_btn.grid(row=4, column=0,columnspan=2, rowspan=3, sticky=N + S + E + W, padx=(0,2), pady=(2,0))
 
         self.tv_btn = FlatButton(self, self.callback, MainViewActions.TIDAL, self.config.values['colors']['lightBlue'])
-        self.tv_btn.setText("Tidal Volume" + '\n' + str() + " [mL]")
         self.tv_btn.grid(row=7, column=0, columnspan=2, rowspan=3, sticky=N + S + E + W, padx=(0,2), pady=(2,0))
 
         self.pres_btn = FlatButton(self, self.callback, MainViewActions.PRESSURE, self.config.values['colors']['lightBlue'])
-        self.pres_btn.setText("Pressure" + '\n' + str(self.settings.pressure) + " [cm H2O]")
         self.pres_btn.grid(row=10, column=0, columnspan=2, rowspan=3, sticky=N + S + E + W, padx=(0,2), pady=(2,0))
 
         self.oxy_btn = FlatButton(self, self.callback, MainViewActions.OXYGEN, self.config.values['colors']['lightBlue'])
-        self.oxy_btn.setText("Oxygen (02)" + '\n' + str(self.settings.oxygen) + " [%]")
         self.oxy_btn.grid(row=13, column=0, columnspan=2, rowspan=3, sticky=N + S + E + W, padx=(0,2), pady=(2,0))
 
 

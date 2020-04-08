@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import matplotlib
 import tkinter as tk
 

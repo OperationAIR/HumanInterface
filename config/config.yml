@@ -7,6 +7,9 @@ colors:
   lightBlue: "#263755"
   mediumBlue: "#1e2a42"
   darkBlue: "#161d2d"
+  pressurePlot: "#EBE1D0"
+  flowPlot: "#43DBA7"
+  alarmColor: "#FF0749"
 
 defaultSettings:
   start: 0
@@ -30,7 +33,7 @@ developer:
   commPort: '/dev/ttyS0'
   baudrate: 500000
   logEnabled: True
-  logDir: "/logs"
+  logDir: "sensorlogs"
 
   # for Mac
 #TTY = '/dev/cu.usbmodemC1DDCDF83'

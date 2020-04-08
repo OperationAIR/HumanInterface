@@ -61,7 +61,7 @@ class Microcontroller:
         self.serialdata = b''
         self.serial_retry = 0
 
-        self.connect()
+        #self.connect()
         self.simulate_thread = None
         if simulate:
             self._simulation_alive = True
@@ -73,7 +73,8 @@ class Microcontroller:
         while self._simulation_alive:
             sensors = Sensors(random.random()*10000, random.random()*40000, random.random()*800, random.random()*2000,
                               random.random() * 10, random.random() * 40, random.random() * 40, random.random() * 500,
-                              random.random() * 10, random.random() * 40, random.random() * 40)
+                              random.random() * 10, random.random() * 40, random.random() * 40, random.random() * 40,
+                              random.random() * 40, random.random() * 40)
             self.sensor_queue.put(sensors)
             time.sleep(0.1)
 
@@ -213,7 +214,6 @@ class Microcontroller:
                         self.serial_retry = 0
                 else:
                     self.serial_retry += 1
-                    print("1. not enough data: {}/{} bytes".format(len(data[offset:]), packet_size))
                     if self.serial_retry >= UART_MAX_RETRIES:
                         print("No luck after retries: delete data ", len(data[offset:]))
                         print('databuffer contents:',  binascii.hexlify(data))
