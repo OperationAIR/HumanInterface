@@ -70,8 +70,8 @@ class Microcontroller:
 
     def _simulate_sensor_data(self):
         while self._simulation_alive:
-            sensors = Sensors(random.random()*10, random.random()*40, random.random()*40, random.random()*100,
-                              random.random() * 10, random.random() * 40, random.random() * 40, random.random() * 100,
+            sensors = Sensors(random.random()*10000, random.random()*40000, random.random()*800, random.random()*2000,
+                              random.random() * 10, random.random() * 40, random.random() * 40, random.random() * 500,
                               random.random() * 10, random.random() * 40, random.random() * 40)
             self.sensor_queue.put(sensors)
             time.sleep(1)

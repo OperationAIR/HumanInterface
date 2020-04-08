@@ -14,6 +14,8 @@ from tkinter import ttk, BOTH, X, Y, N, S, E, W
 
 from models.mcuSensorModel import Sensors
 
+from controllers.alarmController import AlarmController
+
 from utils.config import ConfigValues
 from utils.flatButton import FlatButton
 
@@ -41,18 +43,41 @@ class MainView(Frame):
         self.sensordata = sensordata
         self.callback = callback
 
+        self.alarms = AlarmController()
+
         self.fill_frame()
 
     def update(self, settings, sensordata):
         self.settings = settings
         self.sensordata = sensordata
 
+        if not self.oxy_btn:
+            return
+
+        start_stop_text = "START"
+        if self.settings.start:
+            start_stop_text = "STOP"
+
+        if self.alarms.present():
+            self.alarm_overview_btn.setBackground("red")
+        else:
+            self.alarm_overview_btn.setBackground()
+
+        self.switch_btn.setText(start_stop_text)
         self.tv_btn.setText("Tidal Volume" + '\n' + str(self.sensordata.tidal_volume) + " [mL]")
         self.peep_btn.setText("PEEP" + '\n' + str(self.settings.peep) + " [cm H2O]")
         self.freq_btn.setText("Frequency" + '\n' + str(self.settings.freq) + " [1/min]")
         self.tv_btn.setText("Tidal Volume" + '\n' + str(self.sensordata.tidal_volume) + " [mL]")
         self.pres_btn.setText("Pressure" + '\n' + str(self.settings.pressure) + " [cm H2O]")
         self.oxy_btn.setText("Oxygen (02)" + '\n' + str(self.settings.oxygen) + " [%]")
+
+        self.checkAlarm(self.tv_btn, self.sensordata.tidal_volume, self.settings.min_tv, self.settings.max_tv)
+
+    def checkAlarm(self, button, actual_value, min_value, max_value):
+        if min_value < actual_value < max_value:
+            button.setBackground(button.color)
+        else:
+            button.setBackground("red")
 
     def getFrame(self):
         return self.frame
@@ -66,8 +91,8 @@ class MainView(Frame):
 
         # Create figure for plotting
         self.fig = plt.figure(figsize=(1,1))
-        self.fig.patch.set_facecolor('#263655')
-        ax = self.fig.add_subplot(1, 1, 1, facecolor='#263655')
+        self.fig.patch.set_facecolor(self.config.values['colors']['darkBlue'])
+        ax = self.fig.add_subplot(1, 1, 1, facecolor=self.config.values['colors']['darkBlue'])
         #ax.spines['bottom'].set_color('gray')
 
         xs = list(range(0, x_len))
@@ -98,11 +123,10 @@ class MainView(Frame):
 
         # This function is called periodically from FuncAnimation
         def animate(i, ys):
-
             if not self.settings.start:
                 return line,
             # Add y to list
-            ys.append(-1*self.latest_sensor_data.flow)
+            ys.append(-1*self.sensordata.flow)
             # Limit y list to set number of items
             ys = ys[-x_len:]
             # Update line with new Y values
@@ -128,8 +152,8 @@ class MainView(Frame):
 
         # Create figure for plotting
         self.fig = plt.figure(figsize=(1,1))
-        self.fig.patch.set_facecolor('#263655')
-        ax = self.fig.add_subplot(1, 1, 1, facecolor='#263655')
+        self.fig.patch.set_facecolor(self.config.values['colors']['darkBlue'])
+        ax = self.fig.add_subplot(1, 1, 1, facecolor=self.config.values['colors']['darkBlue'])
         #ax.spines['bottom'].set_color('gray')
 
         xs = list(range(0, x_len))
@@ -160,10 +184,11 @@ class MainView(Frame):
         # This function is called periodically from FuncAnimation
         def animate(i, ys):
 
+
             if not self.settings.start:
                 return line,
             # Add y to list
-            ys.append(self.latest_sensor_data.pressure)
+            ys.append(self.sensordata.pressure)
 
             # Limit y list to set number of items
             ys = ys[-x_len:]
@@ -194,35 +219,34 @@ class MainView(Frame):
         self.alarm_btn.setText("Alarm")
         self.alarm_btn.grid(row=0, column=1, sticky=N + S + E + W, padx=(0,2), pady=(2,0))
 
-        self.alarm_name_btn = FlatButton(self, self.callback, MainViewActions.VIEW_ALARMS, self.config.values['colors']['lightBlue'])
-        self.alarm_name_btn.setText("Alarm Overview")
-        self.alarm_name_btn.grid(row=0, column=2, sticky=N + S + E + W, padx=(0,2), pady=2)
+        self.alarm_overview_btn = FlatButton(self, self.callback, MainViewActions.VIEW_ALARMS, self.config.values['colors']['lightBlue'])
+        self.alarm_overview_btn.setText("Alarm Overview")
+        self.alarm_overview_btn.grid(row=0, column=2, sticky=N + S + E + W, padx=(0,2), pady=(2,0))
 
         self.patient_btn = FlatButton(self, self.callback, MainViewActions.PATIENT, self.config.values['colors']['lightBlue'])
         self.patient_btn.setText("Patient")
-        self.patient_btn.grid(row=0, column=3, sticky=N + S + E + W, padx=(0,2), pady=2)
+        self.patient_btn.grid(row=0, column=3, sticky=N + S + E + W, padx=(0,2), pady=(2, 0))
 
         self.switch_btn = FlatButton(self, self.callback, MainViewActions.STARTSTOP, self.config.values['colors']['lightBlue'])
-        self.switch_btn.setText("Start")
-        self.switch_btn.grid(row=0, column=4, sticky=N + S + E + W, padx=(0,2), pady=2)
+        self.switch_btn.grid(row=0, column=4, sticky=N + S + E + W, padx=(0,2), pady=(2, 0))
 
-        self.peep_btn = FlatButton(self, self.callback, MainViewActions.PEEP, self.config.values['colors']['lightBlue'], fontSize=20)
+        self.peep_btn = FlatButton(self, self.callback, MainViewActions.PEEP, self.config.values['colors']['lightBlue'])
         self.peep_btn.setText("PEEP" + '\n' + str(self.settings.peep) + " [cm H2O]")
         self.peep_btn.grid(row=1, column=0, columnspan=2, rowspan=2, sticky=N + S + E + W, padx=(0,2), pady=(2,0))
 
-        self.freq_btn = FlatButton(self, self.callback, MainViewActions.FREQ, self.config.values['colors']['lightBlue'], fontSize=20)
+        self.freq_btn = FlatButton(self, self.callback, MainViewActions.FREQ, self.config.values['colors']['lightBlue'])
         self.freq_btn.setText("Frequency" + '\n' + str(self.settings.freq) + " [1/min]")
         self.freq_btn.grid(row=3, column=0,columnspan=2, rowspan=2, sticky=N + S + E + W, padx=(0,2), pady=(2,0))
 
-        self.tv_btn = FlatButton(self, self.callback, MainViewActions.TIDAL, self.config.values['colors']['lightBlue'], fontSize=20)
+        self.tv_btn = FlatButton(self, self.callback, MainViewActions.TIDAL, self.config.values['colors']['lightBlue'])
         self.tv_btn.setText("Tidal Volume" + '\n' + str() + " [mL]")
         self.tv_btn.grid(row=5, column=0, columnspan=2, rowspan=2, sticky=N + S + E + W, padx=(0,2), pady=(2,0))
 
-        self.pres_btn = FlatButton(self, self.callback, MainViewActions.PRESSURE, self.config.values['colors']['lightBlue'], fontSize=20)
+        self.pres_btn = FlatButton(self, self.callback, MainViewActions.PRESSURE, self.config.values['colors']['lightBlue'])
         self.pres_btn.setText("Pressure" + '\n' + str(self.settings.pressure) + " [cm H2O]")
         self.pres_btn.grid(row=7, column=0, columnspan=2, rowspan=2, sticky=N + S + E + W, padx=(0,2), pady=(2,0))
 
-        self.oxy_btn = FlatButton(self, self.callback, MainViewActions.OXYGEN, self.config.values['colors']['lightBlue'], fontSize=20)
+        self.oxy_btn = FlatButton(self, self.callback, MainViewActions.OXYGEN, self.config.values['colors']['lightBlue'])
         self.oxy_btn.setText("Oxygen (02)" + '\n' + str(self.settings.oxygen) + " [%]")
         self.oxy_btn.grid(row=9, column=0, columnspan=2, rowspan=2, sticky=N + S + E + W, padx=(0,2), pady=(2,0))
 
@@ -233,8 +257,8 @@ class MainView(Frame):
         # plotPressureFrame = Frame(self, bg='green')
         # plotPressureFrame.grid(row=6, column=2, columnspan=3, rowspan=5, sticky=N+S+E+W)
     
-
-        for i in range(0, 11):
+        self.rowconfigure(0, weight=2)
+        for i in range(1, 11):
             self.rowconfigure(i, weight=1)
 
         self.columnconfigure(0, weight=3)
