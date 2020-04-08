@@ -11,6 +11,8 @@ from utils.config import ConfigValues
 from utils.flatButton import FlatButton
 from utils.constants import SettingType
 
+from controllers.alarmController import AlarmController
+
 
 import enum
 
@@ -21,6 +23,7 @@ class AlarmOverview(Frame):
         Frame.__init__(self, parent, bg=self.config.values['colors']['darkBlue'])
 
         self.callback = callback
+        self.alarms = AlarmController()
 
     def fill_frame(self):
         print("Filling frame!")
@@ -30,9 +33,13 @@ class AlarmOverview(Frame):
         close_btn.setText("Close")
         close_btn.grid(row=0, column=3, sticky=N + S + E + W, padx=10, pady=10)
 
-        self.rowconfigure(0, weight=1)
-        self.rowconfigure(1, weight=3)
-        self.rowconfigure(2, weight=1)
+        for i in range(0, len(self.alarms.alarms)):
+            alarm_btn = FlatButton(self, self.callback, SettingType.NONE,
+                              "red", fontSize=20)
+            alarm_btn.setText(self.alarms.alarms[i])
+            alarm_btn.grid(row=i + 1, column=0, columnspan=4, sticky=N + S + E + W, padx=10, pady=10)
 
+        for i in range(0, len(self.alarms.alarms) + 1):
+            self.rowconfigure(i, weight=1)
         for i in range(0, 4):
             self.columnconfigure(i, weight=1)

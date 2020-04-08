@@ -49,14 +49,13 @@ def registerAlarm():
 
 
 class Alarm:
-
     def __init__(self, type):
         self.type = type
         self.timestamp = time.time()
         self.count = 1
 
     def __str__(self):
-        return AlarmString[(self.type)] + " (" + str(self.count) +")"
+        return AlarmString[(self.type)] + " (" + str(self.timestamp) +")"
 
 class AlarmController:
 

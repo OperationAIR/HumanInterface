@@ -103,19 +103,19 @@ class MainView(Frame):
         self.switch_btn = FlatButton(self, self.callback, MainViewActions.STARTSTOP, self.config.values['colors']['lightBlue'])
         self.switch_btn.grid(row=0, column=4, sticky=N + S + E + W, padx=(0,2), pady=2)
 
-        self.peep_btn = FlatButton(self, self.callback, MainViewActions.PEEP, self.config.values['colors']['lightBlue'], fontSize=20)
+        self.peep_btn = FlatButton(self, self.callback, MainViewActions.PEEP, self.config.values['colors']['lightBlue'])
         self.peep_btn.grid(row=1, column=0, columnspan=2, sticky=N + S + E + W, padx=(0,2), pady=(2,0))
 
-        self.freq_btn = FlatButton(self, self.callback, MainViewActions.FREQ, self.config.values['colors']['lightBlue'], fontSize=20)
+        self.freq_btn = FlatButton(self, self.callback, MainViewActions.FREQ, self.config.values['colors']['lightBlue'])
         self.freq_btn.grid(row=2, column=0,columnspan=2, sticky=N + S + E + W, padx=(0,2), pady=(2,0))
 
-        self.tv_btn = FlatButton(self, self.callback, MainViewActions.TIDAL, self.config.values['colors']['mediumBlue'], fontSize=20)
+        self.tv_btn = FlatButton(self, self.callback, MainViewActions.TIDAL, self.config.values['colors']['mediumBlue'])
         self.tv_btn.grid(row=3, column=0, columnspan=2,sticky=N + S + E + W,padx=(0,2), pady=(2,0))
 
-        self.pres_btn = FlatButton(self, self.callback, MainViewActions.PRESSURE, self.config.values['colors']['lightBlue'], fontSize=20)
+        self.pres_btn = FlatButton(self, self.callback, MainViewActions.PRESSURE, self.config.values['colors']['lightBlue'])
         self.pres_btn.grid(row=4, column=0, columnspan=2,sticky=N + S + E + W,padx=(0,2), pady=(2,0))
 
-        self.oxy_btn = FlatButton(self, self.callback, MainViewActions.OXYGEN, self.config.values['colors']['lightBlue'], fontSize=20)
+        self.oxy_btn = FlatButton(self, self.callback, MainViewActions.OXYGEN, self.config.values['colors']['lightBlue'])
         self.oxy_btn.grid(row=5, column=0, columnspan=2,sticky=N + S + E + W,padx=(0,2), pady=(2,0))
 
         for i in range(0, 6):
