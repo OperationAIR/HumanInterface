@@ -77,11 +77,18 @@ class Sensors:
         return self.__repr__()
 
     def as_list(self):
-        return [[self.timestamp, self.cycle_state, self.pressure, self.flow, self.tidal_volume,  self.oxygen]]
+        return [[self.timestamp, self.cycle_state, self.pressure, self.flow, self.tidal_volume, self.oxygen]]
 
     @classmethod
     def from_list(cls, list_data):
-        sensors = Sensors(0.0, float(list_data[3]), float(list_data[2]), float(list_data[2]), 0.0, 0.0, int(list_data[5]), int(list_data[4]), 0.0, int(list_data[1]), 0)
+        sensors = Sensors(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0, 0.0, 0.0, 0, 0)
+        sensors.timestamp = datetime.datetime.strptime(list_data[0], '%Y-%m-%d %H:%M:%S.%f')
+        sensors.cycle_state = int(list_data[1])
+        sensors.pressure_inhale = float(list_data[2])
+        sensors.pressure_exhale = float(list_data[2])
+        sensors.flow_exhale = float(list_data[3])
+        sensors.tidal_volume = int(list_data[4])
+        sensors.oxygen = int(list_data[5])
         return sensors
 
     @classmethod

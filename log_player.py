@@ -2,11 +2,18 @@ from constants import LOGDIR
 from sensors import Sensors
 from datetime import datetime
 import threading
+import Queue
 
-UPDATE_INTERVAL_MS = 10
+REPLAY_SPEEDUP = 2.0
 
 sf_index = 0
-def replay_log(filename, callback):
+def replay_log(filename, start_index):
+   """
+   Plays back a CSV log.
+
+   Args: - filename (string): CSV filename
+   """
+
    # Serialize CSV data
    ser_data = []
    with open(LOGDIR + '/' + filename) as logfile:
@@ -14,14 +21,18 @@ def replay_log(filename, callback):
          # Isolate values
          values = line.split(',')
          # Serialize into Sensors object
-         sensors = Sensors.from_list(values)
-         sensors.timestamp = datetime.strptime(values[0], '%Y-%m-%d %H:%M:%S.%f')
-         ser_data.append(sensors)
+         ser_data.append(Sensors.from_list(values))
 
    # Replay data from a thread
+   callback_queue = Queue.Queue()
+   global sf_index
+   sf_index = start_index
    def dispatch():
       global sf_index
-      callback(ser_data[sf_index])
+      if sf_index == len(ser_data) - 2: return
+      callback_queue.put(ser_data[sf_index])
       sf_index += 1
-      threading.Timer(float(UPDATE_INTERVAL_MS) * 0.001, dispatch).start()
+      interval_sec = (ser_data[sf_index + 1].timestamp - ser_data[sf_index].timestamp).microseconds * 0.000001 / REPLAY_SPEEDUP
+      threading.Timer(interval_sec, dispatch).start()
    dispatch()
+   return callback_queue
