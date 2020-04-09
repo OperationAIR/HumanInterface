@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import StringVar, Button, Frame
+from tkinter import StringVar, Button, Frame, Canvas
 import signal
 
 from utils.config import ConfigValues
@@ -18,6 +18,7 @@ from controllers.alarmController import AlarmController, AlarmType
 
 from utils.config import ConfigValues
 from utils.flatButton import FlatButton
+from utils.currentValueCanvas import CurrentValueCanvas
 
 from views.graphView import GraphView
 
@@ -75,12 +76,17 @@ class MainView(Frame):
         self.peep_btn.setText("PEEP" + '\n' + str(self.settings.peep) + " [cm H2O]")
         self.peep_btn.setBackground(self.getBtnColor(AlarmType.PEEP_TOO_LOW, AlarmType.PEEP_TOO_HIGH))
         self.freq_btn.setText("Frequency" + '\n' + str(self.settings.freq) + " [1/min]")
-        self.tv_btn.setText("Tidal Volume\n"+str(self.sensordata.minute_volume)+" [L/min]\n"+str(self.sensordata.tidal_volume_exhale)+" [mL]")
-        self.tv_btn.setBackground(self.getBtnColor(AlarmType.TIDAL_TOO_LOW, AlarmType.TIDAL_TOO_HIGH))
         self.pres_btn.setText("Pressure" + '\n' + str(self.settings.pressure) + " [cm H2O]")
         self.pres_btn.setBackground(self.getBtnColor(AlarmType.PRESSURE_TOO_LOW, AlarmType.PRESSURE_TOO_HIGH))
-        self.oxy_btn.setText("Oxygen (02)" + '\n' + str(self.settings.oxygen) + " [%]\n" + str(self.sensordata.oxygen) + "[%]")
+        self.oxy_btn.setText("Oxygen (02)" + '\n' + str(self.settings.oxygen) + " [%]")
         self.oxy_btn.setBackground(self.getBtnColor(AlarmType.OXYGEN_TOO_LOW, AlarmType.OXYGEN_TOO_HIGH))
+
+        self.ppeak_label.setText("Ppeak", self.sensordata.pressure) # not implemented yet, ppeak sensordata
+        self.pmean_label.setText("Pmean", self.sensordata.pressure) # not implemented yet, pmean sensordata
+        self.freq_label.setText("Freq.", 10) # not implemented yet, freq sensordata
+        self.oxy_label.setText("O2", self.sensordata.oxygen)
+        self.tv_label1.setText("TV Min.Vol.", self.sensordata.minute_volume)
+        self.tv_label2.setText("TV In/Ex", [self.sensordata.tidal_volume_inhale, self.sensordata.tidal_volume_exhale])
 
         self.flowgraph.update(-1 * self.sensordata.flow)
         self.pressuregraph.update(self.sensordata.pressure)
@@ -98,14 +104,14 @@ class MainView(Frame):
         pressure_y_range = [0, 80]  # Range of possible Y values to display
 
         self.pressuregraph = GraphView("Pressure", "[cm H2O]", self.sensordata.pressure, pressure_y_range, pressure_x_len, self.config.values['colors']['pressurePlot'], self)
-        self.pressuregraph.getPlot().grid(row=1, column=2, rowspan=5, columnspan=3, sticky=N + S + E + W)
+        self.pressuregraph.getPlot().grid(row=1, column=2, rowspan=4, columnspan=2, sticky=N + S + E + W)
 
         # Parameters
         flow_x_len = 400         # Number of points to display
         flow_y_range = [-30, 0]  # Range of possible Y values to display
 
         self.flowgraph = GraphView("Flow", "[L / min]", self.sensordata.flow, flow_y_range, flow_x_len, self.config.values['colors']['flowPlot'], self)
-        self.flowgraph.getPlot().grid(row=6, column=2, rowspan=5, columnspan=3, sticky=N + S + E + W)
+        self.flowgraph.getPlot().grid(row=5, column=2, rowspan=4, columnspan=2, sticky=N + S + E + W)
 
         # Parameters
         tidal_x_len = 400  # Number of points to display
@@ -113,7 +119,7 @@ class MainView(Frame):
 
         self.tidalgraph = GraphView("Tidal Volume", "[mL]", self.sensordata.tidal_volume_exhale, tidal_y_range,
                                tidal_x_len, self.config.values['colors']['green'], self)
-        self.tidalgraph.getPlot().grid(row=11, column=2, rowspan=5, columnspan=3, sticky=N + S + E + W)
+        self.tidalgraph.getPlot().grid(row=9, column=2, rowspan=4, columnspan=2, sticky=N + S + E + W)
 
 
     def fill_frame(self):
@@ -144,28 +150,44 @@ class MainView(Frame):
         self.freq_btn = FlatButton(self, self.callback, MainViewActions.FREQ, self.config.values['colors']['lightBlue'])
         self.freq_btn.grid(row=4, column=0,columnspan=2, rowspan=3, sticky=N + S + E + W, padx=(0,2), pady=(2,0))
 
-        self.tv_btn = FlatButton(self, self.callback, MainViewActions.TIDAL, self.config.values['colors']['lightBlue'])
-        self.tv_btn.grid(row=7, column=0, columnspan=2, rowspan=3, sticky=N + S + E + W, padx=(0,2), pady=(2,0))
-
         self.pres_btn = FlatButton(self, self.callback, MainViewActions.PRESSURE, self.config.values['colors']['lightBlue'])
-        self.pres_btn.grid(row=10, column=0, columnspan=2, rowspan=3, sticky=N + S + E + W, padx=(0,2), pady=(2,0))
+        self.pres_btn.grid(row=7, column=0, columnspan=2, rowspan=3, sticky=N + S + E + W, padx=(0,2), pady=(2,0))
 
         self.oxy_btn = FlatButton(self, self.callback, MainViewActions.OXYGEN, self.config.values['colors']['lightBlue'])
-        self.oxy_btn.grid(row=13, column=0, columnspan=2, rowspan=3, sticky=N + S + E + W, padx=(0,2), pady=(2,0))
+        self.oxy_btn.grid(row=10, column=0, columnspan=2, rowspan=3, sticky=N + S + E + W, padx=(0,2), pady=(2,0))
 
+        self.ppeak_label = CurrentValueCanvas(self, "Ppeak", 100, self.config.values['colors']['pressurePlot'])
+        self.ppeak_label.grid(row=2, column=4, rowspan=1, sticky=N + S + E + W)
 
-        # plotPressureFrame = Frame(self, bg='green')
-        # plotPressureFrame.grid(row=6, column=2, columnspan=3, rowspan=5, sticky=N+S+E+W)
+        self.pmean_label = CurrentValueCanvas(self, "Pmean", 50, self.config.values['colors']['pressurePlot'])
+        self.pmean_label.grid(row=3, column=4, rowspan=1, sticky=N + S + E + W)
+        
+        self.freq_label = CurrentValueCanvas(self, "Freq.", 9, self.config.values['colors']['flowPlot'])
+        self.freq_label.grid(row=6, column=4, rowspan=1, sticky=N + S + E + W)
+
+        self.oxy_label = CurrentValueCanvas(self, "O2", self.sensordata.oxygen, 'white')
+        self.oxy_label.grid(row=7, column=4, rowspan=1, sticky=N + S + E + W)
+
+        self.tv_label1 = CurrentValueCanvas(self, "TV Min.Vol.",
+                                           [self.sensordata.tidal_volume_inhale, self.sensordata.tidal_volume_exhale],
+                                           self.config.values['colors']['green'])
+        self.tv_label1.grid(row=10, column=4, rowspan=1, sticky=N + S + E + W)
+
+        self.tv_label2 = CurrentValueCanvas(self, "TV In/Ex",
+                    [self.sensordata.tidal_volume_inhale, self.sensordata.tidal_volume_exhale], 
+                    self.config.values['colors']['green'])
+        self.tv_label2.grid(row=11, column=4, rowspan=1, sticky=N + S + E + W)
+
     
         self.rowconfigure(0, weight=5)
-        for i in range(1, 17):
+        for i in range(1, 14):
             self.rowconfigure(i, weight=1)
 
         self.columnconfigure(0, weight=3)
         self.columnconfigure(1, weight=2)
         self.columnconfigure(2, weight=4)
         self.columnconfigure(3, weight=4)
-        self.columnconfigure(4, weight=4)
+        self.columnconfigure(4, weight=2)
 
         self.drawGraphs()
 
