@@ -115,10 +115,10 @@ class AlarmController:
             print(len(self.alarms))
 
         def checkAlarm(self, actual, min, max, low_type, high_type):
-            if actual < min:
+            if min > actual:
                 self.addAlarm(low_type)
                 return True
-            elif max > actual:
+            elif max < actual:
                 self.addAlarm(high_type)
                 return True
             return False

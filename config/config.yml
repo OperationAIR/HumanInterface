@@ -1,5 +1,5 @@
 window:
-  fullscreen: False
+  fullscreen: True
 
 colors:
   backgroundColor: "#000000"
@@ -29,7 +29,7 @@ defaultSettings:
   min_freq: 0
   max_freq: 30
 developer:
-  simulate: False
+  simulate: True
   commPort: '/dev/ttyS0'
   baudrate: 500000
   logEnabled: True
