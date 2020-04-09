@@ -23,24 +23,24 @@ class ChangeAlarmViewActions(enum.Enum):
 class ChangeDoubleSettingView(Frame):
 
     # bound (Bool): Are the two variables linked? (Can variable 2 be less than variable 1)
-    def __init__(self, type, min_current, min_min, min_max, max_current, max_min, max_max, step, description, callback, label1="Minimum \nValue", label2="Maximum \nValue", bound=True, parent=None):
+    def __init__(self, type, min_current, min_min, min_max, step1, max_current, max_min, max_max, step2, description, callback, label1="Minimum \nValue", label2="Maximum \nValue", bound=True, parent=None):
         self.config = ConfigValues()
         Frame.__init__(self, parent, bg=self.config.values['colors']['darkBlue'])
 
         self.type = type
 
-
         self.bound = bound
+        self.step1 = step1
         self.label1 = label1
         self.min_current = min_current
         self.min_min = min_min
         self.min_max = min_max
 
         self.label2 = label2
+        self.step2 = step2
         self.max_current = max_current
         self.max_min = max_min
         self.max_max = max_max
-        self.step = step
         self.description = description
         self.callback = callback
 
@@ -50,14 +50,14 @@ class ChangeDoubleSettingView(Frame):
         self.callback(type, self.min_current, self.max_current)
 
     def valueChange(self, action):
-        if action == ChangeAlarmViewActions.MINMINUS and self.min_current - self.step >= self.min_min:
-            self.min_current = self.min_current - self.step
-        elif action == ChangeAlarmViewActions.MINPLUS and self.min_current + self.step <= self.min_max and (not self.bound or self.max_current - self.min_current > self.step):
-            self.min_current = self.min_current + self.step
-        elif action == ChangeAlarmViewActions.MAXMINUS and self.max_current - self.step >= self.max_min and (not self.bound or self.max_current - self.min_current > self.step):
-            self.max_current = self.max_current - self.step
-        elif action == ChangeAlarmViewActions.MAXPLUS and self.max_current + self.step <= self.max_max:
-            self.max_current = self.max_current + self.step
+        if action == ChangeAlarmViewActions.MINMINUS and self.min_current - self.step1 >= self.min_min:
+            self.min_current = self.min_current - self.step1
+        elif action == ChangeAlarmViewActions.MINPLUS and self.min_current + self.step1 <= self.min_max and (not self.bound or self.max_current - self.min_current > self.step1):
+            self.min_current = self.min_current + self.step1
+        elif action == ChangeAlarmViewActions.MAXMINUS and self.max_current - self.step2 >= self.max_min and (not self.bound or self.max_current - self.min_current > self.step2):
+            self.max_current = self.max_current - self.step2
+        elif action == ChangeAlarmViewActions.MAXPLUS and self.max_current + self.step2 <= self.max_max:
+            self.max_current = self.max_current + self.step2
 
         self.min_value_btn.setText(self.min_current)
         self.max_value_btn.setText(self.max_current)

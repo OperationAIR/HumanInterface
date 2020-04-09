@@ -35,14 +35,14 @@ class Settings():
         ratio = config.values["defaultSettings"]["ratio"]
         pressure = config.values["defaultSettings"]["pressure"]
         oxygen = config.values["defaultSettings"]["oxygen"]
-        max_pressure = config.values["defaultSettings"]["max_pressure"]
-        min_pressure = config.values["defaultSettings"]["min_pressure"]
-        max_tv = config.values["defaultSettings"]["max_tv"]
-        min_tv = config.values["defaultSettings"]["min_tv"]
-        max_fio2 = config.values["defaultSettings"]["max_fio2"]
-        min_fio2 = config.values["defaultSettings"]["min_fio2"]
-        max_peep = config.values["defaultSettings"]["max_peep"]
-        min_peep = config.values["defaultSettings"]["min_peep"]
+        max_pressure = config.values["alarmSettings"]["max_pressure"]
+        min_pressure = config.values["alarmSettings"]["min_pressure"]
+        max_tv = config.values["alarmSettings"]["max_tv"]
+        min_tv = config.values["alarmSettings"]["min_tv"]
+        max_fio2 = config.values["alarmSettings"]["max_fio2"]
+        min_fio2 = config.values["alarmSettings"]["min_fio2"]
+        max_peep = config.values["alarmSettings"]["max_peep"]
+        min_peep = config.values["alarmSettings"]["min_peep"]
         return cls(start, peep, freq, ratio, pressure, oxygen, max_pressure, min_pressure, max_tv, min_tv, max_fio2, min_fio2, max_peep, min_peep)
 
 
