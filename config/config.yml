@@ -1,5 +1,5 @@
 window:
-  fullscreen: True
+  fullscreen: False
 
 colors:
   backgroundColor: "#000000"

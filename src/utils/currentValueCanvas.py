@@ -5,7 +5,7 @@ from utils.config import ConfigValues
 class CurrentValueCanvas(Canvas):
 
     def __init__(self, parent, title, value, textColor=None):
-        Canvas.__init__(self, parent, bd=-2, width=0, height=0)
+        Canvas.__init__(self, parent, bd=-8, width=0, height=0)
 
         self.config = ConfigValues()
 
