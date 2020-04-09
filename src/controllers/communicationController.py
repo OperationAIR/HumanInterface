@@ -77,7 +77,7 @@ class Microcontroller:
                               random.random() * 10, random.random() * 40, random.random() * 40, random.random() * 40,
                               random.random() * 40, random.random() * 40)
             self.sensor_queue.put(sensors)
-            time.sleep(0.1)
+            time.sleep(0.5)
 
         print ('exit simulation thread')
 
