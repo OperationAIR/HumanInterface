@@ -180,7 +180,7 @@ class MainView(Frame):
 
     
         self.rowconfigure(0, weight=5)
-        for i in range(1, 14):
+        for i in range(1, 13):
             self.rowconfigure(i, weight=1)
 
         self.columnconfigure(0, weight=3)

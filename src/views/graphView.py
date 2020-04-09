@@ -72,7 +72,7 @@ class GraphView:
         plt.title(self.title, fontsize= 13, color="white")
         #plt.xlabel('Samples')
         plt.ylabel(self.ylabel)
-        plt.gcf().subplots_adjust(top=0.8, left=0.2, right=1, bottom=0.15)
+        plt.gcf().subplots_adjust(top=0.8, left=0.2, right=1, bottom=0.18)
 
 
         # This function is called periodically from FuncAnimation
