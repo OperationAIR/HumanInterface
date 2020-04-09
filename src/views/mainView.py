@@ -14,7 +14,7 @@ from tkinter import ttk, BOTH, X, Y, N, S, E, W
 
 from models.mcuSensorModel import Sensors
 
-from controllers.alarmController import AlarmController
+from controllers.alarmController import AlarmController, AlarmType
 
 from utils.config import ConfigValues
 from utils.flatButton import FlatButton
@@ -49,6 +49,12 @@ class MainView(Frame):
 
         self.fill_frame()
 
+    def getBtnColor(self, low_alarm, high_alarm):
+        if self.alarms.hasActiveAlarm(low_alarm) or self.alarms.hasActiveAlarm(high_alarm):
+            return self.config.values['colors']['alarmColor']
+        return self.config.values['colors']['lightBlue']
+
+
     def update(self, settings, sensordata):
         self.settings = settings
         self.sensordata = sensordata
@@ -61,28 +67,24 @@ class MainView(Frame):
             start_stop_text = "STOP"
 
         if self.alarms.present():
-            self.alarm_overview_btn.setBackground("red")
+            self.alarm_overview_btn.setBackground(self.config.values['colors']['alarmColor'])
         else:
             self.alarm_overview_btn.setBackground()
 
         self.switch_btn.setText(start_stop_text)
         self.peep_btn.setText("PEEP" + '\n' + str(self.settings.peep) + " [cm H2O]")
+        self.peep_btn.setBackground(self.getBtnColor(AlarmType.PEEP_TOO_LOW, AlarmType.PEEP_TOO_HIGH))
         self.freq_btn.setText("Frequency" + '\n' + str(self.settings.freq) + " [1/min]")
         self.tv_btn.setText("Tidal Volume\n"+str(self.sensordata.minute_volume)+" [L/min]\n"+str(self.sensordata.tidal_volume_exhale)+" [mL]")
+        self.tv_btn.setBackground(self.getBtnColor(AlarmType.TIDAL_TOO_LOW, AlarmType.TIDAL_TOO_HIGH))
         self.pres_btn.setText("Pressure" + '\n' + str(self.settings.pressure) + " [cm H2O]")
+        self.pres_btn.setBackground(self.getBtnColor(AlarmType.PRESSURE_TOO_LOW, AlarmType.PRESSURE_TOO_HIGH))
         self.oxy_btn.setText("Oxygen (02)" + '\n' + str(self.settings.oxygen) + " [%]\n" + str(self.sensordata.oxygen) + "[%]")
-
-        self.checkAlarm(self.tv_btn, self.sensordata.tidal_volume_exhale, self.settings.min_tv, self.settings.max_tv)
+        self.oxy_btn.setBackground(self.getBtnColor(AlarmType.OXYGEN_TOO_LOW, AlarmType.OXYGEN_TOO_HIGH))
 
         self.flowgraph.update(-1 * self.sensordata.flow)
         self.pressuregraph.update(self.sensordata.pressure)
         self.tidalgraph.update(self.sensordata.tidal_volume_exhale)
-
-    def checkAlarm(self, button, actual_value, min_value, max_value):
-        if min_value < actual_value < max_value:
-            button.setBackground(button.color)
-        else:
-            button.setBackground("red")
 
     def getFrame(self):
         return self.frame

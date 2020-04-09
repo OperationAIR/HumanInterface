@@ -100,6 +100,12 @@ class AlarmController:
                     return True
             return False
 
+        def hasActiveAlarm(self, type):
+            for alarm in self.alarms:
+                if alarm.type == type and alarm.active:
+                    return True
+            return False
+
         def printAlarms(self):
             for alarm in self.alarms:
                 print(str(alarm))
