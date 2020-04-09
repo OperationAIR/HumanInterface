@@ -25,6 +25,7 @@ from views.alarmSettingsOverview import AlarmSettingsOverview
 from views.alarmOverview import AlarmOverview
 from views.changeDoubleSettingView import ChangeDoubleSettingView, ChangeAlarmViewActions
 from views.activeAlarmView import alarm_overview
+from views.menuView import MenuView, MenuViewActions
 
 from utils.constants import SettingType
 
@@ -176,10 +177,37 @@ class ViewController(tk.Tk):
 
         self.alarmOverview.fill_frame()
 
+    def menuViewCallback(self, action):
+        print('menuViewCallback')
+        if action == MenuViewActions.NONE:
+            self.menuView.place_forget()
+            return
+        elif action == MenuViewActions.SHUTDOWN:
+            print("Shutdown Machine")
+            self.quit()
+            # todo actually shot down os...
+        elif action == MenuViewActions.SELF_TEST:
+            print("Clicked SELF_TEST: Not implemented")
+        elif action == MenuViewActions.INSPIRATORY_HOLD_START:
+            print("Clicked INSPIRATORY_HOLD_START")
+            self.mcu.try_start_inspiratroy_hold()
+        elif action == MenuViewActions.INSPIRATORY_HOLD_STOP:
+            print("Clicked INSPIRATORY_HOLD_STOP")
+            self.mcu.stop_inspiratroy_hold()
+        else:
+            print("Unknown menu action")
+
+
     def mainViewCallback(self, action):
         if action == MainViewActions.QUIT:
             print("Clicked Quitting")
             self.quit()
+        elif action == MainViewActions.MENU:
+            print("Clicked MENU")
+            self.menuView = MenuView(callback=self.menuViewCallback)
+            self.menuView.place(x=0, y=0, width=self.winfo_width(), height=self.winfo_height())
+            self.menuView.fill_frame()
+
         elif action == MainViewActions.ALARM:
             self.alarmSettingsOverview = AlarmSettingsOverview(self.settings, self.alarmSettingsOverviewCallback)
             self.alarmSettingsOverview.place(x=0, y=0, width=self.winfo_width(), height=self.winfo_height())

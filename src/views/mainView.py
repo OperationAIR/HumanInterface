@@ -36,6 +36,7 @@ class MainViewActions(enum.Enum):
     TIDAL = 8
     PRESSURE = 9
     OXYGEN = 10
+    MENU = 11
 
 class MainView(Frame):
 
@@ -129,9 +130,9 @@ class MainView(Frame):
 
     def fill_frame(self):
 
-        self.air_btn = FlatButton(self, self.callback, MainViewActions.QUIT,
+        self.air_btn = FlatButton(self, self.callback, MainViewActions.MENU,
                              self.config.values['colors']['lightBlue'])
-        self.air_btn.setText("OperationAIR")
+        self.air_btn.setText("Menu")
         self.air_btn.grid(row=0, column=0, sticky=N + S + E + W, padx=(0,2), pady=(2,0))
 
         self.alarm_btn = FlatButton(self, self.callback, MainViewActions.ALARM, self.config.values['colors']['lightBlue'])
@@ -166,7 +167,7 @@ class MainView(Frame):
 
         self.pmean_label = CurrentValueCanvas(self, "Pmean", 50, self.config.values['colors']['pressurePlot'])
         self.pmean_label.grid(row=3, column=4, rowspan=1, sticky=N + S + E + W)
-        
+
         self.freq_label = CurrentValueCanvas(self, "Freq.", 9, self.config.values['colors']['flowPlot'])
         self.freq_label.grid(row=6, column=4, rowspan=1, sticky=N + S + E + W)
 
@@ -179,11 +180,11 @@ class MainView(Frame):
         self.tv_label1.grid(row=10, column=4, rowspan=1, sticky=N + S + E + W)
 
         self.tv_label2 = CurrentValueCanvas(self, "TV In/Ex",
-                    [self.sensordata.tidal_volume_inhale, self.sensordata.tidal_volume_exhale], 
+                    [self.sensordata.tidal_volume_inhale, self.sensordata.tidal_volume_exhale],
                     self.config.values['colors']['green'])
         self.tv_label2.grid(row=11, column=4, rowspan=1, sticky=N + S + E + W)
 
-    
+
         self.rowconfigure(0, weight=5)
         for i in range(1, 13):
             self.rowconfigure(i, weight=1)

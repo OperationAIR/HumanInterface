@@ -154,6 +154,9 @@ class Microcontroller:
     def stop_inspiratroy_hold(self):
         self._send_buffer(SerialCommand.StopInspiratoryHold.format())
 
+    def self_test(self):
+        self._send_buffer(SerialCommand.StopInspiratoryHold.format())
+
     def _match_prefix(self, data):
 
         if len(data) < PREFIX_LEN:
