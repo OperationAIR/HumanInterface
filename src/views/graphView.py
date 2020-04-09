@@ -74,13 +74,11 @@ class GraphView:
         plt.ylabel(self.ylabel)
         plt.gcf().subplots_adjust(top=0.8, left=0.2, right=1, bottom=0.18)
 
-
         # This function is called periodically from FuncAnimation
         def animate(i, ys):
             # if not self.settings.start:
             #     return line,
             # Add y to list
-            self.canvas.draw()
             ys.append(self.data)
             # Limit y list to set number of items
             ys = ys[-x_len:]

@@ -67,7 +67,7 @@ class FlatButton(Canvas):
             self.setText(self.oldText)
             self.text = self.oldText
             self.oldText = ""
-            
+
         elif self.callback:
             self.callback(self.arg)
 
