@@ -70,7 +70,7 @@ class MainView(Frame):
         self.freq_btn.setText("Frequency" + '\n' + str(self.settings.freq) + " [1/min]")
         self.tv_btn.setText("Tidal Volume\n"+str(self.sensordata.minute_volume)+" [L/min]\n"+str(self.sensordata.tidal_volume_exhale)+" [mL]")
         self.pres_btn.setText("Pressure" + '\n' + str(self.settings.pressure) + " [cm H2O]")
-        self.oxy_btn.setText("Oxygen (02)" + '\n' + str(self.settings.oxygen) + " [%]")
+        self.oxy_btn.setText("Oxygen (02)" + '\n' + str(self.settings.oxygen) + " [%]\n" + str(self.sensordata.oxygen) + "[%]")
 
         self.checkAlarm(self.tv_btn, self.sensordata.tidal_volume_exhale, self.settings.min_tv, self.settings.max_tv)
 

@@ -17,7 +17,7 @@ from models.mcuSettingsModel import Settings
 from models.mcuSensorModel import Sensors
 from controllers.alarmController import registerAlarm
 from controllers.communicationController import Microcontroller
-from controllers.alarmController import AlarmController
+from controllers.alarmController import AlarmController, AlarmType
 
 from views.mainView import MainView, MainViewActions
 from views.changeSingleSettingView import ChangeSingleSettingView
@@ -155,8 +155,12 @@ class ViewController(tk.Tk):
         self.mainView.update(self.settings, self.latest_sensor_data)
         self.mcu.send_settings(self.settings)
 
-    def alarmOverviewCallback(self, e):
-        self.alarmOverview.place_forget()
+    def alarmOverviewCallback(self, alarm):
+        if alarm == AlarmType.NONE:
+            self.alarmOverview.place_forget()
+        else:
+            self.alarms.mute(alarm)
+            self.alarmOverview.fill_frame()
 
     def mainViewCallback(self, action):
         if action == MainViewActions.QUIT:
