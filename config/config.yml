@@ -15,7 +15,7 @@ defaultSettings:
   start: 0
   peep: 5
   freq: 20
-  ratio: 2
+  ratio: 20
   pressure: 30
   oxygen: 25
   max_pressure: 50

@@ -137,13 +137,10 @@ class ViewController(tk.Tk):
             self.settings.max_tv = val2
         elif type == SettingType.FREQ:
             self.settings.freq = val1
-            self.settings.ratio = val2
+            self.settings.ratio = int(val2 * 10)
             self.settingsView.place_forget()
             return
 
-        #self.alarmSettingsOverview = AlarmSettingsOverview(self.settings, self.alarmSettingsOverviewCallback)
-        #self.alarmSettingsOverview.place(x=0, y=0, width=self.winfo_width(), height=self.winfo_height())
-        #self.alarmSettingsOverview.fill_frame()
         self.settingsView.place_forget()
 
     def changeSingleSettingCallback(self, type, value):
@@ -163,9 +160,13 @@ class ViewController(tk.Tk):
     def alarmOverviewCallback(self, alarm):
         if alarm == AlarmType.NONE:
             self.alarmOverview.place_forget()
+            return
+        elif alarm == AlarmType.CLEAR:
+            self.alarms.removeInactive()
         else:
             self.alarms.mute(alarm)
-            self.alarmOverview.fill_frame()
+
+        self.alarmOverview.fill_frame()
 
     def mainViewCallback(self, action):
         if action == MainViewActions.QUIT:
@@ -199,7 +200,7 @@ class ViewController(tk.Tk):
             min_freq = self.config.values['defaultSettings']['min_freq']
             max_freq = self.config.values['defaultSettings']['max_freq']
             self.settingsView = ChangeDoubleSettingView(SettingType.FREQ, self.settings.freq, min_freq, max_freq,
-                                                        self.settings.ratio, 1, 5, 1, "Frequency and Ratio",
+                                                        self.settings.ratio / 10, 1, 3, 0.5, "Frequency and Ratio",
                                                         self.changeDoubleValueViewCallback, "Freq \n[1/min]", "Ratio (1:?)", bound=False)
             self.settingsView.place(x=0, y=0, width=self.winfo_width(), height=self.winfo_height())
             self.settingsView.fill_frame()

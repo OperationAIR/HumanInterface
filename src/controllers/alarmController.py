@@ -21,6 +21,7 @@ mediumAlarm = pygame.mixer.Sound(ROOT_DIR + "/resources/sounds/vent.wav")
 
 AlarmString = [
     "Nothing.",
+    "Clear all alarms",
     "PEEP value too high",
     "PEEP value too low",
     "TIDAL value too high",
@@ -33,14 +34,15 @@ AlarmString = [
 
 class AlarmType(enum.IntEnum):
     NONE = 0
-    PEEP_TOO_HIGH = 1
-    PEEP_TOO_LOW = 2
-    TIDAL_TOO_HIGH = 3
-    TIDAL_TOO_LOW = 4
-    PRESSURE_TOO_HIGH = 5
-    PRESSURE_TOO_LOW = 6
-    OXYGEN_TOO_LOW = 7
-    OXYGEN_TOO_HIGH = 8
+    CLEAR = 1
+    PEEP_TOO_HIGH = 2
+    PEEP_TOO_LOW = 3
+    TIDAL_TOO_HIGH = 4
+    TIDAL_TOO_LOW = 5
+    PRESSURE_TOO_HIGH = 6
+    PRESSURE_TOO_LOW = 7
+    OXYGEN_TOO_LOW = 8
+    OXYGEN_TOO_HIGH = 9
 
 def registerAlarm():
     if pygame.mixer.get_busy() == 1:
@@ -101,6 +103,10 @@ class AlarmController:
         def printAlarms(self):
             for alarm in self.alarms:
                 print(str(alarm))
+
+        def removeInactive(self):
+            self.alarms[:] = [alarm for alarm in self.alarms if alarm.active]
+            print(len(self.alarms))
 
         def checkAlarm(self, actual, min, max, low_type, high_type):
             if actual < min:

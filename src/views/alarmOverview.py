@@ -25,8 +25,18 @@ class AlarmOverview(Frame):
         self.callback = callback
         self.alarms = AlarmController()
 
+        self.alarm_btns = []
+
     def fill_frame(self):
-        self.grid_forget()
+        for btn in self.alarm_btns:
+            btn.destroy()
+
+        self.alarm_btns.clear()
+
+        clear_btn = FlatButton(self, self.callback, AlarmType.CLEAR,
+                             self.config.values['colors']['lightBlue'], fontSize=15)
+        clear_btn.setText("Clear Inactive Alarms")
+        clear_btn.grid(row=0, column=0, sticky=N + S + E + W, padx=10, pady=10)
 
         close_btn = FlatButton(self, self.callback, AlarmType.NONE,
                                self.config.values['colors']['lightBlue'], fontSize=20)
@@ -38,10 +48,10 @@ class AlarmOverview(Frame):
             if self.alarms.alarms[i].active:
                 color = self.config.values['colors']['alarmColor']
 
-            alarm_btn = FlatButton(self, self.callback, self.alarms.alarms[i].type,
-                              color, fontSize=20)
-            alarm_btn.setText(self.alarms.alarms[i])
-            alarm_btn.grid(row=i + 1, column=0, columnspan=4, sticky=N + S + E + W, padx=10, pady=10)
+            self.alarm_btns.append(FlatButton(self, self.callback, self.alarms.alarms[i].type,
+                              color, fontSize=20))
+            self.alarm_btns[i].setText(self.alarms.alarms[i])
+            self.alarm_btns[i].grid(row=i + 1, column=0, columnspan=4, sticky=N + S + E + W, padx=10, pady=10)
 
         for i in range(0, len(self.alarms.alarms) + 1):
             self.rowconfigure(i, weight=1)
