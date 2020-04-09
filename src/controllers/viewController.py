@@ -23,7 +23,7 @@ from views.mainView import MainView, MainViewActions
 from views.changeSingleSettingView import ChangeSingleSettingView
 from views.alarmSettingsOverview import AlarmSettingsOverview
 from views.alarmOverview import AlarmOverview
-from views.changeAlarmSettingView import ChangeAlarmSettingView, ChangeAlarmViewActions
+from views.changeDoubleSettingView import ChangeDoubleSettingView, ChangeAlarmViewActions
 from views.activeAlarmView import alarm_overview
 
 from utils.constants import SettingType
@@ -90,55 +90,60 @@ class ViewController(tk.Tk):
         if type == SettingType.PEEP:
             min_peep = self.config.values['defaultSettings']['min_peep']
             max_peep = self.config.values['defaultSettings']['max_peep']
-            self.settingsView = ChangeAlarmSettingView(SettingType.PEEP, self.settings.min_peep, min_peep, max_peep,
-                                                       self.settings.max_peep, min_peep, max_peep, 5, "PEEP [cm H2O]",
-                                                       self.changeValueViewCallback)
+            self.settingsView = ChangeDoubleSettingView(SettingType.PEEP, self.settings.min_peep, min_peep, max_peep,
+                                                        self.settings.max_peep, min_peep, max_peep, 5, "PEEP [cm H2O]",
+                                                        self.changeDoubleValueViewCallback)
             self.settingsView.place(x=0, y=0, width=self.winfo_width(), height=self.winfo_height())
             self.settingsView.fill_frame()
         elif type == SettingType.OXYGEN:
             min_fio2 = self.config.values['defaultSettings']['min_fio2']
             max_fio2 = self.config.values['defaultSettings']['max_fio2']
-            self.settingsView = ChangeAlarmSettingView(SettingType.OXYGEN, self.settings.min_fio2, min_fio2, max_fio2,
-                                                       self.settings.max_fio2, min_fio2, max_fio2, 5, "Oxygen [O2]",
-                                                       self.changeValueViewCallback)
+            self.settingsView = ChangeDoubleSettingView(SettingType.OXYGEN, self.settings.min_fio2, min_fio2, max_fio2,
+                                                        self.settings.max_fio2, min_fio2, max_fio2, 5, "Oxygen [O2]",
+                                                        self.changeDoubleValueViewCallback)
             self.settingsView.place(x=0, y=0, width=self.winfo_width(), height=self.winfo_height())
             self.settingsView.fill_frame()
         elif type == SettingType.TIDAL:
             min_tv = self.config.values['defaultSettings']['min_tv']
             max_tv = self.config.values['defaultSettings']['max_tv']
-            self.settingsView = ChangeAlarmSettingView(SettingType.TIDAL, self.settings.min_tv, min_tv, max_tv,
-                                                       self.settings.max_tv, min_tv, max_tv, 50, "Tidal Volume",
-                                                       self.changeValueViewCallback)
+            self.settingsView = ChangeDoubleSettingView(SettingType.TIDAL, self.settings.min_tv, min_tv, max_tv,
+                                                        self.settings.max_tv, min_tv, max_tv, 50, "Tidal Volume",
+                                                        self.changeDoubleValueViewCallback)
             self.settingsView.place(x=0, y=0, width=self.winfo_width(), height=self.winfo_height())
             self.settingsView.fill_frame()
         elif type == SettingType.PRESSURE:
             min_press = self.config.values['defaultSettings']['min_pressure']
             max_press = self.config.values['defaultSettings']['max_pressure']
-            self.settingsView = ChangeAlarmSettingView(SettingType.PRESSURE, self.settings.min_pressure, min_press, max_press,
-                                                       self.settings.max_pressure, min_press, max_press, 5, "Pressure [cm H2O]",
-                                                       self.changeValueViewCallback)
+            self.settingsView = ChangeDoubleSettingView(SettingType.PRESSURE, self.settings.min_pressure, min_press, max_press,
+                                                        self.settings.max_pressure, min_press, max_press, 5, "Pressure [cm H2O]",
+                                                        self.changeDoubleValueViewCallback)
             self.settingsView.place(x=0, y=0, width=self.winfo_width(), height=self.winfo_height())
             self.settingsView.fill_frame()
 
         self.alarmSettingsOverview.place_forget()
 
-    def changeValueViewCallback(self, type, min, max):
+    def changeDoubleValueViewCallback(self, type, val1, val2):
         if type == SettingType.PEEP:
-            self.settings.min_peep = min
-            self.settings.max_peep = max
+            self.settings.min_peep = val1
+            self.settings.max_peep = val2
         elif type == SettingType.OXYGEN:
-            self.settings.min_fio2 = min
-            self.settings.max_fio2 = max
+            self.settings.min_fio2 = val1
+            self.settings.max_fio2 = val2
         elif type == SettingType.PRESSURE:
-            self.settings.min_pressure = min
-            self.settings.max_pressure = max
+            self.settings.min_pressure = val1
+            self.settings.max_pressure = val2
         elif type == SettingType.TIDAL:
-            self.settings.min_tv = min
-            self.settings.max_tv = max
+            self.settings.min_tv = val1
+            self.settings.max_tv = val2
+        elif type == SettingType.FREQ:
+            self.settings.freq = val1
+            self.settings.ratio = val2
+            self.settingsView.place_forget()
+            return
 
-        self.alarmSettingsOverview = AlarmSettingsOverview(self.settings, self.alarmSettingsOverviewCallback)
-        self.alarmSettingsOverview.place(x=0, y=0, width=self.winfo_width(), height=self.winfo_height())
-        self.alarmSettingsOverview.fill_frame()
+        #self.alarmSettingsOverview = AlarmSettingsOverview(self.settings, self.alarmSettingsOverviewCallback)
+        #self.alarmSettingsOverview.place(x=0, y=0, width=self.winfo_width(), height=self.winfo_height())
+        #self.alarmSettingsOverview.fill_frame()
         self.settingsView.place_forget()
 
     def changeSingleSettingCallback(self, type, value):
@@ -186,24 +191,29 @@ class ViewController(tk.Tk):
         elif action == MainViewActions.PEEP:
             print("Clicked PEEP")
             self.changeSettingView = ChangeSingleSettingView(SettingType.PEEP, self.settings.peep, self.settings.min_peep,
-                                                             self.settings.max_peep, 5, "PEEP [cm H2O]", self.changeSingleSettingCallback)
+                                                             self.settings.max_peep, 5, "PEEP \n[cm H2O]", self.changeSingleSettingCallback)
             self.changeSettingView.place(x=0, y=0, width=self.winfo_width(), height=self.winfo_height())
             self.changeSettingView.fill_frame()
         elif action == MainViewActions.FREQ:
             print("Clicked Freq")
             min_freq = self.config.values['defaultSettings']['min_freq']
             max_freq = self.config.values['defaultSettings']['max_freq']
-            self.changeSettingView = ChangeSingleSettingView(SettingType.FREQ, self.settings.freq,
-                                                             min_freq,
-                                                             max_freq, 1, "Frequency [1/min]",
-                                                             self.changeSingleSettingCallback)
-            self.changeSettingView.place(x=0, y=0, width=self.winfo_width(), height=self.winfo_height())
-            self.changeSettingView.fill_frame()
+            self.settingsView = ChangeDoubleSettingView(SettingType.FREQ, self.settings.freq, min_freq, max_freq,
+                                                        self.settings.ratio, 1, 5, 1, "Frequency and Ratio",
+                                                        self.changeDoubleValueViewCallback, "Freq \n[1/min]", "Ratio (1:?)", bound=False)
+            self.settingsView.place(x=0, y=0, width=self.winfo_width(), height=self.winfo_height())
+            self.settingsView.fill_frame()
+            #self.changeSettingView = ChangeSingleSettingView(SettingType.FREQ, self.settings.freq,
+                                                           #  min_freq,
+                                                            # max_freq, 1, "Frequency \n[1/min]",
+                                                             #self.changeSingleSettingCallback)
+            #self.changeSettingView.place(x=0, y=0, width=self.winfo_width(), height=self.winfo_height())
+            #self.changeSettingView.fill_frame()
         elif action == MainViewActions.PRESSURE:
             print("Clicked Pressure")
             self.changeSettingView = ChangeSingleSettingView(SettingType.PRESSURE, self.settings.pressure,
                                                              self.settings.min_pressure,
-                                                             self.settings.max_pressure, 1, "Pressure [cm H2O]",
+                                                             self.settings.max_pressure, 1, "Pressure \n[cm H2O]",
                                                              self.changeSingleSettingCallback)
             self.changeSettingView.place(x=0, y=0, width=self.winfo_width(), height=self.winfo_height())
             self.changeSettingView.fill_frame()
@@ -211,7 +221,7 @@ class ViewController(tk.Tk):
             print("Clicked Oxygen")
             self.changeSettingView = ChangeSingleSettingView(SettingType.OXYGEN, self.settings.oxygen,
                                                              self.settings.min_fio2,
-                                                             self.settings.max_fio2, 5, "Oxygen [O2]",
+                                                             self.settings.max_fio2, 5, "Oxygen \n[O2]",
                                                              self.changeSingleSettingCallback)
             self.changeSettingView.place(x=0, y=0, width=self.winfo_width(), height=self.winfo_height())
             self.changeSettingView.fill_frame()

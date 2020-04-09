@@ -6,4 +6,5 @@ class SettingType(enum.Enum):
     PRESSURE = 2
     TIDAL = 3
     OXYGEN = 4
-    FREQ = 5
+    FREQ_ALARM = 5
+    FREQ = 6

@@ -93,7 +93,10 @@ class AlarmController:
             registerAlarm()
 
         def present(self):
-            return len(self.alarms) >= 1
+            for alarm in self.alarms:
+                if alarm.active:
+                    return True
+            return False
 
         def printAlarms(self):
             for alarm in self.alarms:
