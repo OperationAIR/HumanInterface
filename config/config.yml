@@ -7,8 +7,8 @@ colors:
   lightBlue: "#263755"
   mediumBlue: "#1e2a42"
   darkBlue: "#161d2d"
-  pressurePlot: "#EBE1D0"
-  flowPlot: "#43DBA7"
+  pressurePlot: "#f1c40f"
+  flowPlot: "#9b59b6"
   alarmColor: "#FF0749"
 
 defaultSettings:
@@ -29,7 +29,7 @@ defaultSettings:
   min_freq: 0
   max_freq: 30
 developer:
-  simulate: True
+  simulate: False
   commPort: '/dev/ttyS0'
   baudrate: 500000
   logEnabled: True

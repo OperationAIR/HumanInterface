@@ -43,12 +43,13 @@ class AlarmType(enum.IntEnum):
     OXYGEN_TOO_HIGH = 8
 
 def registerAlarm():
-
     if pygame.mixer.get_busy() == 1:
         pass
     else:
-        pygame.time.wait(1000)
         mediumAlarm.play()
+
+def stopAlarm():
+    pygame.mixer.pause()
 
 
 class Alarm:
@@ -108,9 +109,15 @@ class AlarmController:
             return False
 
         def mute(self, type):
+            activeAlarm = False
             for alarm in self.alarms:
+                activeAlarm = alarm.active or activeAlarm
                 if alarm.type == type:
                     alarm.turnOff()
+
+            if not activeAlarm:
+                stopAlarm()
+
 
         def checkForNewAlarms(self, settings, sensordata):
             anomaly = check_for_anomalies(sensordata, settings)

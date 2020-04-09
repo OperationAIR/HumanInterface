@@ -90,19 +90,20 @@ class MainView(Frame):
 
     def drawGraphs(self):
 
-        # Parameters
-        flow_x_len = 400         # Number of points to display
-        flow_y_range = [-30, 0]  # Range of possible Y values to display
-
-        self.flowgraph = GraphView("Flow", "[L / min]", self.sensordata.flow, flow_y_range, flow_x_len, self.config.values['colors']['green'], self)
-        self.flowgraph.getPlot().grid(row=1, column=2, rowspan=5, columnspan=3, sticky=N + S + E + W)
 
         # Parameters
         pressure_x_len = 400         # Number of points to display
         pressure_y_range = [0, 80]  # Range of possible Y values to display
 
-        self.pressuregraph = GraphView("Pressure", "[cm H2O]", self.sensordata.pressure, pressure_y_range, pressure_x_len, self.config.values['colors']['green'], self)
-        self.pressuregraph.getPlot().grid(row=6, column=2, rowspan=5, columnspan=3, sticky=N + S + E + W)
+        self.pressuregraph = GraphView("Pressure", "[cm H2O]", self.sensordata.pressure, pressure_y_range, pressure_x_len, self.config.values['colors']['pressurePlot'], self)
+        self.pressuregraph.getPlot().grid(row=1, column=2, rowspan=5, columnspan=3, sticky=N + S + E + W)
+
+        # Parameters
+        flow_x_len = 400         # Number of points to display
+        flow_y_range = [-30, 0]  # Range of possible Y values to display
+
+        self.flowgraph = GraphView("Flow", "[L / min]", self.sensordata.flow, flow_y_range, flow_x_len, self.config.values['colors']['flowPlot'], self)
+        self.flowgraph.getPlot().grid(row=6, column=2, rowspan=5, columnspan=3, sticky=N + S + E + W)
 
         # Parameters
         tidal_x_len = 400  # Number of points to display
