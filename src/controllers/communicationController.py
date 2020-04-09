@@ -34,6 +34,8 @@ class SerialCommand(Enum):
     LogPrint                    = 0x23232323 # '####' comment
     TriggerInspiratoryHold      = 0x99998888
     StopInspiratoryHold         = 0x99999999
+    TriggerExpiratoryHold       = 0x77776666
+    StopExpiratoryHold          = 0x77777777
 
     def format(self):
         return self.value.to_bytes(4, sys.byteorder)
@@ -154,8 +156,17 @@ class Microcontroller:
     def stop_inspiratroy_hold(self):
         self._send_buffer(SerialCommand.StopInspiratoryHold.format())
 
+    def try_start_expiratroy_hold(self):
+        print('try start inspiratory hold')
+        self._send_buffer(SerialCommand.TriggerExpiratoryHold.format())
+
+    def stop_expiratroy_hold(self):
+        self._send_buffer(SerialCommand.StopExpiratoryHold.format())
+
+
     def self_test(self):
-        self._send_buffer(SerialCommand.StopInspiratoryHold.format())
+        # self._send_buffer(SerialCommand.SelfTest.format())
+        pass
 
     def _match_prefix(self, data):
 

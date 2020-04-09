@@ -195,6 +195,12 @@ class ViewController(tk.Tk):
         elif action == MenuViewActions.INSPIRATORY_HOLD_STOP:
             print("Clicked INSPIRATORY_HOLD_STOP")
             self.mcu.stop_inspiratroy_hold()
+        elif action == MenuViewActions.EXPIRATORY_HOLD_START:
+            print("Clicked EXPIRATORY_HOLD_START")
+            self.mcu.try_start_expiratroy_hold()
+        elif action == MenuViewActions.EXPIRATORY_HOLD_STOP:
+            print("Clicked EXPIRATORY_HOLD_STOP")
+            self.mcu.stop_expiratroy_hold()
         else:
             print("Unknown menu action")
 
@@ -377,7 +383,8 @@ class ViewController(tk.Tk):
 
         self.mainView.update(self.settings, self.latest_sensor_data)
         if self.menuView:
-            self.menuView.update(self.latest_sensor_data.inspiratory_hold_result)
+            self.menuView.update(self.latest_sensor_data.inspiratory_hold_result,
+                                self.latest_sensor_data.expiratory_hold_result)
 
         if self._thread_alive:
            self.after(100,self.asyncio)
