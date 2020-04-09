@@ -58,7 +58,7 @@ class MenuView(Frame):
         insp_hold_stop_btn = FlatButton(self, self.callback, MenuViewActions.INSPIRATORY_HOLD_STOP,
                                self.config.values['colors']['lightBlue'], fontSize=20)
         insp_hold_stop_btn.setText("Stop \nInspiratory \nhold")
-        insp_hold_stop_btn.grid(row=1, column=3, sticky=N + S + E + W,padx=(2,0), pady=80)
+        insp_hold_stop_btn.grid(row=1, column=3, sticky=N + S + E + W,padx=(2,0), pady=40)
 
 
         self.rowconfigure(0, weight=1)
@@ -66,5 +66,14 @@ class MenuView(Frame):
         self.rowconfigure(2, weight=1)
         self.rowconfigure(3, weight=1)
 
+        self.insp_hold_text = StringVar()
+
+        insp_hold_label = tk.Label(self, textvariable=self.insp_hold_text)
+        self.insp_hold_text.set("Insp hold: xx")
+        insp_hold_label.grid(row=2, column=2, sticky=N + S + E + W,padx=(2,0), pady=40)
+
         for i in range(0, 4):
             self.columnconfigure(i, weight=1)
+
+    def update(self, insp_hold_value):
+        self.insp_hold_text.set('{0:.2g} [cm H2O]'.format(insp_hold_value))

@@ -83,6 +83,7 @@ class ViewController(tk.Tk):
 
         self.setStyle()
 
+        self.menuView = None
         self.mainView = MainView(self.winfo_width(), self.winfo_height(), self.settings, self.latest_sensor_data, self.mainViewCallback)
 
         self.mainView.pack(fill=BOTH, expand=True)
@@ -375,6 +376,8 @@ class ViewController(tk.Tk):
                 self.send_settings()
 
         self.mainView.update(self.settings, self.latest_sensor_data)
+        if self.menuView:
+            self.menuView.update(self.latest_sensor_data.inspiratory_hold_result)
 
         if self._thread_alive:
            self.after(100,self.asyncio)

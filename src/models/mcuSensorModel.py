@@ -26,12 +26,12 @@ class Sensors:
         int32_t tidal_volume_exhale;       // Tidal volume [mL] (Based on exhale flow)
         int32_t minute_volume;      // Average flow (exhale) [mL / minute] (average over last 10 sec interval)
         int32_t cycle_state;        // PeeP / Peak / None
-        int32_t power_status;       // Status of PSU (TODO: Not Implemented Yet)
+        uint32_t power_status;      // Status of UPS: volatage [mV OR-ed with UPSStatus bits]
 
-        int32_t inspiratory_hold_result1;   // Value for end of inspiratory hold sensor 1
-        int32_t inspiratory_hold_result2;   // Value for end of inspiratory hold sensor 2
+        int32_t inspiratory_hold_result;   // Value for end of inspiratory hold sensor 1
+        int32_t expiratory_hold_result;   // Value for end of expiratory hold sensor 1
 
-    };
+    }
     """
     def __init__(self,
             flow_inhale,
@@ -46,8 +46,8 @@ class Sensors:
             minute_volume,
             cycle_state,
             power_status,
-            inspiratory_hold_result1,
-            inspiratory_hold_result2):
+            inspiratory_hold_result,
+            expiratory_hold_result):
 
         self.timestamp = datetime.datetime.now()
         self.flow_inhale = flow_inhale / 1000
@@ -62,8 +62,8 @@ class Sensors:
         self.minute_volume = minute_volume / 1000
         self.cycle_state = cycle_state # 0: stopped, 1: peak pressure, 2: peep pressure
         self.power_status = power_status
-        self.inspiratory_hold_result1 = inspiratory_hold_result1
-        self.inspiratory_hold_result2 = inspiratory_hold_result2
+        self.inspiratory_hold_result = inspiratory_hold_result
+        self.expiratory_hold_result = expiratory_hold_result
 
     @property
     def peep(self):
@@ -95,7 +95,7 @@ class Sensors:
             self.pressure_exhale,
             self.tidal_volume_exhale,
             self.oxygen,
-            self.inspiratory_hold_result1)
+            self.inspiratory_hold_result)
         return repr
 
     def __str__(self):
@@ -124,7 +124,7 @@ class Sensors:
             minute_volume=0,
             cycle_state=0,
             power_status=1,
-            inspiratory_hold_result1=0,
-            inspiratory_hold_result2=0,
+            inspiratory_hold_result=0,
+            expiratory_hold_result=0,
         )
 
