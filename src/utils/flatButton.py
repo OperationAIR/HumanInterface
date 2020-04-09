@@ -1,10 +1,11 @@
 import tkinter as tk
 from tkinter import Canvas
 from utils.config import ConfigValues
+import time
 
 class FlatButton(Canvas):
 
-    def __init__(self, parent, callback, arg=None, color=None, pressColor=None, fontSize=None):
+    def __init__(self, parent, callback, arg=None, color=None, pressColor=None, fontSize=None, timeout=None):
         Canvas.__init__(self, parent, width=0, height=0, bd=-2, bg=color, highlightthickness=0, relief='ridge')
 
         self.config = ConfigValues()
@@ -25,17 +26,49 @@ class FlatButton(Canvas):
 
         self.textColor = "White"
         self.text = ""
+        self.oldText = ""
         self.bind("<Button-1>", self.pressEvent)
         self.bind("<ButtonRelease-1>", self.releaseEvent)
         self.bind("<Configure>", self.centerText)
+        self.timeout = 0
+
+        if timeout:
+            self.timeout = timeout
+
+        self.timestamp = time.time()
+        self.counting = False
 
     def pressEvent(self, event):
+        if self.timeout > 0:
+            self.timestamp = time.time()
+            self.oldText = self.text
+            self.text = "Hold for " + str(self.timeout) + " s"
+            self.setText(self.text)
+            self.counting = True
+
         if self.callback:
             self.configure(bg=self.pressColor)
 
+    def checkTimeout(self):
+        if self.counting:
+            time_diff = time.time() - self.timestamp
+            if time_diff > self.timeout:
+                self.setText(self.oldText)
+                self.text = self.oldText
+                self.oldText = ""
+                self.callback(self.arg)
+            return
+
     def releaseEvent(self, event):
         self.configure(bg=self.color)
-        if self.callback:
+
+        if self.counting:
+            self.counting = False
+            self.setText(self.oldText)
+            self.text = self.oldText
+            self.oldText = ""
+            
+        elif self.callback:
             self.callback(self.arg)
 
     def setBackground(self, color=None):
@@ -66,6 +99,9 @@ class FlatButton(Canvas):
         return 0
 
     def setText(self, text, color=None):
+        if self.oldText == text:
+            return
+
         self.text = text
         if color:
             self.textColor = color

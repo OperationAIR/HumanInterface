@@ -63,9 +63,14 @@ class MainView(Frame):
         if not self.oxy_btn:
             return
 
-        start_stop_text = "START"
+        start_stop_text = ""
         if self.settings.start:
+            self.switch_btn.timeout = 5
+            self.switch_btn.checkTimeout()
             start_stop_text = "STOP"
+        else:
+            self.switch_btn.timeout = 0
+            start_stop_text = "START"
 
         if self.alarms.present():
             self.alarm_overview_btn.setBackground(self.config.values['colors']['alarmColor'])
@@ -141,7 +146,7 @@ class MainView(Frame):
         self.patient_btn.setText("Patient")
         self.patient_btn.grid(row=0, column=3, sticky=N + S + E + W, padx=(0,2), pady=(2, 0))
 
-        self.switch_btn = FlatButton(self, self.callback, MainViewActions.STARTSTOP, self.config.values['colors']['lightBlue'])
+        self.switch_btn = FlatButton(self, self.callback, MainViewActions.STARTSTOP, self.config.values['colors']['lightBlue'], timeout=5)
         self.switch_btn.grid(row=0, column=4, sticky=N + S + E + W, padx=(0,2), pady=(2, 0))
 
         self.peep_btn = FlatButton(self, self.callback, MainViewActions.PEEP, self.config.values['colors']['lightBlue'])
