@@ -146,6 +146,7 @@ class ViewController(tk.Tk):
             self.settings.freq = val1
             self.settings.ratio = int(val2 * 10)
             self.settingsView.place_forget()
+            self.mcu.send_settings(self.settings)
             return
 
         self.settingsView.place_forget()
@@ -221,8 +222,8 @@ class ViewController(tk.Tk):
             #self.changeSettingView.fill_frame()
         elif action == MainViewActions.PRESSURE:
             print("Clicked Pressure")
-            min_press = self.config.values['defaultSettings']['min_press']
-            max_press = self.config.values['defaultSettings']['max_press']
+            min_press = self.config.values['defaultSettings']['min_pressure']
+            max_press = self.config.values['defaultSettings']['max_pressure']
             self.changeSettingView = ChangeSingleSettingView(SettingType.PRESSURE, self.settings.pressure,
                                                              min_press,
                                                              max_press, self.press_step, "Pressure \n[cm H2O]",

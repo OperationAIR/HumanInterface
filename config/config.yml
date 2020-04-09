@@ -1,5 +1,5 @@
 window:
-  fullscreen: True
+  fullscreen: False
 
 colors:
   backgroundColor: "#000000"
@@ -42,7 +42,7 @@ alarmSettings:
   max_peep: 35
   min_fio2: 20
   max_fio2: 50
-  min_tv: 500
+  min_tv: 50
   max_tv: 800
 
 developer:
