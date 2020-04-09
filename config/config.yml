@@ -16,18 +16,35 @@ defaultSettings:
   peep: 5
   freq: 20
   ratio: 20
+  ratio_step: 0.5
   pressure: 30
   oxygen: 25
   max_pressure: 50
   min_pressure: 20
+  pressure_step: 5
   max_tv: 800
   min_tv: 50
-  max_fio2: 50
+  tv_step: 50
+  max_fio2: 60
   min_fio2: 20
+  fio2_step: 5
   max_peep: 35
   min_peep: 5
+  peep_step: 5
   min_freq: 0
   max_freq: 30
+  freq_step: 1
+
+alarmSettings:
+  min_pressure: 20
+  max_pressure: 50
+  min_peep: 5
+  max_peep: 35
+  min_fio2: 20
+  max_fio2: 50
+  min_tv: 500
+  max_tv: 800
+
 developer:
   simulate: True
   commPort: '/dev/ttyS0'
