@@ -70,13 +70,6 @@ class ViewController(tk.Tk):
         self.attributes('-fullscreen', self.config.values['window']['fullscreen'])
         self.center()
 
-        # For plotting
-        self.line_pressure = None
-        self.line_flow = None
-        self.ys_p = []
-        self.ys_f = []
-        self.pressure_animation_ref = None
-
         self.log_handle = None
 
         self.latest_sensor_data = Sensors.default()
@@ -327,8 +320,6 @@ class ViewController(tk.Tk):
         if self.io_thread:
             self.io_thread.join()
             print('io thread joined')
-        if self.pressure_animation_ref:
-            self.pressure_animation_ref.running = False
         self.destroy()
 
     def start(self):
