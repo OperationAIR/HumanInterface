@@ -5,7 +5,6 @@ import datetime
 from utils.math import pressure_to_cm_h2o
 import struct
 
-from utils.math import pressure_to_cm_h2o
 
 
 class Sensors:
@@ -62,8 +61,8 @@ class Sensors:
         self.minute_volume = minute_volume / 1000
         self.cycle_state = cycle_state # 0: stopped, 1: peak pressure, 2: peep pressure
         self.power_status = power_status
-        self.inspiratory_hold_result = inspiratory_hold_result
-        self.expiratory_hold_result = expiratory_hold_result
+        self.inspiratory_hold_result = pressure_to_cm_h2o(inspiratory_hold_result)
+        self.expiratory_hold_result = pressure_to_cm_h2o(expiratory_hold_result)
 
     @property
     def peep(self):

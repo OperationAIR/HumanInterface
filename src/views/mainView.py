@@ -87,8 +87,8 @@ class MainView(Frame):
         self.oxy_btn.setText("Oxygen (02)" + '\n' + str(self.settings.oxygen) + " [%]")
         self.oxy_btn.setBackground(self.getBtnColor(AlarmType.OXYGEN_TOO_LOW, AlarmType.OXYGEN_TOO_HIGH))
 
-        self.ppeak_label.setText("Ppeak", self.sensordata.pressure) # not implemented yet, ppeak sensordata
-        self.pmean_label.setText("Pmean", self.sensordata.pressure) # not implemented yet, pmean sensordata
+        self.ppeak_label.setText("p ", self.sensordata.pressure) # not implemented yet, ppeak sensordata
+        # self.pmean_label.setText("Pmean", self.sensordata.pressure) # not implemented yet, pmean sensordata
         self.freq_label.setText("Freq.", 10) # not implemented yet, freq sensordata
         self.oxy_label.setText("O2", self.sensordata.oxygen)
         self.tv_label1.setText("TV Min.Vol.", self.sensordata.minute_volume)
@@ -165,8 +165,8 @@ class MainView(Frame):
         self.ppeak_label = CurrentValueCanvas(self, "Ppeak", 100, self.config.values['colors']['pressurePlot'])
         self.ppeak_label.grid(row=2, column=4, rowspan=1, sticky=N + S + E + W)
 
-        self.pmean_label = CurrentValueCanvas(self, "Pmean", 50, self.config.values['colors']['pressurePlot'])
-        self.pmean_label.grid(row=3, column=4, rowspan=1, sticky=N + S + E + W)
+        # self.pmean_label = CurrentValueCanvas(self, "Pmean", 50, self.config.values['colors']['pressurePlot'])
+        # self.pmean_label.grid(row=3, column=4, rowspan=1, sticky=N + S + E + W)
 
         self.freq_label = CurrentValueCanvas(self, "Freq.", 9, self.config.values['colors']['flowPlot'])
         self.freq_label.grid(row=6, column=4, rowspan=1, sticky=N + S + E + W)
