@@ -51,6 +51,7 @@ developer:
   baudrate: 500000
   logEnabled: True
   logDir: "sensorlogs"
+  pressureQueueLen: 30
 
   # for Mac
 #TTY = '/dev/cu.usbmodemC1DDCDF83'

@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import StringVar, Button, Frame, Canvas
+from tkinter import StringVar, Button, Frame, Canvas, N, S, E, W
 import signal
 
 from utils.config import ConfigValues
@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 matplotlib.use("TkAgg")
 from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg)
 from queue import Queue
-from tkinter import ttk, BOTH, X, Y, N, S, E, W
+from collections import deque
 
 from models.mcuSensorModel import Sensors
 
@@ -47,6 +47,8 @@ class MainView(Frame):
         self.sensordata = sensordata
         self.callback = callback
 
+        self.pressureQueue = deque(maxlen=self.config.values['developer']['pressureQueueLen'])
+
         self.alarms = AlarmController()
 
         self.fill_frame()
@@ -78,6 +80,8 @@ class MainView(Frame):
         else:
             self.alarm_overview_btn.setBackground()
 
+        self.pressureQueue.append(self.sensordata.pressure)
+
         self.switch_btn.setText(start_stop_text)
         self.peep_btn.setText("PEEP" + '\n' + str(self.settings.peep) + " [cm H2O]")
         self.peep_btn.setBackground(self.getBtnColor(AlarmType.PEEP_TOO_LOW, AlarmType.PEEP_TOO_HIGH))
@@ -87,8 +91,11 @@ class MainView(Frame):
         self.oxy_btn.setText("Oxygen (02)" + '\n' + str(self.settings.oxygen) + " [%]")
         self.oxy_btn.setBackground(self.getBtnColor(AlarmType.OXYGEN_TOO_LOW, AlarmType.OXYGEN_TOO_HIGH))
 
-        self.ppeak_label.setText("p ", self.sensordata.pressure) # not implemented yet, ppeak sensordata
-        # self.pmean_label.setText("Pmean", self.sensordata.pressure) # not implemented yet, pmean sensordata
+        ppeak = max(self.pressureQueue)
+        self.ppeak_label.setText("p ", ppeak)
+        pmean = sum(self.pressureQueue)/len(self.pressureQueue)
+        self.pmean_label.setText("Pmean", pmean)
+
         self.freq_label.setText("Freq.", 10) # not implemented yet, freq sensordata
         self.oxy_label.setText("O2", self.sensordata.oxygen)
         self.tv_label1.setText("TV Min.Vol.", self.sensordata.minute_volume)
@@ -165,8 +172,8 @@ class MainView(Frame):
         self.ppeak_label = CurrentValueCanvas(self, "Ppeak", 100, self.config.values['colors']['pressurePlot'])
         self.ppeak_label.grid(row=2, column=4, rowspan=1, sticky=N + S + E + W)
 
-        # self.pmean_label = CurrentValueCanvas(self, "Pmean", 50, self.config.values['colors']['pressurePlot'])
-        # self.pmean_label.grid(row=3, column=4, rowspan=1, sticky=N + S + E + W)
+        self.pmean_label = CurrentValueCanvas(self, "Pmean", 50, self.config.values['colors']['pressurePlot'])
+        self.pmean_label.grid(row=3, column=4, rowspan=1, sticky=N + S + E + W)
 
         self.freq_label = CurrentValueCanvas(self, "Freq.", 9, self.config.values['colors']['flowPlot'])
         self.freq_label.grid(row=6, column=4, rowspan=1, sticky=N + S + E + W)
