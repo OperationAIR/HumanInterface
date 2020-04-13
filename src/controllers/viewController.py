@@ -37,7 +37,10 @@ class ViewController(tk.Tk):
     def __init__(self):
         super().__init__()
 
+        # We start by requesting current settings from mcu
+        # in case the mcu was alread
         self.settings = Settings.fromConfig()
+        self.settings_initialized = False
 
         self.config = ConfigValues()
 
@@ -83,7 +86,8 @@ class ViewController(tk.Tk):
         self.io_thread = Thread(target=self.asyncio)
         self.io_thread.daemon = True
         self.io_thread.start()
-        print(self.req_sensors())
+        # self.mcu.request_settings()
+        self.mcu.request_sensor_data()
 
     def updateSettings(self, settings):
         self.settings = settings
@@ -345,9 +349,6 @@ class ViewController(tk.Tk):
         print("Bye, Tkinter!")
         self.mcu.led_off()
 
-    def req_sensors(self):
-        self.mcu.request_sensor_data()
-
     def send_settings(self, popup=None):
         self.mcu.send_settings(self.settings)
         print("Send settings:", self.settings)
@@ -355,7 +356,7 @@ class ViewController(tk.Tk):
 
     def asyncio(self):
         if self.settings.start:
-            self.req_sensors()
+            self.mcu.request_sensor_data()
             if self.latest_sensor_data.cycle_state:
                 self.checkAllAlarms(self.settings, self.latest_sensor_data)
 
@@ -367,10 +368,17 @@ class ViewController(tk.Tk):
                 logger.write_csv(self.log_handle, self.latest_sensor_data.as_list())
 
         if not self.settings_queue.empty():
-            settings = self.settings_queue.get()
-            if not self.settings.equals(settings):
+            mcuSettings = self.settings_queue.get()
+            if not self.settings_initialized:
+                self.settings = Settings.from_mcuSettings(mcuSettings)
+                # Todo, maybe verify settings
+                self.settings_initialized = True
+            elif not self.settings.equals(mcuSettings):
                 print("MISMATCH SETTINGS: RESEND")
                 self.send_settings()
+
+        if not self.settings_initialized:
+            self.mcu.request_settings()
 
         self.mainView.update(self.settings, self.latest_sensor_data)
         if self.menuView:

@@ -13,7 +13,7 @@ from enum import Enum
 from queue import Queue
 from serial.tools import list_ports
 
-from models.mcuSettingsModel import Settings
+from models.mcuSettingsModel import Settings, MCUSettings
 from models.mcuSensorModel import Sensors
 
 PREFIX_LEN = 4
@@ -139,10 +139,14 @@ class Microcontroller:
     def send_settings(self, settings: Settings):
         """Send new settings to microcontroller"""
         cmd = SerialCommand.NewSettings.format()
-        settings_buffer = settings.get_bit_string()
+        settings_buffer = settings.pack_mcu_settings()
         checksum = self.crc(settings_buffer).to_bytes(2, byteorder='little')
         msg = cmd + settings_buffer + checksum
         self._send_buffer(msg)
+
+    def request_settings(self):
+        """ Request settings from mcu """
+        self._send_buffer(SerialCommand.RequestSettings.format())
 
     def request_sensor_data(self):
         """Send command to request latest sensor data from microcontroller"""
@@ -249,11 +253,11 @@ class Microcontroller:
                     data = data[PREFIX_LEN:]
                     print('unknown exception', e)
             elif cmd == SerialCommand.NewSettings:
-                settings_size = 26 # todo retrieve from Settings class?
+                settings_size = MCUSettings.size()
                 offset = PREFIX_LEN
                 end = offset+settings_size
                 if len(data[offset:]) >= settings_size:
-                    settings = Settings.from_binary(data[offset:end])
+                    settings = MCUSettings.from_binary(data[offset:end])
                     self.settings_queue.put(settings)
                     data = data[end:]
                     if self.serial_retry:
