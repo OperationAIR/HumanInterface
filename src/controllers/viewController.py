@@ -373,11 +373,13 @@ class ViewController(tk.Tk):
                 self.settings = Settings.from_mcuSettings(mcuSettings)
                 # Todo, maybe verify settings
                 self.settings_initialized = True
+                print('settings initialized')
             elif not self.settings.equals(mcuSettings):
                 print("MISMATCH SETTINGS: RESEND")
                 self.send_settings()
 
         if not self.settings_initialized:
+            print('request settings')
             self.mcu.request_settings()
 
         self.mainView.update(self.settings, self.latest_sensor_data)

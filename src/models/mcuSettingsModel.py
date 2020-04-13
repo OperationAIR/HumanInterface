@@ -13,15 +13,22 @@ class MCUSettings:
         self.pressure = int(pressure)
         self.oxygen = int(oxygen)
 
-    @staticmethod
-    def size():
-        return (6*2)
+    @classmethod
+    def num_properties(cls):
+        return 6
+
+    @classmethod
+    def size(cls):
+        """binary size including crc"""
+        return (cls.num_properties()*2 + 2)
 
     @classmethod
     def from_binary(cls, packed_data):
         """ reconstruct mcu settings from binary blob """
-        # size + 1 because of crc16
-        unpacked = struct.unpack('H'*(cls.size() + 1), packed_data)
+
+        # num + 1 because of crc16
+        num_values = cls.num_properties() + 1
+        unpacked = struct.unpack('H'*num_values, packed_data)
         crc = [unpacked[-1]]
 
         start = unpacked[0]
