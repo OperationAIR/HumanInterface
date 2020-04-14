@@ -64,6 +64,7 @@ class Sensors:
         self.inspiratory_hold_result = pressure_to_cm_h2o(inspiratory_hold_result)
         self.expiratory_hold_result = pressure_to_cm_h2o(expiratory_hold_result)
 
+
     @property
     def peep(self):
         return self.cycle_state >= 2
@@ -101,7 +102,22 @@ class Sensors:
         return self.__repr__()
 
     def as_list(self):
-        return [[self.timestamp, self.cycle_state, self.pressure, self.flow, self.tidal_volume_exhale,  self.oxygen]]
+        return [[self.timestamp, self.cycle_state, self.pressure_inhale, self.pressure_exhale, self.flow, self.tidal_volume_inhale, self.tidal_volume_exhale, self.oxygen]]
+
+    @classmethod
+    def from_list(cls, list_data):
+        print(list_data)
+        # print(list_data[4])
+        sensors = Sensors(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0, 0.0, 0.0, 0, 0, 0, 0, 0)
+        sensors.timestamp = datetime.datetime.strptime(list_data[0], '%Y-%m-%d %H:%M:%S.%f')
+        sensors.cycle_state = int(list_data[1])
+        sensors.pressure_inhale = float(list_data[2])
+        sensors.pressure_exhale = float(list_data[3])
+        sensors.flow_exhale = float(list_data[4])
+        sensors.tidal_volume_inhale = int(list_data[5])
+        sensors.tidal_volume_exhale = int(list_data[6])
+        sensors.oxygen = int(list_data[7])
+        return sensors
 
     @classmethod
     def from_binary(cls, packed_data):

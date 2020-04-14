@@ -1,5 +1,5 @@
 logs/
-sensorslogs/
+# sensorslogs/
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -14,7 +14,7 @@ build/
 develop-eggs/
 dist/
 downloads/
-sensorlogs/
+# sensorlogs/
 eggs/
 .eggs/
 lib/

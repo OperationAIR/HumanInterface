@@ -2,9 +2,6 @@ import pygame
 import os
 from pathlib import Path
 
-from models.mcuSensorModel import Sensors
-from models.mcuSettingsModel import Settings
-
 from utils.anamolyDetection import Anomaly, check_for_anomalies
 
 import enum
