@@ -52,7 +52,7 @@ developer:
   logEnabled: True
   logDir: "sensorlogs"
   pressureQueueLen: 30
-  graphYaxisUpdateInterval: 10
+  graphYaxisUpdateInterval: 5
 
   # for Mac
 #TTY = '/dev/cu.usbmodemC1DDCDF83'
