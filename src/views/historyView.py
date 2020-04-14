@@ -110,7 +110,7 @@ class HistoryView(Frame):
 
         seventy_two_hour_btn = FlatButton(self, self.callback, HistoryViewActions.SEVENTY_TWO_HOUR,
                                self.config.values['colors']['lightBlue'], fontSize=20)
-        seventy_two_hour_btn.setText("1u")
+        seventy_two_hour_btn.setText("72u")
         seventy_two_hour_btn.grid(row=0, column=6, sticky=N + S + E + W, padx=(1, 10), pady=20)
 
         delete_btn = FlatButton(self, self.callback, HistoryViewActions.DELETE,
