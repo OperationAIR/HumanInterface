@@ -90,7 +90,7 @@ class MainView(Frame):
         self.oxy_btn.setBackground(self.getBtnColor(AlarmType.OXYGEN_TOO_LOW, AlarmType.OXYGEN_TOO_HIGH))
 
         ppeak = max(self.pressureQueue)
-        self.ppeak_label.setText("p ", ppeak)
+        self.ppeak_label.setText("Ppeak", ppeak)
         pmean = sum(self.pressureQueue)/len(self.pressureQueue)
         self.pmean_label.setText("Pmean", pmean)
 
@@ -134,7 +134,7 @@ class MainView(Frame):
 
 
     def fill_frame(self):
-
+        # Buttons on the  top and left
         self.air_btn = FlatButton(self, self.callback, MainViewActions.MENU,
                              self.config.values['colors']['lightBlue'])
         self.air_btn.setText("Menu")
@@ -167,27 +167,29 @@ class MainView(Frame):
         self.oxy_btn = FlatButton(self, self.callback, MainViewActions.OXYGEN, self.config.values['colors']['lightBlue'])
         self.oxy_btn.grid(row=10, column=0, columnspan=2, rowspan=3, sticky=N + S + E + W, padx=(0,2), pady=(2,0))
 
+
+        # Labels on the right side next to the graphs
         self.ppeak_label = CurrentValueCanvas(self, "Ppeak", 100, self.config.values['colors']['pressurePlot'])
-        self.ppeak_label.grid(row=2, column=4, rowspan=1, sticky=N + S + E + W)
+        self.ppeak_label.grid(row=1, column=4, rowspan=2, sticky=N + S + E + W)
 
         self.pmean_label = CurrentValueCanvas(self, "Pmean", 50, self.config.values['colors']['pressurePlot'])
-        self.pmean_label.grid(row=3, column=4, rowspan=1, sticky=N + S + E + W)
+        self.pmean_label.grid(row=3, column=4, rowspan=2, sticky=N + S + E + W)
 
         self.freq_label = CurrentValueCanvas(self, "Freq.", 9, self.config.values['colors']['flowPlot'])
-        self.freq_label.grid(row=6, column=4, rowspan=1, sticky=N + S + E + W)
+        self.freq_label.grid(row=5, column=4, rowspan=2, sticky=N + S + E + W)
 
         self.oxy_label = CurrentValueCanvas(self, "O2", self.sensordata.oxygen, 'white')
-        self.oxy_label.grid(row=7, column=4, rowspan=1, sticky=N + S + E + W)
+        self.oxy_label.grid(row=7, column=4, rowspan=2, sticky=N + S + E + W)
 
         self.tv_label1 = CurrentValueCanvas(self, "TV Min.Vol.",
                                            [self.sensordata.tidal_volume_inhale, self.sensordata.tidal_volume_exhale],
                                            self.config.values['colors']['green'])
-        self.tv_label1.grid(row=10, column=4, rowspan=1, sticky=N + S + E + W)
+        self.tv_label1.grid(row=9, column=4, rowspan=2, sticky=N + S + E + W)
 
         self.tv_label2 = CurrentValueCanvas(self, "TV In/Ex",
                     [self.sensordata.tidal_volume_inhale, self.sensordata.tidal_volume_exhale],
                     self.config.values['colors']['green'])
-        self.tv_label2.grid(row=11, column=4, rowspan=1, sticky=N + S + E + W)
+        self.tv_label2.grid(row=11, column=4, rowspan=2, sticky=N + S + E + W)
 
 
         self.rowconfigure(0, weight=5)
