@@ -1,23 +1,14 @@
-import tkinter as tk
-from tkinter import StringVar, Button, Frame
 import time
+from collections import deque
 
-from utils.config import ConfigValues
 import matplotlib
 import matplotlib.animation as animation
 import matplotlib.pyplot as plt
-
-matplotlib.use("TkAgg")
-from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg)
-from queue import Queue
-from tkinter import ttk, BOTH, X, Y, N, S, E, W
-
-from controllers.alarmController import AlarmController
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 from utils.config import ConfigValues
-from utils.flatButton import FlatButton
 
-from collections import deque
+matplotlib.use("TkAgg")
 
 
 class GraphView:
@@ -53,14 +44,8 @@ class GraphView:
         #ax.spines['bottom'].set_color('gray')
 
         xs = list(range(-x_len, 0))
-        
 
-        yr = max(y_range) - min(y_range)
-        print(y_range, yr)
-        if yr < 20:
-            yr = 20
-
-        # ax.set_ylim(20)
+        ax.set_ylim(bottom=min(y_range), top=max(y_range))
         ax.spines["top"].set_visible(False)
         ax.spines["bottom"].set_visible(False)
         ax.spines["right"].set_visible(False)
@@ -77,9 +62,6 @@ class GraphView:
         # Create a blank line. We will update the line in animate
         line, = ax.plot(xs, self.ys, color= self.linecolor)
 
-        # line, = ax.plot([], [], color=self.linecolor)
-
-
         # Add labels
         plt.title(self.title, fontsize= 13, color="white")
         plt.ylabel(self.ylabel)
@@ -87,26 +69,16 @@ class GraphView:
 
         # This function is called periodically from FuncAnimation
         def animate(i, ys):
-            # if not self.settings.start:
-            #     return line,
             # Add y to list
             ys.append(self.data)
-            # Limit y list to set number of items
-            # ys = ys[-x_len:]
             # Update line with new Y values
             line.set_ydata(ys)
 
-
             if time.time() - self.yaxisRefreshTime >= self.config.values['developer']['graphYaxisUpdateInterval']:
-                ax.set_ylim(bottom=min(ys), top=max(ys))
+                margin = 5
+                ax.set_ylim(bottom=min(ys)-margin, top=max(ys)+margin)
                 self.canvas.draw()
-                # ax.autoscale(enable=False, axis='y')
-                # ax.relim()
-                # ax.autoscale_view(scalex=False, scaley=True)
                 self.yaxisRefreshTime = time.time()
-
-
-            
 
             return line,
         # Set up plot to call animate() function periodically
@@ -119,4 +91,3 @@ class GraphView:
            blit=True)
 
         return self.canvas.get_tk_widget()
-        # canvas.get_tk_widget().grid(row=1, column=2, rowspan=5, columnspan=3, sticky=N + S + E + W)

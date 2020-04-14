@@ -106,8 +106,6 @@ class Sensors:
 
     @classmethod
     def from_list(cls, list_data):
-        print(list_data)
-        # print(list_data[4])
         sensors = Sensors(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0, 0.0, 0.0, 0, 0, 0, 0, 0)
         sensors.timestamp = datetime.datetime.strptime(list_data[0], '%Y-%m-%d %H:%M:%S.%f')
         sensors.cycle_state = int(list_data[1])
