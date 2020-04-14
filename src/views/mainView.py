@@ -12,8 +12,6 @@ from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg)
 from queue import Queue
 from collections import deque
 
-from models.mcuSensorModel import Sensors
-
 from controllers.alarmController import AlarmController, AlarmType
 
 from utils.config import ConfigValues
@@ -101,7 +99,7 @@ class MainView(Frame):
         self.tv_label1.setText("TV Min.Vol.", self.sensordata.minute_volume)
         self.tv_label2.setText("TV In/Ex", [self.sensordata.tidal_volume_inhale, self.sensordata.tidal_volume_exhale])
 
-        self.flowgraph.update(-1 * self.sensordata.flow)
+        # self.flowgraph.update(-1 * self.sensordata.flow)
         self.pressuregraph.update(self.sensordata.pressure)
         self.tidalgraph.update(self.sensordata.tidal_volume_exhale)
 
@@ -117,14 +115,14 @@ class MainView(Frame):
         pressure_y_range = [0, 80]  # Range of possible Y values to display
 
         self.pressuregraph = GraphView("Pressure", "[cm H2O]", self.sensordata.pressure, pressure_y_range, pressure_x_len, self.config.values['colors']['pressurePlot'], self)
-        self.pressuregraph.getPlot().grid(row=1, column=2, rowspan=4, columnspan=2, sticky=N + S + E + W)
+        self.pressuregraph.getPlot().grid(row=1, column=2, rowspan=6, columnspan=2, sticky=N + S + E + W)
 
         # Parameters
-        flow_x_len = 400         # Number of points to display
-        flow_y_range = [-30, 0]  # Range of possible Y values to display
+        # flow_x_len = 400         # Number of points to display
+        # flow_y_range = [-30, 0]  # Range of possible Y values to display
 
-        self.flowgraph = GraphView("Flow", "[L / min]", self.sensordata.flow, flow_y_range, flow_x_len, self.config.values['colors']['flowPlot'], self)
-        self.flowgraph.getPlot().grid(row=5, column=2, rowspan=4, columnspan=2, sticky=N + S + E + W)
+        # self.flowgraph = GraphView("Flow", "[L / min]", self.sensordata.flow, flow_y_range, flow_x_len, self.config.values['colors']['flowPlot'], self)
+        # self.flowgraph.getPlot().grid(row=5, column=2, rowspan=4, columnspan=2, sticky=N + S + E + W)
 
         # Parameters
         tidal_x_len = 400  # Number of points to display
@@ -132,7 +130,7 @@ class MainView(Frame):
 
         self.tidalgraph = GraphView("Tidal Volume", "[mL]", self.sensordata.tidal_volume_exhale, tidal_y_range,
                                tidal_x_len, self.config.values['colors']['green'], self)
-        self.tidalgraph.getPlot().grid(row=9, column=2, rowspan=4, columnspan=2, sticky=N + S + E + W)
+        self.tidalgraph.getPlot().grid(row=7, column=2, rowspan=6, columnspan=2, sticky=N + S + E + W)
 
 
     def fill_frame(self):
