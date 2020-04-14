@@ -26,6 +26,7 @@ from views.alarmOverview import AlarmOverview
 from views.changeDoubleSettingView import ChangeDoubleSettingView, ChangeAlarmViewActions
 from views.activeAlarmView import alarm_overview
 from views.menuView import MenuView, MenuViewActions
+from views.historyView import HistoryView, HistoryViewActions
 
 from utils.constants import SettingType
 
@@ -201,6 +202,9 @@ class ViewController(tk.Tk):
         else:
             print("Unknown menu action")
 
+    def historyViewCallback(self, action):
+        if action == HistoryViewActions.CLOSE:
+            self.historyView.place_forget()
 
     def mainViewCallback(self, action):
         if action == MainViewActions.QUIT:
@@ -222,10 +226,11 @@ class ViewController(tk.Tk):
             self.alarmOverview = AlarmOverview(self.alarmOverviewCallback)
             self.alarmOverview.place(x=0, y=0, width=self.winfo_width(), height=self.winfo_height())
             self.alarmOverview.fill_frame()
-
         elif action == MainViewActions.PATIENT:
             print("Clicked Patient")
-            self.mcu.try_start_inspiratroy_hold()
+            self.historyView = HistoryView(self.historyViewCallback)
+            self.historyView.place(x=0, y=0, width=self.winfo_width(), height=self.winfo_height())
+            self.historyView.fill_frame()
         elif action == MainViewActions.STARTSTOP:
             print("Clicked Startstop")
             self.start()
