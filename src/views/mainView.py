@@ -17,6 +17,8 @@ from utils.currentValueCanvas import CurrentValueCanvas
 
 from views.graphView import GraphView
 
+from models.mcuSensorModel import UPSStatus
+
 
 import enum
 
@@ -96,7 +98,14 @@ class MainView(Frame):
         self.freq_label.setText("Freq.", 10) # not implemented yet, freq sensordata
         self.oxy_label.setText("O2", self.sensordata.oxygen)
         self.tv_label1.setText("TVmin.vol.", self.sensordata.minute_volume)
-        self.batt_label.setText("Batt. %", self.sensordata.oxygen)
+
+        batt_status = self.sensordata.ups_status
+        if batt_status == UPSStatus.OK:
+            self.batt_label.setText("Pwr. %", self.sensordata.battery_percentage)
+        elif batt_status == UPSStatus.BATTERY_POWERED:
+            self.batt_label.setText("Batt. %", self.sensordata.battery_percentage)
+        else:
+            self.batt_label.setTitle("Pwr. Err.")
 
         self.flowgraph.update(-1 * self.sensordata.flow)
         self.pressuregraph.update(self.sensordata.pressure)
@@ -176,7 +185,7 @@ class MainView(Frame):
                                            self.config.values['colors']['green'])
         self.tv_label1.grid(row=9, column=4, rowspan=2, sticky=N + S + E + W)
 
-        self.batt_label = CurrentValueCanvas(self, "Batt. %", self.sensordata.oxygen, 'white')
+        self.batt_label = CurrentValueCanvas(self, "Batt. %", self.sensordata.battery_percentage, 'white')
         self.batt_label.grid(row=11, column=4, rowspan=2, sticky=N + S + E + W)
 
         # Buttons under graphs

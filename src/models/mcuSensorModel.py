@@ -9,8 +9,8 @@ from enum import Enum
 
 class UPSStatus(Enum):
     UNKNOWN              = (0),
-    OK                   = (1 << 31),
-    BATTERY_POWERED      = (1 << 30),
+    OK                   = (1 << 31)
+    BATTERY_POWERED      = (1 << 30)
     FAIL                 = (1 << 29)
 
 
@@ -36,7 +36,7 @@ class Sensors:
         int32_t inspiratory_hold_result;   // Value for end of inspiratory hold sensor 1
         int32_t expiratory_hold_result;   // Value for end of expiratory hold sensor 1
 
-        uint32_t power_status;      // Status of UPS: volatage [mV OR-ed with UPSStatus bits]
+        uint32_t power_status;      // Status of UPS: voltage [mV OR-ed with UPSStatus bits]
         uint32_t system_status;         // enum SystemStatus value(s) OR-ed together
 
     }
@@ -99,13 +99,13 @@ class Sensors:
         return cls.num_properties()*prop_size
 
     @property
-    def usp_status(self):
+    def ups_status(self):
         status = self.power_status & 0xF0000000
-        if status == UPSStatus.OK:
+        if status == UPSStatus.OK.value:
             return UPSStatus.OK
-        elif status == UPSStatus.BATTERY_POWERED:
+        elif status == UPSStatus.BATTERY_POWERED.value:
             return UPSStatus.BATTERY_POWERED
-        elif status == UPSStatus.FAIL:
+        elif status == UPSStatus.FAIL.value:
             return UPSStatus.FAIL
         else:
             return UPSStatus.UNKNOWN
@@ -113,9 +113,9 @@ class Sensors:
     @property
     def battery_percentage(self):
         battery_mv = self.power_status & 0x0000FFFF
-        zero = 22000
-        full = 24000
-        battery_percentage = min((battery_mv - zero) / (full - zero) * 100, 100)
+        zero = 23600
+        full = 25400
+        battery_percentage = max(min((battery_mv - zero) / (full - zero) * 100, 100), 0)
         return battery_percentage
 
 
@@ -138,7 +138,14 @@ class Sensors:
 
     @classmethod
     def from_list(cls, list_data):
-        sensors = Sensors(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0, 0.0, 0.0, 0, 0, 0, 0, 0)
+        # For testing different battery levels and whether power is connected
+        # ps = 0x80006338 # Full battery and UPS OK
+        # ps = 0x40006338 # Full battery and UPS Battery powered
+        ps = 0x40005c30 # Zero battery and UPS Battery powered
+        # ps = 0x80005c30 # Zero battery and UPS OK
+        # ps = 0x80005fb4 # 50 % battery and UPS OK
+
+        sensors = Sensors(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0, 0.0, 0.0, 0, 0, ps, 0, 0, 0)
         sensors.timestamp = datetime.datetime.strptime(list_data[0], '%Y-%m-%d %H:%M:%S.%f')
         sensors.cycle_state = int(list_data[1])
         sensors.pressure_inhale = float(list_data[2])
@@ -173,7 +180,7 @@ class Sensors:
             cycle_state=0,
             inspiratory_hold_result=0,
             expiratory_hold_result=0,
-            power_status=1,
+            power_status=0x800063381,
             system_status=0
         )
 
