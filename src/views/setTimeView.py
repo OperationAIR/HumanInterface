@@ -11,6 +11,8 @@ from utils.config import ConfigValues
 from utils.flatButton import FlatButton
 from utils.constants import SettingType
 
+
+from datetime import datetime
 import enum
 
 class SetTimeCallback(enum.Enum):
@@ -27,7 +29,9 @@ class SetTimeView(Frame):
         self.type = type
 
         self.callback = callback
-        self.time = [1, 2, 0, 0]
+        now = datetime.now()
+        dt = now.strftime("%H%M")
+        self.time = [dt[0], dt[1], dt[2], dt[3]]
 
         self.fill_frame()
 
@@ -120,13 +124,7 @@ class SetTimeView(Frame):
     def fill_frame(self):
         label_btn = FlatButton(self, None, None, self.config.values['colors']['darkBlue'], fontSize=25)
         label_btn.setText("Set the Time")
-        label_btn.grid(row=0, column=0, columnspan=1, sticky=N+S+E+W, padx=10, pady=10)
-
-        close_btn = FlatButton(self, self.returnTimeCallback, SetTimeCallback.CLOSE,
-                               self.config.values['colors']['lightBlue'], fontSize=20)
-
-        close_btn.setText("Close")
-        close_btn.grid(row=0, column=4, sticky=N+S+E+W, padx=10, pady=10)
+        label_btn.grid(row=0, column=0, columnspan=5, sticky=N+S+E+W, padx=10, pady=10)
 
         self.drawPlusButtons()
         self.drawTime()

@@ -5,6 +5,7 @@ import matplotlib
 import matplotlib.animation as animation
 import matplotlib.pyplot as plt
 import tkinter as tk
+import os
 
 from threading import Thread
 
@@ -96,6 +97,7 @@ class ViewController(tk.Tk):
     def setTimeCallback(self, type, time):
         if type == SetTimeCallback.SET_TIME:
             print("Setting time to " + str(time))
+            os.system("date -s " + time)
         self.setTimeView.place_forget()
         self.mainView.pack(fill=BOTH, expand=True)
 
