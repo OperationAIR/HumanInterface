@@ -31,7 +31,7 @@ class SetTimeView(Frame):
         self.callback = callback
         now = datetime.now()
         dt = now.strftime("%H%M")
-        self.time = [dt[0], dt[1], dt[2], dt[3]]
+        self.time = [int(dt[0]), int(dt[1]), int(dt[2]), int(dt[3])]
 
         self.fill_frame()
 
@@ -56,7 +56,7 @@ class SetTimeView(Frame):
     def changeTimeCallback(self, arg):
         (index, change) = arg
         newtime = self.time[:]
-        newtime[index] += change
+        newtime[index] += int(change)
 
         if newtime[index] < 0:
             return False
