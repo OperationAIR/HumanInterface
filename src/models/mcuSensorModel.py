@@ -5,6 +5,13 @@ import datetime
 from utils.math import pressure_to_cm_h2o
 import struct
 
+from enum import Enum
+
+class UPSStatus(Enum):
+    UNKNOWN              = (0),
+    OK                   = (1 << 31),
+    BATTERY_POWERED      = (1 << 30),
+    FAIL                 = (1 << 29)
 
 
 class Sensors:
@@ -25,10 +32,12 @@ class Sensors:
         int32_t tidal_volume_exhale;       // Tidal volume [mL] (Based on exhale flow)
         int32_t minute_volume;      // Average flow (exhale) [mL / minute] (average over last 10 sec interval)
         int32_t cycle_state;        // PeeP / Peak / None
-        uint32_t power_status;      // Status of UPS: volatage [mV OR-ed with UPSStatus bits]
 
         int32_t inspiratory_hold_result;   // Value for end of inspiratory hold sensor 1
         int32_t expiratory_hold_result;   // Value for end of expiratory hold sensor 1
+
+        uint32_t power_status;      // Status of UPS: volatage [mV OR-ed with UPSStatus bits]
+        uint32_t system_status;         // enum SystemStatus value(s) OR-ed together
 
     }
     """
@@ -46,7 +55,8 @@ class Sensors:
             cycle_state,
             power_status,
             inspiratory_hold_result,
-            expiratory_hold_result):
+            expiratory_hold_result,
+            system_status):
 
         self.timestamp = datetime.datetime.now()
         self.flow_inhale = flow_inhale / 1000
@@ -63,6 +73,7 @@ class Sensors:
         self.power_status = power_status
         self.inspiratory_hold_result = pressure_to_cm_h2o(inspiratory_hold_result)
         self.expiratory_hold_result = pressure_to_cm_h2o(expiratory_hold_result)
+        self.system_status = system_status
 
 
     @property
@@ -80,12 +91,33 @@ class Sensors:
 
     @classmethod
     def num_properties(cls):
-        return 14
+        return 15
 
     @classmethod
     def size(cls):
         prop_size = 4
         return cls.num_properties()*prop_size
+
+    @property
+    def usp_status(self):
+        status = self.power_status & 0xF0000000
+        if status == UPSStatus.OK:
+            return UPSStatus.OK
+        elif status == UPSStatus.BATTERY_POWERED:
+            return UPSStatus.BATTERY_POWERED
+        elif status == UPSStatus.FAIL:
+            return UPSStatus.FAIL
+        else:
+            return UPSStatus.UNKNOWN
+
+    @property
+    def battery_percentage(self):
+        battery_mv = self.power_status & 0x0000FFFF
+        zero = 22000
+        full = 24000
+        battery_percentage = min((battery_mv - zero) / (full - zero) * 100, 100)
+        return battery_percentage
+
 
     def __repr__(self):
         repr = 'Sensor data: t={}, cycle = {}, flow {}, pressure {} [cm H2O], tidal volume {} [mL], oxygen: {} %, inspiratory hold 1: {}'.format(
@@ -119,7 +151,10 @@ class Sensors:
 
     @classmethod
     def from_binary(cls, packed_data):
-        unpacked = struct.unpack('=' + 'i'*cls.num_properties(), packed_data)
+        num_unsigned_properties = 2
+        num_signed_properties = cls.num_properties() - num_unsigned_properties
+
+        unpacked = struct.unpack('=' + 'i'*num_signed_properties + 'I'*num_unsigned_properties, packed_data)
         return cls(*unpacked)
 
     @classmethod
@@ -136,8 +171,9 @@ class Sensors:
             tidal_volume_exhale=0,
             minute_volume=0,
             cycle_state=0,
-            power_status=1,
             inspiratory_hold_result=0,
             expiratory_hold_result=0,
+            power_status=1,
+            system_status=0
         )
 
