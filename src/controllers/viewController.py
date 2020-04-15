@@ -26,6 +26,7 @@ from views.alarmOverview import AlarmOverview
 from views.changeDoubleSettingView import ChangeDoubleSettingView, ChangeAlarmViewActions
 from views.activeAlarmView import alarm_overview
 from views.menuView import MenuView, MenuViewActions
+from views.setTimeView import SetTimeView, SetTimeCallback
 
 from utils.constants import SettingType
 
@@ -80,14 +81,23 @@ class ViewController(tk.Tk):
         self.setStyle()
 
         self.menuView = None
+
+        self.setTimeView = SetTimeView(self.setTimeCallback)
         self.mainView = MainView(self.winfo_width(), self.winfo_height(), self.settings, self.latest_sensor_data, self.mainViewCallback)
 
-        self.mainView.pack(fill=BOTH, expand=True)
+        self.setTimeView.place(x=0, y=0, width=self.winfo_width(), height=self.winfo_height())
+
         self.io_thread = Thread(target=self.asyncio)
         self.io_thread.daemon = True
         self.io_thread.start()
         # self.mcu.request_settings()
         self.mcu.request_sensor_data()
+
+    def setTimeCallback(self, type, time):
+        if type == SetTimeCallback.SET_TIME:
+            print("Setting time to " + str(time))
+        self.setTimeView.place_forget()
+        self.mainView.pack(fill=BOTH, expand=True)
 
     def updateSettings(self, settings):
         self.settings = settings
@@ -379,7 +389,7 @@ class ViewController(tk.Tk):
                 self.send_settings()
 
         if not self.settings_initialized:
-            print('request settings')
+            #print('request settings')
             self.mcu.request_settings()
 
         self.mainView.update(self.settings, self.latest_sensor_data)
