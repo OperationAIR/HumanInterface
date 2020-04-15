@@ -36,7 +36,7 @@ class Sensors:
         int32_t inspiratory_hold_result;   // Value for end of inspiratory hold sensor 1
         int32_t expiratory_hold_result;   // Value for end of expiratory hold sensor 1
 
-        uint32_t power_status;      // Status of UPS: volatage [mV OR-ed with UPSStatus bits]
+        uint32_t power_status;      // Status of UPS: voltage [mV OR-ed with UPSStatus bits]
         uint32_t system_status;         // enum SystemStatus value(s) OR-ed together
 
     }
@@ -75,6 +75,7 @@ class Sensors:
         self.expiratory_hold_result = pressure_to_cm_h2o(expiratory_hold_result)
         self.system_status = system_status
 
+
     @property
     def peep(self):
         return self.cycle_state >= 2
@@ -98,7 +99,7 @@ class Sensors:
         return cls.num_properties()*prop_size
 
     @property
-    def usp_status(self):
+    def ups_status(self):
         status = self.power_status & 0xF0000000
         if status == UPSStatus.OK.value:
             return UPSStatus.OK
@@ -112,9 +113,9 @@ class Sensors:
     @property
     def battery_percentage(self):
         battery_mv = self.power_status & 0x0000FFFF
-        zero = 22000
-        full = 24000
-        battery_percentage = min((battery_mv - zero) / (full - zero) * 100, 100)
+        zero = 23600
+        full = 25400
+        battery_percentage = max(min((battery_mv - zero) / (full - zero) * 100, 100), 0)
         return battery_percentage
 
 
@@ -133,7 +134,27 @@ class Sensors:
         return self.__repr__()
 
     def as_list(self):
-        return [[self.timestamp, self.cycle_state, self.pressure, self.flow, self.tidal_volume_exhale,  self.oxygen]]
+        return [[self.timestamp, self.cycle_state, self.pressure_inhale, self.pressure_exhale, self.flow, self.tidal_volume_inhale, self.tidal_volume_exhale, self.oxygen]]
+
+    @classmethod
+    def from_list(cls, list_data):
+        # For testing different battery levels and whether power is connected
+        # ps = 0x80006338 # Full battery and UPS OK
+        # ps = 0x40006338 # Full battery and UPS Battery powered
+        ps = 0x40005c30 # Zero battery and UPS Battery powered
+        # ps = 0x80005c30 # Zero battery and UPS OK
+        # ps = 0x80005fb4 # 50 % battery and UPS OK
+
+        sensors = Sensors(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0, 0.0, 0.0, 0, 0, ps, 0, 0, 0)
+        sensors.timestamp = datetime.datetime.strptime(list_data[0], '%Y-%m-%d %H:%M:%S.%f')
+        sensors.cycle_state = int(list_data[1])
+        sensors.pressure_inhale = float(list_data[2])
+        sensors.pressure_exhale = float(list_data[3])
+        sensors.flow_exhale = float(list_data[4])
+        sensors.tidal_volume_inhale = int(list_data[5])
+        sensors.tidal_volume_exhale = int(list_data[6])
+        sensors.oxygen = int(list_data[7])
+        return sensors
 
     @classmethod
     def from_binary(cls, packed_data):
@@ -159,7 +180,7 @@ class Sensors:
             cycle_state=0,
             inspiratory_hold_result=0,
             expiratory_hold_result=0,
-            power_status=1,
+            power_status=0x800063381,
             system_status=0
         )
 

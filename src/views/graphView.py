@@ -1,23 +1,15 @@
-import tkinter as tk
-from tkinter import StringVar, Button, Frame
-import signal
+import time
+from collections import deque
 
-from utils.config import ConfigValues
 import matplotlib
 import matplotlib.animation as animation
 import matplotlib.pyplot as plt
-
-matplotlib.use("TkAgg")
-from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg)
-from queue import Queue
-from tkinter import ttk, BOTH, X, Y, N, S, E, W
-
-from models.mcuSensorModel import Sensors
-
-from controllers.alarmController import AlarmController
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 from utils.config import ConfigValues
-from utils.flatButton import FlatButton
+
+matplotlib.use("TkAgg")
+
 
 class GraphView:
 
@@ -31,6 +23,10 @@ class GraphView:
         self.parent = parent
 
         self.config = ConfigValues()
+
+        self.yaxisRefreshTime = time.time()
+
+        self.ys = deque([0 for x in range(xlen)], maxlen=xlen)
 
     def update(self, data):
         self.data = data
@@ -48,9 +44,8 @@ class GraphView:
         #ax.spines['bottom'].set_color('gray')
 
         xs = list(range(-x_len, 0))
-        ys = [0 for x in range(x_len)]
 
-        #ax.set_ylim(y_range)
+        ax.set_ylim(bottom=min(y_range), top=max(y_range))
         ax.spines["top"].set_visible(False)
         ax.spines["bottom"].set_visible(False)
         ax.spines["right"].set_visible(False)
@@ -63,29 +58,27 @@ class GraphView:
 
         plt.tick_params(axis="both", which="both", bottom=False, top=False,
                 labelbottom=True, left=False, right=False, labelleft=True, colors="white")
+        
         # Create a blank line. We will update the line in animate
-        line, = ax.plot(xs, ys, color= self.linecolor)
-
-
+        line, = ax.plot(xs, self.ys, color= self.linecolor)
 
         # Add labels
         plt.title(self.title, fontsize= 13, color="white")
-        #plt.xlabel('Samples')
         plt.ylabel(self.ylabel)
         plt.gcf().subplots_adjust(top=0.8, left=0.2, right=1, bottom=0.18)
 
         # This function is called periodically from FuncAnimation
         def animate(i, ys):
-            # if not self.settings.start:
-            #     return line,
             # Add y to list
             ys.append(self.data)
-            # Limit y list to set number of items
-            ys = ys[-x_len:]
             # Update line with new Y values
             line.set_ydata(ys)
-            ax.relim()
-            ax.autoscale_view()
+
+            if time.time() - self.yaxisRefreshTime >= self.config.values['developer']['graphYaxisUpdateInterval']:
+                margin = 5
+                ax.set_ylim(bottom=min(ys)-margin, top=max(ys)+margin)
+                self.canvas.draw()
+                self.yaxisRefreshTime = time.time()
 
             return line,
         # Set up plot to call animate() function periodically
@@ -93,9 +86,8 @@ class GraphView:
         self.canvas = FigureCanvasTkAgg(self.fig, master=self.parent)
         self.flow_animation_ref = animation.FuncAnimation(self.fig,
            animate,
-           fargs=(ys,),
+           fargs=(self.ys,),
            interval=100,
            blit=True)
 
         return self.canvas.get_tk_widget()
-        # canvas.get_tk_widget().grid(row=1, column=2, rowspan=5, columnspan=3, sticky=N + S + E + W)

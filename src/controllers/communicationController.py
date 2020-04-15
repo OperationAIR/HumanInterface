@@ -16,6 +16,8 @@ from serial.tools import list_ports
 from models.mcuSettingsModel import Settings, MCUSettings
 from models.mcuSensorModel import Sensors
 
+from utils.logPlayer import replay_log
+
 PREFIX_LEN = 4
 
 class SerialCommand(Enum):
@@ -74,11 +76,12 @@ class Microcontroller:
             self.connect()
 
     def _simulate_sensor_data(self):
+        queue = replay_log('sensors_1.csv', 0)
+
         while self._simulation_alive:
-            sensors = Sensors(random.random()*10000, random.random()*40000, random.random()*800, random.random()*2000,
-                              random.random() * 10, random.random() * 40, random.random() * 40, random.random() * 500,
-                              random.random() * 10, random.random() * 40, random.random() * 40, random.random() * 40,
-                              random.random() * 40, random.random() * 40, random.random() * 40)
+            sensors = queue.get()
+            print(sensors)
+
             self.sensor_queue.put(sensors)
             time.sleep(0.5)
 

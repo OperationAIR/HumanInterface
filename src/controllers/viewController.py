@@ -379,7 +379,7 @@ class ViewController(tk.Tk):
                 self.send_settings()
 
         if not self.settings_initialized:
-            print('request settings')
+            # print('request settings')
             self.mcu.request_settings()
 
         self.mainView.update(self.settings, self.latest_sensor_data)

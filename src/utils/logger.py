@@ -9,6 +9,7 @@ The session can be ended with `logger.close_session()`. The file will then be cl
 import csv
 import typing
 from pathlib import Path
+import os
 
 LogHandle = typing.NamedTuple('loghandle', [('file', typing.TextIO), ('writer', csv.writer)])
 
@@ -38,7 +39,8 @@ def start_new_session(directory, file_prefix: str, use_csv: bool):
     """
 
     ext = 'csv' if csv else 'txt'
-    p = Path(directory)
+    ROOT_DIR = str(Path(os.path.dirname(os.path.abspath(__file__))).parent.parent)
+    p = Path(ROOT_DIR + '/' + directory)
     if not p.exists():
         try:
             p.mkdir(parents=True)

@@ -2,9 +2,6 @@ import pygame
 import os
 from pathlib import Path
 
-from models.mcuSensorModel import Sensors
-from models.mcuSettingsModel import Settings
-
 from utils.anamolyDetection import Anomaly, check_for_anomalies
 
 import enum
@@ -14,7 +11,6 @@ from datetime import datetime
 ROOT_DIR = str(Path(os.path.dirname(os.path.abspath(__file__))).parent.parent)
 
 pygame.mixer.init()
-print(ROOT_DIR + "/resources/sounds/vent.wav")
 
 mediumAlarm = pygame.mixer.Sound(ROOT_DIR + "/resources/sounds/medium_alarm.wav")
 #highAlarm = pygame.mixer.Sound("alarm_high_priority.wav")
