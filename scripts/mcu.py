@@ -16,6 +16,9 @@ parser.add_argument('--reset', action='store_true',
 parser.add_argument('--bootloader', action='store_true',
     help="restart mcu in uart bootloader")
 
+parser.add_argument('--delay', action='store_true',
+    help="Extra 1 second delay at end")
+
 args = parser.parse_args()
 
 delay = 0.01
@@ -37,3 +40,7 @@ elif args.bootloader:
     print('mcu should be in uart bootloader now')
 else:
     parser.print_help()
+
+
+if args.delay:
+    sleep(1)
