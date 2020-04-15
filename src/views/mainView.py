@@ -1,6 +1,4 @@
-import tkinter as tk
-from tkinter import StringVar, Button, Frame, Canvas, N, S, E, W
-import signal
+from tkinter import Frame, N, S, E, W
 
 from utils.config import ConfigValues
 import matplotlib
@@ -9,7 +7,6 @@ import matplotlib.pyplot as plt
 
 matplotlib.use("TkAgg")
 from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg)
-from queue import Queue
 from collections import deque
 
 from controllers.alarmController import AlarmController, AlarmType
@@ -35,6 +32,8 @@ class MainViewActions(enum.Enum):
     PRESSURE = 9
     OXYGEN = 10
     MENU = 11
+    INSP_HOLD = 12
+    EXP_HOLD = 13
 
 class MainView(Frame):
 
@@ -96,12 +95,10 @@ class MainView(Frame):
 
         self.freq_label.setText("Freq.", 10) # not implemented yet, freq sensordata
         self.oxy_label.setText("O2", self.sensordata.oxygen)
-        self.tv_label1.setText("TV Min.Vol.", self.sensordata.minute_volume)
-        self.tv_label2.setText("TV In/Ex", [self.sensordata.tidal_volume_inhale, self.sensordata.tidal_volume_exhale])
+        self.tv_label1.setText("TVmin.vol.", self.sensordata.minute_volume)
 
-        # self.flowgraph.update(-1 * self.sensordata.flow)
+        self.flowgraph.update(-1 * self.sensordata.flow)
         self.pressuregraph.update(self.sensordata.pressure)
-        self.tidalgraph.update(self.sensordata.tidal_volume_exhale)
 
     def getFrame(self):
         return self.frame
@@ -112,25 +109,17 @@ class MainView(Frame):
 
         # Parameters
         pressure_x_len = 400         # Number of points to display
-        pressure_y_range = [0, 80]  # Range of possible Y values to display
+        pressure_y_range = [0, 40]  # Range of possible Y values to display
 
         self.pressuregraph = GraphView("Pressure", "[cm H2O]", self.sensordata.pressure, pressure_y_range, pressure_x_len, self.config.values['colors']['pressurePlot'], self)
-        self.pressuregraph.getPlot().grid(row=1, column=2, rowspan=6, columnspan=2, sticky=N + S + E + W)
+        self.pressuregraph.getPlot().grid(row=1, column=2, rowspan=4, columnspan=2, sticky=N + S + E + W)
 
         # Parameters
-        # flow_x_len = 400         # Number of points to display
-        # flow_y_range = [-30, 0]  # Range of possible Y values to display
+        flow_x_len = 400         # Number of points to display
+        flow_y_range = [-60, 0]  # Range of possible Y values to display
 
-        # self.flowgraph = GraphView("Flow", "[L / min]", self.sensordata.flow, flow_y_range, flow_x_len, self.config.values['colors']['flowPlot'], self)
-        # self.flowgraph.getPlot().grid(row=5, column=2, rowspan=4, columnspan=2, sticky=N + S + E + W)
-
-        # Parameters
-        tidal_x_len = 400  # Number of points to display
-        tidal_y_range = [0, 80]  # Range of possible Y values to display
-
-        self.tidalgraph = GraphView("Tidal Volume", "[mL]", self.sensordata.tidal_volume_exhale, tidal_y_range,
-                               tidal_x_len, self.config.values['colors']['green'], self)
-        self.tidalgraph.getPlot().grid(row=7, column=2, rowspan=6, columnspan=2, sticky=N + S + E + W)
+        self.flowgraph = GraphView("Flow", "[L / min]", self.sensordata.flow, flow_y_range, flow_x_len, self.config.values['colors']['flowPlot'], self)
+        self.flowgraph.getPlot().grid(row=5, column=2, rowspan=4, columnspan=2, sticky=N + S + E + W)
 
 
     def fill_frame(self):
@@ -176,25 +165,31 @@ class MainView(Frame):
         self.pmean_label.grid(row=3, column=4, rowspan=2, sticky=N + S + E + W)
 
         self.freq_label = CurrentValueCanvas(self, "Freq.", 9, self.config.values['colors']['flowPlot'])
-        self.freq_label.grid(row=5, column=4, rowspan=2, sticky=N + S + E + W)
+        self.freq_label.grid(row=6, column=4, rowspan=2, sticky=N + S + E + W)
 
         self.oxy_label = CurrentValueCanvas(self, "O2", self.sensordata.oxygen, 'white')
-        self.oxy_label.grid(row=7, column=4, rowspan=2, sticky=N + S + E + W)
+        self.oxy_label.grid(row=8, column=4, rowspan=2, sticky=N + S + E + W)
 
-        self.tv_label1 = CurrentValueCanvas(self, "TV Min.Vol.",
+        self.tv_label1 = CurrentValueCanvas(self, "TVmin.vol",
                                            [self.sensordata.tidal_volume_inhale, self.sensordata.tidal_volume_exhale],
                                            self.config.values['colors']['green'])
-        self.tv_label1.grid(row=9, column=4, rowspan=2, sticky=N + S + E + W)
+        self.tv_label1.grid(row=11, column=4, rowspan=2, sticky=N + S + E + W)
 
-        self.tv_label2 = CurrentValueCanvas(self, "TV In/Ex",
-                    [self.sensordata.tidal_volume_inhale, self.sensordata.tidal_volume_exhale],
-                    self.config.values['colors']['green'])
-        self.tv_label2.grid(row=11, column=4, rowspan=2, sticky=N + S + E + W)
+        # Buttons under graphs
+        self.inspHold_btn = FlatButton(self, self.callback, MainViewActions.INSP_HOLD, self.config.values['colors']['lightBlue'])
+        self.inspHold_btn.setText("Inspiration\nHold")
+        self.inspHold_btn.grid(row=10, column=2, columnspan=1, rowspan=3, sticky=N + S + E + W, padx=(0,2), pady=(2,0))
+
+        self.expHold_btn = FlatButton(self, self.callback, MainViewActions.EXP_HOLD, self.config.values['colors']['lightBlue'])
+        self.expHold_btn.setText("Expiration\nHold")
+        self.expHold_btn.grid(row=10, column=3, columnspan=1, rowspan=3, sticky=N + S + E + W, padx=(0,2), pady=(2,0))
 
 
         self.rowconfigure(0, weight=5)
-        for i in range(1, 13):
+        for i in range(1, 10):
             self.rowconfigure(i, weight=1)
+        for i in range(9, 13):
+            self.rowconfigure(i, weight=3)
 
         self.columnconfigure(0, weight=3)
         self.columnconfigure(1, weight=2)
