@@ -9,8 +9,8 @@ from enum import Enum
 
 class UPSStatus(Enum):
     UNKNOWN              = (0),
-    OK                   = (1 << 31),
-    BATTERY_POWERED      = (1 << 30),
+    OK                   = (1 << 31)
+    BATTERY_POWERED      = (1 << 30)
     FAIL                 = (1 << 29)
 
 
@@ -100,11 +100,11 @@ class Sensors:
     @property
     def usp_status(self):
         status = self.power_status & 0xF0000000
-        if status == UPSStatus.OK:
+        if status == UPSStatus.OK.value:
             return UPSStatus.OK
-        elif status == UPSStatus.BATTERY_POWERED:
+        elif status == UPSStatus.BATTERY_POWERED.value:
             return UPSStatus.BATTERY_POWERED
-        elif status == UPSStatus.FAIL:
+        elif status == UPSStatus.FAIL.value:
             return UPSStatus.FAIL
         else:
             return UPSStatus.UNKNOWN

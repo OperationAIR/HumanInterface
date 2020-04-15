@@ -64,6 +64,7 @@ class Microcontroller:
         self.serial_retry = 0
 
         self.simulate_thread = None
+        self.simulate = simulate
         if simulate:
             self._simulation_alive = True
             self.simulate_thread = threading.Thread(target=self._simulate_sensor_data, name='simulate')
@@ -146,7 +147,9 @@ class Microcontroller:
 
     def request_settings(self):
         """ Request settings from mcu """
-        self._send_buffer(SerialCommand.RequestSettings.format())
+        if not self.simulate:
+            print('request settings')
+            self._send_buffer(SerialCommand.RequestSettings.format())
 
     def request_sensor_data(self):
         """Send command to request latest sensor data from microcontroller"""
