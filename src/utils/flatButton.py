@@ -58,7 +58,7 @@ class FlatButton(Canvas):
                 self.oldText = ""
                 self.callback(self.arg)
             else:
-                self.text = round(self.timeout - self.time_diff)
+                self.text = "Hold for \n" + str(round(self.timeout - self.time_diff)) + " s"
                 self.setText(self.text)
             return
 
