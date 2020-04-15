@@ -96,6 +96,7 @@ class MainView(Frame):
         self.freq_label.setText("Freq.", 10) # not implemented yet, freq sensordata
         self.oxy_label.setText("O2", self.sensordata.oxygen)
         self.tv_label1.setText("TVmin.vol.", self.sensordata.minute_volume)
+        self.batt_label.setText("Batt. %", self.sensordata.oxygen)
 
         self.flowgraph.update(-1 * self.sensordata.flow)
         self.pressuregraph.update(self.sensordata.pressure)
@@ -165,15 +166,18 @@ class MainView(Frame):
         self.pmean_label.grid(row=3, column=4, rowspan=2, sticky=N + S + E + W)
 
         self.freq_label = CurrentValueCanvas(self, "Freq.", 9, self.config.values['colors']['flowPlot'])
-        self.freq_label.grid(row=6, column=4, rowspan=2, sticky=N + S + E + W)
+        self.freq_label.grid(row=5, column=4, rowspan=2, sticky=N + S + E + W)
 
         self.oxy_label = CurrentValueCanvas(self, "O2", self.sensordata.oxygen, 'white')
-        self.oxy_label.grid(row=8, column=4, rowspan=2, sticky=N + S + E + W)
+        self.oxy_label.grid(row=7, column=4, rowspan=2, sticky=N + S + E + W)
 
         self.tv_label1 = CurrentValueCanvas(self, "TVmin.vol",
                                            [self.sensordata.tidal_volume_inhale, self.sensordata.tidal_volume_exhale],
                                            self.config.values['colors']['green'])
-        self.tv_label1.grid(row=11, column=4, rowspan=2, sticky=N + S + E + W)
+        self.tv_label1.grid(row=9, column=4, rowspan=2, sticky=N + S + E + W)
+
+        self.batt_label = CurrentValueCanvas(self, "Batt. %", self.sensordata.oxygen, 'white')
+        self.batt_label.grid(row=11, column=4, rowspan=2, sticky=N + S + E + W)
 
         # Buttons under graphs
         self.inspHold_btn = FlatButton(self, self.callback, MainViewActions.INSP_HOLD, self.config.values['colors']['lightBlue'])
