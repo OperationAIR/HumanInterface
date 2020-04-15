@@ -5,6 +5,13 @@ import datetime
 from utils.math import pressure_to_cm_h2o
 import struct
 
+from enum import Enum
+
+class UPSStatus(Enum):
+    UNKNOWN              = (0),
+    OK                   = (1 << 31),
+    BATTERY_POWERED      = (1 << 30),
+    FAIL                 = (1 << 29)
 
 
 class Sensors:
@@ -89,6 +96,27 @@ class Sensors:
     def size(cls):
         prop_size = 4
         return cls.num_properties()*prop_size
+
+    @property
+    def usp_status(self):
+        status = self.power_status & 0xF0000000
+        if status == UPSStatus.OK:
+            return UPSStatus.OK
+        elif status == UPSStatus.BATTERY_POWERED:
+            return UPSStatus.BATTERY_POWERED
+        elif status == UPSStatus.FAIL:
+            return UPSStatus.FAIL
+        else:
+            return UPSStatus.UNKNOWN
+
+    @property
+    def battery_percentage(self):
+        battery_mv = self.power_status & 0x0000FFFF
+        zero = 22000
+        full = 24000
+        battery_percentage = min((battery_mv - zero) / (full - zero) * 100, 100)
+        return battery_percentage
+
 
     def __repr__(self):
         repr = 'Sensor data: t={}, cycle = {}, flow {}, pressure {} [cm H2O], tidal volume {} [mL], oxygen: {} %, inspiratory hold 1: {}'.format(
