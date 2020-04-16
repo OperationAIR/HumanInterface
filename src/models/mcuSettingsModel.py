@@ -73,7 +73,8 @@ class Settings():
 
 
 
-    def __init__(self, start, peep, freq, ratio, pressure, oxygen, max_pressure, min_pressure, max_tv, min_tv, max_fio2, min_fio2, max_peep, min_peep):
+    def __init__(self, start, peep, freq, ratio, pressure, oxygen, max_pressure, min_pressure, max_tv, 
+            min_tv, max_fio2, min_fio2, max_peep, min_peep, min_batt_voltage, max_batt_voltage, min_batt):
         # settings for mcu
         self.start = int(start)
         self.peep = int(peep)
@@ -91,6 +92,11 @@ class Settings():
         self.min_fio2 = int(min_fio2)
         self.max_peep = int(max_peep)
         self.min_peep = int(min_peep)
+
+        # Battery settings
+        self.min_batt_voltage = int(min_batt_voltage)
+        self.max_batt_voltage = int(max_batt_voltage)
+        self.min_batt = int(min_batt)
 
     @classmethod
     def fromConfig(cls):
@@ -111,7 +117,14 @@ class Settings():
         min_fio2 = config.values["alarmSettings"]["min_fio2"]
         max_peep = config.values["alarmSettings"]["max_peep"]
         min_peep = config.values["alarmSettings"]["min_peep"]
-        return cls(start, peep, freq, ratio, pressure, oxygen, max_pressure, min_pressure, max_tv, min_tv, max_fio2, min_fio2, max_peep, min_peep)
+
+        min_batt_voltage = config.values["defaultSettings"]["min_batt_voltage"]
+        max_batt_voltage = config.values["defaultSettings"]["max_batt_voltage"]
+
+        min_batt = config.values["alarmSettings"]["min_batt"]
+
+        return cls(start, peep, freq, ratio, pressure, oxygen, max_pressure, min_pressure, max_tv, 
+            min_tv, max_fio2, min_fio2, max_peep, min_peep, min_batt_voltage, max_batt_voltage, min_batt)
 
     def pack_mcu_settings(self):
         return MCUSettings(
@@ -135,9 +148,11 @@ class Settings():
 
     def __repr__(self):
         return """start {}, peep {}, freq {}, ratio {}, pressure {}, oxygen {}, max_pressure {},
-        min_pressure {}, max_tv {}, min_tv {}, max_fiO2 {}, min_fiO2 {}""".format(
+        min_pressure {}, max_tv {}, min_tv {}, max_fiO2 {}, min_fiO2 {}, 
+        min_batt_voltage {}, max_batt_voltage {}, min_batt {}""".format(
             self.start, self.peep, self.freq, self.ratio, self.pressure, self.oxygen,
-            self.max_pressure, self.min_pressure, self.max_tv, self.min_tv, self.max_fio2, self.min_fio2)
+            self.max_pressure, self.min_pressure, self.max_tv, self.min_tv, self.max_fio2, self.min_fio2,
+            self.min_batt_voltage, self.max_batt_voltage, self.min_batt)
 
     def __str__(self):
         return self.__repr__()

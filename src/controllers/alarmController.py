@@ -3,6 +3,7 @@ import os
 from pathlib import Path
 
 from utils.anamolyDetection import Anomaly, check_for_anomalies
+from models.mcuSensorModel import UPSStatus
 
 import enum
 import time
@@ -25,7 +26,9 @@ AlarmString = [
     "PRESSURE value too high",
     "PRESSURE value too low",
     "OXYGEN value too high",
-    "OXYGEN value too low"
+    "OXYGEN value too low",
+    "Running on BATTERY",
+    "LOW BATTERY"
 ]
 
 class AlarmType(enum.IntEnum):
@@ -39,6 +42,8 @@ class AlarmType(enum.IntEnum):
     PRESSURE_TOO_LOW = 7
     OXYGEN_TOO_LOW = 8
     OXYGEN_TOO_HIGH = 9
+    RUN_ON_BATTERY = 10
+    LOW_BATTERY = 11
 
 def registerAlarm():
     if pygame.mixer.get_busy() == 1:
@@ -147,6 +152,12 @@ class AlarmController:
             self.checkAlarm(sensordata.oxygen, settings.min_fio2, settings.max_fio2,
                             AlarmType.OXYGEN_TOO_LOW,
                             AlarmType.OXYGEN_TOO_HIGH)
+
+            if sensordata.battery_percentage < settings.min_batt:
+                self.addAlarm(AlarmType.LOW_BATTERY)
+            
+            if sensordata.ups_status == UPSStatus.BATTERY_POWERED:
+                self.addAlarm(AlarmType.RUN_ON_BATTERY)
 
         def __str__(self):
             return repr(self)

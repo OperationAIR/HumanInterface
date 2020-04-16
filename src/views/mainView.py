@@ -46,7 +46,7 @@ class MainView(Frame):
         self.sensordata = sensordata
         self.callback = callback
 
-        self.pressureQueue = deque(maxlen=self.config.values['developer']['pressureQueueLen'])
+        self.pressureQueue = deque(maxlen=self.config.values['defaultSettings']['pressureQueueLen'])
 
         self.alarms = AlarmController()
 
@@ -56,6 +56,11 @@ class MainView(Frame):
         if self.alarms.hasActiveAlarm(low_alarm) or self.alarms.hasActiveAlarm(high_alarm):
             return self.config.values['colors']['alarmColor']
         return self.config.values['colors']['lightBlue']
+
+    def getCanvasColor(self, *args):
+        if any(self.alarms.hasActiveAlarm(arg) is True for arg in args):
+            return self.config.values['colors']['alarmColor']
+        return self.config.values['colors']['darkBlue']
 
 
     def update(self, settings, sensordata):
@@ -106,6 +111,7 @@ class MainView(Frame):
             self.batt_label.setText("Batt. %", self.sensordata.battery_percentage)
         else:
             self.batt_label.setTitle("Pwr. Err.")
+        self.batt_label.setBackgroundColor(self.getCanvasColor(AlarmType.RUN_ON_BATTERY, AlarmType.LOW_BATTERY))
 
         self.flowgraph.update(-1 * self.sensordata.flow)
         self.pressuregraph.update(self.sensordata.pressure)

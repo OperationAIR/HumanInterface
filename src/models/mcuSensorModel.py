@@ -5,6 +5,8 @@ import datetime
 from utils.math import pressure_to_cm_h2o
 import struct
 
+from utils.config import ConfigValues
+
 from enum import Enum
 
 class UPSStatus(Enum):
@@ -75,6 +77,8 @@ class Sensors:
         self.expiratory_hold_result = pressure_to_cm_h2o(expiratory_hold_result)
         self.system_status = system_status
 
+        self.config = ConfigValues()
+
 
     @property
     def peep(self):
@@ -113,8 +117,8 @@ class Sensors:
     @property
     def battery_percentage(self):
         battery_mv = self.power_status & 0x0000FFFF
-        zero = 23600
-        full = 25400
+        zero = self.config.values['defaultSettings']['min_batt_voltage']
+        full = self.config.values['defaultSettings']['max_batt_voltage']
         battery_percentage = max(min((battery_mv - zero) / (full - zero) * 100, 100), 0)
         return battery_percentage
 
@@ -139,8 +143,8 @@ class Sensors:
     @classmethod
     def from_list(cls, list_data):
         # For testing different battery levels and whether power is connected
-        ps = 0x80006338 # Full battery and UPS OK
-        # ps = 0x40006338 # Full battery and UPS Battery powered
+        # ps = 0x80006338 # Full battery and UPS OK
+        ps = 0x40006338 # Full battery and UPS Battery powered
         # ps = 0x40005c30 # Zero battery and UPS Battery powered
         # ps = 0x80005c30 # Zero battery and UPS OK
         # ps = 0x80005fb4 # 50 % battery and UPS OK
