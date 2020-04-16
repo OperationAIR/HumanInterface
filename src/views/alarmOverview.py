@@ -47,9 +47,14 @@ class AlarmOverview(Frame):
             color = self.config.values['colors']['lightBlue']
             if self.alarms.alarms[i].active:
                 color = self.config.values['colors']['alarmColor']
+                
+            if self.alarms.alarms[i].type == AlarmType.RUN_ON_BATTERY:
+                self.alarm_btns.append(FlatButton(self, self.callback, self.alarms.alarms[i].type,
+                    color, fontSize=20, pressable=False))
+            else:
+                self.alarm_btns.append(FlatButton(self, self.callback, self.alarms.alarms[i].type,
+                    color, fontSize=20))
 
-            self.alarm_btns.append(FlatButton(self, self.callback, self.alarms.alarms[i].type,
-                              color, fontSize=20))
             self.alarm_btns[i].setText(self.alarms.alarms[i])
             self.alarm_btns[i].grid(row=i + 1, column=0, columnspan=4, sticky=N + S + E + W, padx=10, pady=10)
 

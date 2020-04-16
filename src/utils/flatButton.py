@@ -4,7 +4,7 @@ import time
 
 class FlatButton(Canvas):
 
-    def __init__(self, parent, callback, arg=None, color=None, pressColor=None, fontSize=None, timeout=None):
+    def __init__(self, parent, callback, arg=None, color=None, pressColor=None, fontSize=None, timeout=None, pressable=True):
         Canvas.__init__(self, parent, width=0, height=0, bd=-2, bg=color, highlightthickness=0, relief='ridge')
 
         self.config = ConfigValues()
@@ -38,7 +38,12 @@ class FlatButton(Canvas):
         self.time_diff = 0
         self.counting = False
 
+        self.pressable = pressable
+
     def pressEvent(self, event):
+        if not self.pressable:
+            return
+
         if self.timeout > 0:
             self.timestamp = time.time()
             self.oldText = self.text
@@ -63,6 +68,9 @@ class FlatButton(Canvas):
             return
 
     def releaseEvent(self, event):
+        if not self.pressable:
+            return
+
         self.configure(bg=self.color)
 
         if self.counting:
