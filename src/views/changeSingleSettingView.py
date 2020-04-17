@@ -4,7 +4,6 @@ from tkinter import E, Frame, N, S, W
 from utils.config import ConfigValues
 from utils.constants import SettingType
 from utils.flatButton import FlatButton
-
 from utils.internationalization import Internationalization
 
 

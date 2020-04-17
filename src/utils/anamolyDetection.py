@@ -1,13 +1,15 @@
-from utils.logPlayer import replay_log
+from enum import Enum
+from queue import Queue
+
 import matplotlib as mpl
 import matplotlib.pyplot as plt
-from matplotlib import colors as cl
-from matplotlib import collections as mc
 import numpy as np
-from queue import Queue
-from enum import Enum
+from matplotlib import collections as mc
+from matplotlib import colors as cl
 
 from models.mcuSettingsModel import Settings
+from utils.logPlayer import replay_log
+
 
 class Anomaly(Enum):
    NONE = 0

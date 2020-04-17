@@ -1,5 +1,5 @@
-import signal
 from queue import Queue
+from signal import signal, SIGINT
 from threading import Thread
 from tkinter import BOTH, Tk, font, ttk
 
@@ -62,7 +62,7 @@ class ViewController(Tk):
         self.protocol("WM_DELETE_WINDOW", self.quit)
         self.title(_("Operation Air Ventilator"))
         self.geometry('800x480')
-        signal.signal(signal.SIGINT, self.quit)
+        signal(SIGINT, self.quit)
         self.attributes('-fullscreen', self.config.values['window']['fullscreen'])
         self.center()
 

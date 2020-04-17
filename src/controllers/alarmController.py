@@ -1,12 +1,11 @@
-from enum import IntEnum
 import os
 import time
 from datetime import datetime
+from enum import IntEnum
 from pathlib import Path
 
 import pygame
 from utils.anamolyDetection import Anomaly, check_for_anomalies
-
 from utils.internationalization import Internationalization
 
 ROOT_DIR = str(Path(os.path.dirname(os.path.abspath(__file__))).parent.parent)

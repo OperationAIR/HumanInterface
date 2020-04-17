@@ -1,4 +1,5 @@
 from tkinter import Button, StringVar, Tk
+
 from utils.internationalization import Internationalization
 
 

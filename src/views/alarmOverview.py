@@ -1,10 +1,8 @@
-import enum
 from tkinter import E, Frame, N, S, W
 
 from controllers.alarmController import AlarmController, AlarmType
 from utils.config import ConfigValues
 from utils.flatButton import FlatButton
-
 from utils.internationalization import Internationalization
 
 

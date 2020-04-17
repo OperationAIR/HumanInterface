@@ -1,6 +1,7 @@
-# import tkinter as tk
 from tkinter import Canvas
+
 from utils.config import ConfigValues
+
 
 class CurrentValueCanvas(Canvas):
 
@@ -40,4 +41,3 @@ class CurrentValueCanvas(Canvas):
 
         self.textId = self.create_text(0, 0, anchor="nw", fill=self.textColor,font="HelveticaNeue 13",
                         text=self.text)
-

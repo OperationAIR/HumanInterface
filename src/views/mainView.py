@@ -1,30 +1,17 @@
-from tkinter import Frame, N, S, E, W
-
-from utils.config import ConfigValues
-import matplotlib
-import matplotlib.animation as animation
-import matplotlib.pyplot as plt
-
-matplotlib.use("TkAgg")
-from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg)
+from enum import Enum
 from collections import deque
+from tkinter import E, Frame, N, S, W
 
 from controllers.alarmController import AlarmController, AlarmType
-
+from models.mcuSensorModel import UPSStatus
 from utils.config import ConfigValues
-from utils.flatButton import FlatButton
 from utils.currentValueCanvas import CurrentValueCanvas
-
+from utils.flatButton import FlatButton
+from utils.internationalization import Internationalization
 from views.graphView import GraphView
 
-from models.mcuSensorModel import UPSStatus
 
-from utils.internationalization import Internationalization
-
-import enum
-
-
-class MainViewActions(enum.Enum):
+class MainViewActions(Enum):
     QUIT = 1
     ALARM = 2
     VIEW_ALARMS = 3
@@ -215,4 +202,3 @@ class MainView(Frame):
         self.columnconfigure(4, weight=2)
 
         self.drawGraphs()
-

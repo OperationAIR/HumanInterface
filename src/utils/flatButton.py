@@ -1,8 +1,9 @@
+from time import time
 from tkinter import Canvas
-from utils.config import ConfigValues
-import time
 
+from utils.config import ConfigValues
 from utils.internationalization import Internationalization
+
 
 class FlatButton(Canvas):
 
@@ -38,13 +39,13 @@ class FlatButton(Canvas):
         if timeout:
             self.timeout = timeout
 
-        self.timestamp = time.time()
+        self.timestamp = time()
         self.time_diff = 0
         self.counting = False
 
     def pressEvent(self, event):
         if self.timeout > 0:
-            self.timestamp = time.time()
+            self.timestamp = time()
             self.oldText = self.text
             self.text = _("Hold for") + "\n" + str(self.timeout) + " s"
             self.setText(self.text)
@@ -55,7 +56,7 @@ class FlatButton(Canvas):
 
     def checkTimeout(self):
         if self.counting:
-            self.time_diff = time.time() - self.timestamp
+            self.time_diff = time() - self.timestamp
             if self.time_diff > self.timeout:
                 self.setText(self.oldText)
                 self.text = self.oldText

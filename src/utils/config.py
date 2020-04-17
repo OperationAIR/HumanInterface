@@ -1,6 +1,8 @@
-import yaml
 import os
 from pathlib import Path
+
+import yaml
+
 
 class ConfigValues():
 
@@ -28,5 +30,4 @@ class ConfigValues():
 
     def __getattr__(self, name):
         return getattr(self.instance, name)
-
 

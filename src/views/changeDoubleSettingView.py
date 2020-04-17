@@ -1,21 +1,13 @@
-
-import tkinter as tk
-from tkinter import StringVar, Button, Frame, Label
-import matplotlib
-
-matplotlib.use("TkAgg")
-from tkinter import ttk, BOTH, N, S, E, W, LEFT
-import tkinter.font as tkFont
+from enum import Enum
+from tkinter import E, Frame, N, S, W
 
 from utils.config import ConfigValues
-from utils.flatButton import FlatButton
 from utils.constants import SettingType
-
-import enum
-
+from utils.flatButton import FlatButton
 from utils.internationalization import Internationalization
 
-class ChangeAlarmViewActions(enum.Enum):
+
+class ChangeAlarmViewActions(Enum):
     CONFIRM = 2
     MINMINUS = 3
     MINPLUS = 4

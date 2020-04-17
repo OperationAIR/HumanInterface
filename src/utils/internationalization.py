@@ -1,6 +1,6 @@
+import gettext
 import os
 from pathlib import Path
-import gettext
 
 from utils.config import ConfigValues
 

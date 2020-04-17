@@ -1,21 +1,17 @@
-
 import binascii
-import random
 import signal
 import struct
 import sys
-import time
-import serial
 import threading
-
-import crcmod
+import time
 from enum import Enum
 from queue import Queue
-from serial.tools import list_ports
 
-from models.mcuSettingsModel import Settings, MCUSettings
+import crcmod
 from models.mcuSensorModel import Sensors
-
+from models.mcuSettingsModel import MCUSettings, Settings
+from serial import Serial
+from serial.tools import list_ports
 from utils.logPlayer import replay_log
 
 PREFIX_LEN = 4
@@ -120,7 +116,7 @@ class Microcontroller:
         available_ports = [p.device for p in list_ports.comports()]
         print(available_ports)
         if 1 or self.port in available_ports: #todo rpi
-            self.serial = serial.Serial(self.port, self.baudrate, timeout=0.1)
+            self.serial = Serial(self.port, self.baudrate, timeout=0.1)
             print('open port: ', self.serial, self.serial.port)
             self._start_reader()
         else:
@@ -371,4 +367,3 @@ if __name__ == "__main__":
                 mcu.request_sensor_data()
 
         time.sleep(0.1)
-
