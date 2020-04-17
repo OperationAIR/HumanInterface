@@ -11,6 +11,7 @@ pyserial = "*"
 crcmod = "*"
 pygame = "*"
 pyyaml = "*"
+gpiozero = "*"
 
 [requires]
 python_version = "3.6"

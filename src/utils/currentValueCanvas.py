@@ -33,5 +33,11 @@ class CurrentValueCanvas(Canvas):
         self.textId = self.create_text(0, 0, anchor="nw", fill=self.textColor,font="HelveticaNeue 13",
                         text=self.text)
     
+    def setTitle(self, title):
+        self.delete("all")
 
+        self.text = title
+
+        self.textId = self.create_text(0, 0, anchor="nw", fill=self.textColor,font="HelveticaNeue 13",
+                        text=self.text)
 

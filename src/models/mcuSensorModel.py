@@ -5,6 +5,13 @@ import datetime
 from utils.math import pressure_to_cm_h2o
 import struct
 
+from enum import Enum
+
+class UPSStatus(Enum):
+    UNKNOWN              = (0),
+    OK                   = (1 << 31)
+    BATTERY_POWERED      = (1 << 30)
+    FAIL                 = (1 << 29)
 
 
 class Sensors:
@@ -25,10 +32,12 @@ class Sensors:
         int32_t tidal_volume_exhale;       // Tidal volume [mL] (Based on exhale flow)
         int32_t minute_volume;      // Average flow (exhale) [mL / minute] (average over last 10 sec interval)
         int32_t cycle_state;        // PeeP / Peak / None
-        uint32_t power_status;      // Status of UPS: volatage [mV OR-ed with UPSStatus bits]
 
         int32_t inspiratory_hold_result;   // Value for end of inspiratory hold sensor 1
         int32_t expiratory_hold_result;   // Value for end of expiratory hold sensor 1
+
+        uint32_t power_status;      // Status of UPS: voltage [mV OR-ed with UPSStatus bits]
+        uint32_t system_status;         // enum SystemStatus value(s) OR-ed together
 
     }
     """
@@ -46,7 +55,8 @@ class Sensors:
             cycle_state,
             power_status,
             inspiratory_hold_result,
-            expiratory_hold_result):
+            expiratory_hold_result,
+            system_status):
 
         self.timestamp = datetime.datetime.now()
         self.flow_inhale = flow_inhale / 1000
@@ -63,6 +73,8 @@ class Sensors:
         self.power_status = power_status
         self.inspiratory_hold_result = pressure_to_cm_h2o(inspiratory_hold_result)
         self.expiratory_hold_result = pressure_to_cm_h2o(expiratory_hold_result)
+        self.system_status = system_status
+
 
     @property
     def peep(self):
@@ -79,12 +91,33 @@ class Sensors:
 
     @classmethod
     def num_properties(cls):
-        return 14
+        return 15
 
     @classmethod
     def size(cls):
         prop_size = 4
         return cls.num_properties()*prop_size
+
+    @property
+    def ups_status(self):
+        status = self.power_status & 0xF0000000
+        if status == UPSStatus.OK.value:
+            return UPSStatus.OK
+        elif status == UPSStatus.BATTERY_POWERED.value:
+            return UPSStatus.BATTERY_POWERED
+        elif status == UPSStatus.FAIL.value:
+            return UPSStatus.FAIL
+        else:
+            return UPSStatus.UNKNOWN
+
+    @property
+    def battery_percentage(self):
+        battery_mv = self.power_status & 0x0000FFFF
+        zero = 23600
+        full = 25400
+        battery_percentage = max(min((battery_mv - zero) / (full - zero) * 100, 100), 0)
+        return battery_percentage
+
 
     def __repr__(self):
         repr = 'Sensor data: t={}, cycle = {}, flow {}, pressure {} [cm H2O], tidal volume {} [mL], oxygen: {} %, inspiratory hold 1: {}'.format(
@@ -101,11 +134,34 @@ class Sensors:
         return self.__repr__()
 
     def as_list(self):
-        return [[self.timestamp, self.cycle_state, self.pressure, self.flow, self.tidal_volume_exhale,  self.oxygen]]
+        return [[self.timestamp, self.cycle_state, self.pressure_inhale, self.pressure_exhale, self.flow, self.tidal_volume_inhale, self.tidal_volume_exhale, self.oxygen]]
+
+    @classmethod
+    def from_list(cls, list_data):
+        # For testing different battery levels and whether power is connected
+        # ps = 0x80006338 # Full battery and UPS OK
+        # ps = 0x40006338 # Full battery and UPS Battery powered
+        ps = 0x40005c30 # Zero battery and UPS Battery powered
+        # ps = 0x80005c30 # Zero battery and UPS OK
+        # ps = 0x80005fb4 # 50 % battery and UPS OK
+
+        sensors = Sensors(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0, 0.0, 0.0, 0, 0, ps, 0, 0, 0)
+        sensors.timestamp = datetime.datetime.strptime(list_data[0], '%Y-%m-%d %H:%M:%S.%f')
+        sensors.cycle_state = int(list_data[1])
+        sensors.pressure_inhale = float(list_data[2])
+        sensors.pressure_exhale = float(list_data[3])
+        sensors.flow_exhale = float(list_data[4])
+        sensors.tidal_volume_inhale = int(list_data[5])
+        sensors.tidal_volume_exhale = int(list_data[6])
+        sensors.oxygen = int(list_data[7])
+        return sensors
 
     @classmethod
     def from_binary(cls, packed_data):
-        unpacked = struct.unpack('=' + 'i'*cls.num_properties(), packed_data)
+        num_unsigned_properties = 2
+        num_signed_properties = cls.num_properties() - num_unsigned_properties
+
+        unpacked = struct.unpack('=' + 'i'*num_signed_properties + 'I'*num_unsigned_properties, packed_data)
         return cls(*unpacked)
 
     @classmethod
@@ -122,8 +178,9 @@ class Sensors:
             tidal_volume_exhale=0,
             minute_volume=0,
             cycle_state=0,
-            power_status=1,
             inspiratory_hold_result=0,
             expiratory_hold_result=0,
+            power_status=0x800063381,
+            system_status=0
         )
 
