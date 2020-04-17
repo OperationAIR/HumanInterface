@@ -1,21 +1,14 @@
-
-import tkinter as tk
-from tkinter import StringVar, Button, Frame, Label
-import matplotlib
-
-matplotlib.use("TkAgg")
-from tkinter import ttk, BOTH, N, S, E, W, LEFT
-import tkinter.font as tkFont
+from enum import Enum
+from datetime import datetime
+from tkinter import E, Frame, N, S, W
 
 from utils.config import ConfigValues
 from utils.flatButton import FlatButton
-from utils.constants import SettingType
+
+from utils.internationalization import Internationalization
 
 
-from datetime import datetime
-import enum
-
-class SetTimeCallback(enum.Enum):
+class SetTimeCallback(Enum):
     CLOSE = 0
     SET_TIME = 1
 
@@ -32,6 +25,8 @@ class SetTimeView(Frame):
         now = datetime.now()
         dt = now.strftime("%H%M")
         self.time = [int(dt[0]), int(dt[1]), int(dt[2]), int(dt[3])]
+
+        Internationalization()
 
         self.fill_frame()
 
@@ -123,7 +118,7 @@ class SetTimeView(Frame):
 
     def fill_frame(self):
         label_btn = FlatButton(self, None, None, self.config.values['colors']['darkBlue'], fontSize=25)
-        label_btn.setText("Set the Time")
+        label_btn.setText(_("Set the Time"))
         label_btn.grid(row=0, column=0, columnspan=5, sticky=N+S+E+W, padx=10, pady=10)
 
         self.drawPlusButtons()
@@ -131,7 +126,7 @@ class SetTimeView(Frame):
         self.drawMinusButtons()
 
         confirm_btn = FlatButton(self, self.returnTimeCallback, SetTimeCallback.SET_TIME, self.config.values['colors']['green'], fontSize=40)
-        confirm_btn.setText("Confirm", "white")
+        confirm_btn.setText(_("Confirm"), "white")
         confirm_btn.grid(row=4, column=0, columnspan=5, sticky=N + S + E + W, padx=20, pady=(60, 20))
 
         for i in range(0, 5):

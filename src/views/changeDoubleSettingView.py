@@ -13,6 +13,8 @@ from utils.constants import SettingType
 
 import enum
 
+from utils.internationalization import Internationalization
+
 class ChangeAlarmViewActions(enum.Enum):
     CONFIRM = 2
     MINMINUS = 3
@@ -21,9 +23,10 @@ class ChangeAlarmViewActions(enum.Enum):
     MAXPLUS = 6
 
 class ChangeDoubleSettingView(Frame):
+    Internationalization()
 
     # bound (Bool): Are the two variables linked? (Can variable 2 be less than variable 1)
-    def __init__(self, type, min_current, min_min, min_max, step1, max_current, max_min, max_max, step2, description, callback, label1="Minimum \nValue", label2="Maximum \nValue", bound=True, parent=None):
+    def __init__(self, type, min_current, min_min, min_max, step1, max_current, max_min, max_max, step2, description, callback, label1=_("Minimum\nValue"), label2=_("Maximum\nValue"), bound=True, parent=None):
         self.config = ConfigValues()
         Frame.__init__(self, parent, bg=self.config.values['colors']['darkBlue'])
 
@@ -73,7 +76,7 @@ class ChangeDoubleSettingView(Frame):
 
         close_btn = FlatButton(self, self.confirmSetting, SettingType.NONE,
                                self.config.values['colors']['lightBlue'], fontSize=20)
-        close_btn.setText("Close")
+        close_btn.setText(_("Close"))
         close_btn.grid(row=0, column=3, sticky=N+S+E+W, padx=10, pady=10)
 
         min_desc_btn = FlatButton(self, None, None,
@@ -117,7 +120,7 @@ class ChangeDoubleSettingView(Frame):
         self.max_value_btn.grid(row=2, column=3, sticky=N + S + E + W)
 
         confirm_btn = FlatButton(self, self.confirmSetting, self.type, self.config.values['colors']['green'], fontSize=40)
-        confirm_btn.setText("Confirm", "white")
+        confirm_btn.setText(_("Confirm"), "white")
         confirm_btn.grid(row=3, column=0, columnspan=4, sticky=N + S + E + W, padx=20, pady=(60, 20))
 
         for i in range(0, 4):

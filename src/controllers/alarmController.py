@@ -1,12 +1,13 @@
-import pygame
+from enum import IntEnum
 import os
-from pathlib import Path
-
-from utils.anamolyDetection import Anomaly, check_for_anomalies
-
-import enum
 import time
 from datetime import datetime
+from pathlib import Path
+
+import pygame
+from utils.anamolyDetection import Anomaly, check_for_anomalies
+
+from utils.internationalization import Internationalization
 
 ROOT_DIR = str(Path(os.path.dirname(os.path.abspath(__file__))).parent.parent)
 
@@ -15,20 +16,22 @@ pygame.mixer.init()
 mediumAlarm = pygame.mixer.Sound(ROOT_DIR + "/resources/sounds/medium_alarm.wav")
 #highAlarm = pygame.mixer.Sound("alarm_high_priority.wav")
 
+Internationalization()
+
 AlarmString = [
-    "Nothing.",
-    "Clear all alarms",
-    "PEEP value too high",
-    "PEEP value too low",
-    "TIDAL value too high",
-    "TIDAL value too low",
-    "PRESSURE value too high",
-    "PRESSURE value too low",
-    "OXYGEN value too high",
-    "OXYGEN value too low"
+    _("Nothing."),
+    _("Clear all alarms"),
+    _("PEEP value too high"),
+    _("PEEP value too low"),
+    _("TIDAL value too high"),
+    _("TIDAL value too low"),
+    _("PRESSURE value too high"),
+    _("PRESSURE value too low"),
+    _("OXYGEN value too high"),
+    _("OXYGEN value too low")
 ]
 
-class AlarmType(enum.IntEnum):
+class AlarmType(IntEnum):
     NONE = 0
     CLEAR = 1
     PEEP_TOO_HIGH = 2
@@ -70,7 +73,7 @@ class Alarm:
 
     def __str__(self):
         dt_object = datetime.fromtimestamp(self.timestamp)
-        return AlarmString[(self.type)] + " (Latest at " + str(dt_object.hour) +":" + str(dt_object.minute) + ")"
+        return AlarmString[(self.type)] + " (" + _("Latest at") + " " + str(dt_object.hour) +":" + str(dt_object.minute) + ")"
 
 class AlarmController:
 
