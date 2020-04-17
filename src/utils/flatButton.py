@@ -55,6 +55,8 @@ class FlatButton(Canvas):
             return
 
     def setEnabled(self, state):
+        if state == self.enabled:
+            return
         self.enabled = state
         if not self.enabled:
             self.configure(bg=self.pressColor)
