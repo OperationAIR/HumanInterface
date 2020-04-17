@@ -401,9 +401,6 @@ class ViewController(tk.Tk):
             self.mcu.request_settings()
 
         self.mainView.update(self.settings, self.latest_sensor_data)
-        if self.menuView:
-            self.menuView.update(self.latest_sensor_data.inspiratory_hold_result,
-                                self.latest_sensor_data.expiratory_hold_result)
 
         if self._thread_alive:
            self.after(100,self.asyncio)
