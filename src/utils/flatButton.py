@@ -37,17 +37,9 @@ class FlatButton(Canvas):
         self.timestamp = time.time()
         self.time_diff = 0
         self.counting = False
+        self.press_arg = None
 
-    def pressEvent(self, event):
-        if self.timeout > 0:
-            self.timestamp = time.time()
-            self.oldText = self.text
-            self.text = "Hold for\n" + str(self.timeout) + " s"
-            self.setText(self.text)
-            self.counting = True
-
-        if self.callback:
-            self.configure(bg=self.pressColor)
+        self.enabled = True
 
     def checkTimeout(self):
         if self.counting:
@@ -62,8 +54,34 @@ class FlatButton(Canvas):
                 self.setText(self.text)
             return
 
+    def setEnabled(self, state):
+        if state == self.enabled:
+            return
+        self.enabled = state
+        if not self.enabled:
+            self.configure(bg=self.pressColor)
+        else:
+            self.configure(bg=self.color)
+
+    def pressEvent(self, event):
+        if self.timeout > 0:
+            self.timestamp = time.time()
+            self.oldText = self.text
+            self.text = "Hold for\n" + str(self.timeout) + " s"
+            self.setText(self.text)
+            self.counting = True
+
+        if self.callback and self.enabled:
+            self.configure(bg=self.pressColor)
+            if self.press_arg:
+                self.callback(self.press_arg)
+
+    def setCustomPressArgument(self, press_arg):
+        self.press_arg = press_arg
+
     def releaseEvent(self, event):
-        self.configure(bg=self.color)
+        if self.enabled:
+            self.configure(bg=self.color)
 
         if self.counting:
             self.counting = False
@@ -71,8 +89,9 @@ class FlatButton(Canvas):
             self.text = self.oldText
             self.oldText = ""
 
-        elif self.callback:
-            self.callback(self.arg)
+        elif self.callback and self.enabled:
+            arg = self.arg
+            self.callback(arg)
 
     def setBackground(self, color=None):
         if not color:

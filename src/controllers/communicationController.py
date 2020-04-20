@@ -158,19 +158,18 @@ class Microcontroller:
         """Send command to request latest sensor data from microcontroller"""
         self._send_buffer(SerialCommand.SensorData.format())
 
-
-    def try_start_inspiratroy_hold(self):
+    def try_start_inspiratory_hold(self):
         print('try start inspiratory hold')
         self._send_buffer(SerialCommand.TriggerInspiratoryHold.format())
 
-    def stop_inspiratroy_hold(self):
+    def stop_inspiratory_hold(self):
         self._send_buffer(SerialCommand.StopInspiratoryHold.format())
 
-    def try_start_expiratroy_hold(self):
+    def try_start_expiratory_hold(self):
         print('try start inspiratory hold')
         self._send_buffer(SerialCommand.TriggerExpiratoryHold.format())
 
-    def stop_expiratroy_hold(self):
+    def stop_expiratory_hold(self):
         self._send_buffer(SerialCommand.StopExpiratoryHold.format())
 
 

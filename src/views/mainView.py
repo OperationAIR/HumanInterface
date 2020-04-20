@@ -34,8 +34,10 @@ class MainViewActions(enum.Enum):
     PRESSURE = 9
     OXYGEN = 10
     MENU = 11
-    INSP_HOLD = 12
-    EXP_HOLD = 13
+    INSP_HOLD_START = 12
+    INSP_HOLD_STOP = 13
+    EXP_HOLD_START = 14
+    EXP_HOLD_STOP = 15
 
 class MainView(Frame):
 
@@ -89,6 +91,13 @@ class MainView(Frame):
         self.pres_btn.setBackground(self.getBtnColor(AlarmType.PRESSURE_TOO_LOW, AlarmType.PRESSURE_TOO_HIGH))
         self.oxy_btn.setText("Oxygen (02)" + '\n' + str(self.settings.oxygen) + " [%]")
         self.oxy_btn.setBackground(self.getBtnColor(AlarmType.OXYGEN_TOO_LOW, AlarmType.OXYGEN_TOO_HIGH))
+
+        self.inspHold_btn.setEnabled(settings.start)
+        if sensordata.inspiratory_hold_result:
+            self.inspHold_btn.setText("Inspiration Hold" + "\n{0:.2g} ".format(sensordata.inspiratory_hold_result) + "[cm H2O]")
+        self.expHold_btn.setEnabled(settings.start)
+        if sensordata.expiratory_hold_result:
+            self.expHold_btn.setText("Expiration Hold" + "\n{0:.2g} ".format(sensordata.expiratory_hold_result) + "[cm H2O]")
 
         ppeak = max(self.pressureQueue)
         self.ppeak_label.setText("Ppeak", ppeak)
@@ -189,12 +198,14 @@ class MainView(Frame):
         self.batt_label.grid(row=11, column=4, rowspan=2, sticky=N + S + E + W)
 
         # Buttons under graphs
-        self.inspHold_btn = FlatButton(self, self.callback, MainViewActions.INSP_HOLD, self.config.values['colors']['lightBlue'])
-        self.inspHold_btn.setText("Inspiration\nHold")
+        self.inspHold_btn = FlatButton(self, self.callback, MainViewActions.INSP_HOLD_STOP, self.config.values['colors']['lightBlue'])
+        self.inspHold_btn.setCustomPressArgument(MainViewActions.INSP_HOLD_START)
+        self.inspHold_btn.setText("Inspiration Hold\n(Hold to measure)")
         self.inspHold_btn.grid(row=10, column=2, columnspan=1, rowspan=3, sticky=N + S + E + W, padx=(0,2), pady=(2,0))
 
-        self.expHold_btn = FlatButton(self, self.callback, MainViewActions.EXP_HOLD, self.config.values['colors']['lightBlue'])
-        self.expHold_btn.setText("Expiration\nHold")
+        self.expHold_btn = FlatButton(self, self.callback, MainViewActions.EXP_HOLD_STOP, self.config.values['colors']['lightBlue'])
+        self.expHold_btn.setCustomPressArgument(MainViewActions.EXP_HOLD_START)
+        self.expHold_btn.setText("Expiration Hold\n(Hold to measure)")
         self.expHold_btn.grid(row=10, column=3, columnspan=1, rowspan=3, sticky=N + S + E + W, padx=(0,2), pady=(2,0))
 
 
