@@ -192,18 +192,6 @@ class ViewController(Tk):
             # todo actually shot down os...
         elif action == MenuViewActions.SELF_TEST:
             print("Clicked SELF_TEST: Not implemented")
-        elif action == MenuViewActions.INSPIRATORY_HOLD_START:
-            print("Clicked INSPIRATORY_HOLD_START")
-            self.mcu.try_start_inspiratroy_hold()
-        elif action == MenuViewActions.INSPIRATORY_HOLD_STOP:
-            print("Clicked INSPIRATORY_HOLD_STOP")
-            self.mcu.stop_inspiratroy_hold()
-        elif action == MenuViewActions.EXPIRATORY_HOLD_START:
-            print("Clicked EXPIRATORY_HOLD_START")
-            self.mcu.try_start_expiratroy_hold()
-        elif action == MenuViewActions.EXPIRATORY_HOLD_STOP:
-            print("Clicked EXPIRATORY_HOLD_STOP")
-            self.mcu.stop_expiratroy_hold()
         else:
             print("Unknown menu action")
 
@@ -280,6 +268,18 @@ class ViewController(Tk):
                                                              self.changeSingleSettingCallback)
             self.changeSettingView.place(x=0, y=0, width=self.winfo_width(), height=self.winfo_height())
             self.changeSettingView.fill_frame()
+        elif action == MainViewActions.INSP_HOLD_START:
+            print("Insp Hold Start")
+            self.mcu.try_start_inspiratory_hold()
+        elif action == MainViewActions.INSP_HOLD_STOP:
+            print("Insp Hold Stop")
+            self.mcu.stop_inspiratory_hold()
+        elif action == MainViewActions.EXP_HOLD_START:
+            print("Exp hold start")
+            self.mcu.try_start_expiratory_hold()
+        elif action == MainViewActions.EXP_HOLD_STOP:
+            print("Exp hold stop")
+            self.mcu.stop_expiratory_hold()
         else:
             print("Unknown action")
 
@@ -390,9 +390,6 @@ class ViewController(Tk):
             self.mcu.request_settings()
 
         self.mainView.update(self.settings, self.latest_sensor_data)
-        if self.menuView:
-            self.menuView.update(self.latest_sensor_data.inspiratory_hold_result,
-                                self.latest_sensor_data.expiratory_hold_result)
 
         if self._thread_alive:
            self.after(100,self.asyncio)
