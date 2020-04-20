@@ -94,10 +94,10 @@ class MainView(Frame):
 
         self.inspHold_btn.setEnabled(settings.start)
         if sensordata.inspiratory_hold_result:
-            self.inspHold_btn.setText("Inspiration Hold\n" + str(sensordata.inspiratory_hold_result) + " [cm H2O]")
+            self.inspHold_btn.setText("Inspiration Hold" + "\n{0:.2g} ".format(sensordata.inspiratory_hold_result) + "[cm H2O]")
         self.expHold_btn.setEnabled(settings.start)
         if sensordata.expiratory_hold_result:
-            self.expHold_btn.setText("Expiration Hold\n" + str(sensordata.expiratory_hold_result) + " [cm H2O]")
+            self.expHold_btn.setText("Expiration Hold" + "\n{0:.2g} ".format(sensordata.expiratory_hold_result) + "[cm H2O]")
 
         ppeak = max(self.pressureQueue)
         self.ppeak_label.setText("Ppeak", ppeak)
