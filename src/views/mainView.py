@@ -85,10 +85,10 @@ class MainView(Frame):
 
         self.inspHold_btn.setEnabled(settings.start)
         if sensordata.inspiratory_hold_result:
-            self.inspHold_btn.setText("Inspiration Hold" + "\n{0:.2g} ".format(sensordata.inspiratory_hold_result) + "[cm H2O]")
+            self.inspHold_btn.setText(_("Inspiration Hold") + "\n{0:.2g} ".format(sensordata.inspiratory_hold_result) + _("[cm H2O]"))
         self.expHold_btn.setEnabled(settings.start)
         if sensordata.expiratory_hold_result:
-            self.expHold_btn.setText("Expiration Hold" + "\n{0:.2g} ".format(sensordata.expiratory_hold_result) + "[cm H2O]")
+            self.expHold_btn.setText(_("Expiration Hold") + "\n{0:.2g} ".format(sensordata.expiratory_hold_result) + _("[cm H2O]"))
 
         ppeak = max(self.pressureQueue)
         self.ppeak_label.setText(_("Ppeak"), ppeak)
@@ -191,12 +191,12 @@ class MainView(Frame):
         # Buttons under graphs
         self.inspHold_btn = FlatButton(self, self.callback, MainViewActions.INSP_HOLD_STOP, self.config.values['colors']['lightBlue'])
         self.inspHold_btn.setCustomPressArgument(MainViewActions.INSP_HOLD_START)
-        self.inspHold_btn.setText("Inspiration Hold\n(Hold to measure)")
+        self.inspHold_btn.setText(_("Inspiration Hold\n(Hold to measure)"))
         self.inspHold_btn.grid(row=10, column=2, columnspan=1, rowspan=3, sticky=N + S + E + W, padx=(0,2), pady=(2,0))
 
         self.expHold_btn = FlatButton(self, self.callback, MainViewActions.EXP_HOLD_STOP, self.config.values['colors']['lightBlue'])
         self.expHold_btn.setCustomPressArgument(MainViewActions.EXP_HOLD_START)
-        self.expHold_btn.setText("Expiration Hold\n(Hold to measure)")
+        self.expHold_btn.setText(_("Expiration Hold\n(Hold to measure)"))
         self.expHold_btn.grid(row=10, column=3, columnspan=1, rowspan=3, sticky=N + S + E + W, padx=(0,2), pady=(2,0))
 
 

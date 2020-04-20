@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-17 18:56+0200\n"
-"PO-Revision-Date: 2020-04-17 18:56+0200\n"
+"POT-Creation-Date: 2020-04-20 09:27+0200\n"
+"PO-Revision-Date: 2020-04-20 09:31+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: nl\n"
@@ -18,101 +18,102 @@ msgstr ""
 "X-Generator: Poedit 2.3\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: utils/flatButton.py:49 utils/flatButton.py:65
+#: utils/flatButton.py:58
 msgid "Hold for"
 msgstr "Druk voor"
 
-#: controllers/alarmController.py:22
+#: controllers/alarmController.py:21
 msgid "Nothing."
 msgstr "Niks."
 
-#: controllers/alarmController.py:23
+#: controllers/alarmController.py:22
 msgid "Clear all alarms"
 msgstr "Verwijder alle alarmen"
 
-#: controllers/alarmController.py:24
+#: controllers/alarmController.py:23
 msgid "PEEP value too high"
 msgstr "PEEP waarde te hoog"
 
-#: controllers/alarmController.py:25
+#: controllers/alarmController.py:24
 msgid "PEEP value too low"
 msgstr "PEEP waarde te laag"
 
-#: controllers/alarmController.py:26
+#: controllers/alarmController.py:25
 msgid "TIDAL value too high"
 msgstr "TIDAL waarde te hoog"
 
-#: controllers/alarmController.py:27
+#: controllers/alarmController.py:26
 msgid "TIDAL value too low"
 msgstr "TIDAL waarde te laag"
 
-#: controllers/alarmController.py:28
+#: controllers/alarmController.py:27
 msgid "PRESSURE value too high"
 msgstr "DRUK waarde te hoog"
 
-#: controllers/alarmController.py:29
+#: controllers/alarmController.py:28
 msgid "PRESSURE value too low"
 msgstr "DRUK waarde te laag"
 
-#: controllers/alarmController.py:30
+#: controllers/alarmController.py:29
 msgid "OXYGEN value too high"
 msgstr "ZUURSTOF waarde te hoog"
 
-#: controllers/alarmController.py:31
+#: controllers/alarmController.py:30
 msgid "OXYGEN value too low"
 msgstr "ZUURSTOF waarde te laag"
 
-#: controllers/alarmController.py:76
+#: controllers/alarmController.py:75
 msgid "Latest at"
 msgstr "Laatst op"
 
-#: controllers/viewController.py:62
+#: controllers/viewController.py:63
 msgid "Operation Air Ventilator"
 msgstr ""
 
-#: controllers/viewController.py:105 controllers/viewController.py:244
-#: views/mainView.py:89 views/alarmSettingsOverview.py:31
+#: controllers/viewController.py:106 controllers/viewController.py:233
+#: views/mainView.py:78 views/alarmSettingsOverview.py:30
 msgid "PEEP"
 msgstr ""
 
-#: controllers/viewController.py:105 controllers/viewController.py:129
-#: controllers/viewController.py:244 controllers/viewController.py:268
-#: views/mainView.py:89 views/mainView.py:92 views/mainView.py:128
+#: controllers/viewController.py:106 controllers/viewController.py:130
+#: controllers/viewController.py:233 controllers/viewController.py:257
+#: views/mainView.py:78 views/mainView.py:81 views/mainView.py:88
+#: views/mainView.py:91 views/mainView.py:124
 msgid "[cm H2O]"
 msgstr ""
 
-#: controllers/viewController.py:113 controllers/viewController.py:278
-#: views/alarmSettingsOverview.py:46
+#: controllers/viewController.py:114 controllers/viewController.py:267
+#: views/alarmSettingsOverview.py:45
 msgid "Oxygen"
 msgstr "Zuurstof"
 
-#: controllers/viewController.py:113 controllers/viewController.py:278
+#: controllers/viewController.py:114 controllers/viewController.py:267
 msgid "[O2]"
 msgstr ""
 
-#: controllers/viewController.py:121 views/alarmSettingsOverview.py:41
+#: controllers/viewController.py:122 views/alarmSettingsOverview.py:40
 msgid "Tidal Volume"
 msgstr ""
 
-#: controllers/viewController.py:129 controllers/viewController.py:268
-#: views/mainView.py:92 views/mainView.py:128 views/alarmSettingsOverview.py:36
+#: controllers/viewController.py:130 controllers/viewController.py:257
+#: views/mainView.py:81 views/mainView.py:124 views/alarmSettingsOverview.py:35
 msgid "Pressure"
 msgstr "Druk"
 
-#: controllers/viewController.py:252
+#: controllers/viewController.py:241
 msgid "Frequency and Ratio"
 msgstr "Frequentie en Ratio"
 
-#: controllers/viewController.py:253
+#: controllers/viewController.py:242
 msgid "Freq"
 msgstr ""
 
-#: controllers/viewController.py:253 views/mainView.py:91
+#: controllers/viewController.py:242 views/mainView.py:80
 msgid "[1/min]"
 msgstr ""
 
-#: controllers/viewController.py:253 controllers/viewController.py:306
-#: controllers/viewController.py:309 controllers/viewController.py:312
+#: controllers/viewController.py:242 controllers/viewController.py:307
+#: controllers/viewController.py:310 controllers/viewController.py:313
 msgid "Ratio"
 msgstr ""
 
@@ -120,106 +121,116 @@ msgstr ""
 msgid "Set the Time"
 msgstr "Stel Tijd in"
 
-#: views/setTimeView.py:129 views/changeDoubleSettingView.py:123
-#: views/changeSingleSettingView.py:77
+#: views/setTimeView.py:129 views/changeDoubleSettingView.py:115
+#: views/changeSingleSettingView.py:76
 msgid "Confirm"
 msgstr "Bevestig"
 
-#: views/mainView.py:76
+#: views/mainView.py:65
 msgid "STOP"
 msgstr ""
 
-#: views/mainView.py:79
+#: views/mainView.py:68
 msgid "START"
 msgstr ""
 
-#: views/mainView.py:91
+#: views/mainView.py:80
 msgid "Frequency"
 msgstr "Frequentie"
 
-#: views/mainView.py:94
+#: views/mainView.py:83
 msgid "Oxygen (O2)"
 msgstr "Zuurstof (O2)"
 
-#: views/mainView.py:98 views/mainView.py:175
+#: views/mainView.py:88
+msgid "Inspiration Hold"
+msgstr "Inspiratie Vasthouden"
+
+#: views/mainView.py:91
+msgid "Expiration Hold"
+msgstr "Expiratie Vasthouden"
+
+#: views/mainView.py:94 views/mainView.py:171
 msgid "Ppeak"
 msgstr ""
 
-#: views/mainView.py:100 views/mainView.py:178
+#: views/mainView.py:96 views/mainView.py:174
 msgid "Pmean"
 msgstr ""
 
-#: views/mainView.py:102 views/mainView.py:181
+#: views/mainView.py:98 views/mainView.py:177
 msgid "Freq."
 msgstr ""
 
-#: views/mainView.py:103 views/mainView.py:184
+#: views/mainView.py:99 views/mainView.py:180
 msgid "O2"
 msgstr ""
 
-#: views/mainView.py:104 views/mainView.py:187
+#: views/mainView.py:100 views/mainView.py:183
 msgid "TVmin.vol."
 msgstr ""
 
-#: views/mainView.py:108
+#: views/mainView.py:104
 msgid "Pwr. %"
 msgstr ""
 
-#: views/mainView.py:110 views/mainView.py:192
+#: views/mainView.py:106 views/mainView.py:188
 msgid "Batt. %"
 msgstr ""
 
-#: views/mainView.py:112
+#: views/mainView.py:108
 msgid "Pwr. Err."
 msgstr ""
 
-#: views/mainView.py:135
+#: views/mainView.py:131
 msgid "Flow"
 msgstr "Stroom"
 
-#: views/mainView.py:135
+#: views/mainView.py:131
 msgid "[L / min]"
 msgstr ""
 
-#: views/mainView.py:143
+#: views/mainView.py:139
 msgid "Menu"
 msgstr ""
 
-#: views/mainView.py:147
+#: views/mainView.py:143
 msgid "Alarm"
 msgstr ""
 
-#: views/mainView.py:151
+#: views/mainView.py:147
 msgid "Alarm Overview"
 msgstr "Alarm Overzicht"
 
-#: views/mainView.py:155
+#: views/mainView.py:151
 msgid "Patient"
 msgstr "Patiënt"
 
-#: views/mainView.py:197 views/menuView.py:50
+#: views/mainView.py:194
 msgid ""
-"Inspiratory\n"
-"Hold"
+"Inspiration Hold\n"
+"(Hold to measure)"
 msgstr ""
-"Inspiratie\n"
-"Vasthouden"
+"Inspiratie Vasthouden\n"
+"(Houd ingedrukt\n"
+"voor meeting)"
 
-#: views/mainView.py:201 views/menuView.py:68
+#: views/mainView.py:199
 msgid ""
-"Expiratory\n"
-"Hold"
+"Expiration Hold\n"
+"(Hold to measure)"
 msgstr ""
-"Expiratie\n"
-"Vasthouden"
+"Expiratie Vasthouden\n"
+"(Houd ingedrukt\n"
+"voor meeting)"
 
-#: views/alarmSettingsOverview.py:26 views/changeDoubleSettingView.py:79
-#: views/alarmOverview.py:37 views/changeSingleSettingView.py:52
-#: views/menuView.py:34
+#: views/alarmSettingsOverview.py:25 views/changeDoubleSettingView.py:71
+#: views/alarmOverview.py:35 views/changeSingleSettingView.py:51
+#: views/menuView.py:30
 msgid "Close"
 msgstr "Sluit"
 
-#: views/changeDoubleSettingView.py:29
+#: views/changeDoubleSettingView.py:21
 msgid ""
 "Minimum\n"
 "Value"
@@ -227,7 +238,7 @@ msgstr ""
 "Minimale\n"
 "Waarde"
 
-#: views/changeDoubleSettingView.py:29
+#: views/changeDoubleSettingView.py:21
 msgid ""
 "Maximum\n"
 "Value"
@@ -235,7 +246,7 @@ msgstr ""
 "Maximale\n"
 "Waarde"
 
-#: views/alarmOverview.py:32
+#: views/alarmOverview.py:30
 msgid ""
 "Clear\n"
 "Inactive Alarms"
@@ -243,48 +254,46 @@ msgstr ""
 "Wis\n"
 "Inactieve Alarmen"
 
-#: views/activeAlarmView.py:11
+#: views/activeAlarmView.py:12
 msgid "Alarm settings"
 msgstr "Alarm instellingen"
 
-#: views/activeAlarmView.py:17
+#: views/activeAlarmView.py:18
 msgid "Stop"
 msgstr ""
 
-#: views/menuView.py:39
+#: views/menuView.py:35
 msgid "Shutdown"
 msgstr "Sluit af"
 
-#: views/menuView.py:45
+#: views/menuView.py:41
 msgid "Self Test"
 msgstr "Eigen Test"
 
-#: views/menuView.py:55
-msgid ""
-"Stop Insp.\n"
-"Hold"
-msgstr ""
-"Stop Insp.\n"
-"Vasthouden"
-
-#: views/menuView.py:73
-msgid ""
-"Stop Exp.\n"
-"Hold"
-msgstr ""
-"Stop Exp.\n"
-"Vasthouden"
-
 #~ msgid ""
-#~ "Inspiration\n"
+#~ "Inspiratory\n"
 #~ "Hold"
 #~ msgstr ""
 #~ "Inspiratie\n"
 #~ "Vasthouden"
 
 #~ msgid ""
-#~ "Expiration\n"
+#~ "Expiratory\n"
 #~ "Hold"
 #~ msgstr ""
 #~ "Expiratie\n"
+#~ "Vasthouden"
+
+#~ msgid ""
+#~ "Stop Insp.\n"
+#~ "Hold"
+#~ msgstr ""
+#~ "Stop Insp.\n"
+#~ "Vasthouden"
+
+#~ msgid ""
+#~ "Stop Exp.\n"
+#~ "Hold"
+#~ msgstr ""
+#~ "Stop Exp.\n"
 #~ "Vasthouden"
