@@ -1,6 +1,7 @@
 import struct
-from utils.math import pressure_to_pa, pressure_to_cm_h2o
+
 from utils.config import ConfigValues
+from utils.math import pressure_to_cm_h2o, pressure_to_pa
 
 
 class MCUSettings:

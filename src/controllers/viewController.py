@@ -1,42 +1,30 @@
-import signal
 import subprocess
-import tkinter as tk
-from utils.config import ConfigValues
-import matplotlib
-import matplotlib.animation as animation
-import matplotlib.pyplot as plt
-import tkinter as tk
-import os
-
-from threading import Thread
-
-matplotlib.use("TkAgg")
-from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg)
 from queue import Queue
-from tkinter import ttk, BOTH, N, S, E, W
-from tkinter import StringVar, Button, Tk, Label
-from models.mcuSettingsModel import Settings
-from models.mcuSensorModel import Sensors
-from controllers.alarmController import registerAlarm
-from controllers.communicationController import Microcontroller
+from signal import SIGINT, signal
+from threading import Thread
+from tkinter import BOTH, Tk, font, ttk
+
+import matplotlib.pyplot as plt
+
 from controllers.alarmController import AlarmController, AlarmType
-
-from views.mainView import MainView, MainViewActions
-from views.changeSingleSettingView import ChangeSingleSettingView
-from views.alarmSettingsOverview import AlarmSettingsOverview
-from views.alarmOverview import AlarmOverview
-from views.changeDoubleSettingView import ChangeDoubleSettingView, ChangeAlarmViewActions
-from views.activeAlarmView import alarm_overview
-from views.menuView import MenuView, MenuViewActions
-from views.setTimeView import SetTimeView, SetTimeCallback
-
-from utils.constants import SettingType
-from utils.airTime import AirTime
-
-
+from controllers.communicationController import Microcontroller
+from models.mcuSensorModel import Sensors
+from models.mcuSettingsModel import Settings
 from utils import logger
+from utils.airTime import AirTime
+from utils.config import ConfigValues
+from utils.constants import SettingType
+from utils.internationalization import Internationalization
+from views.alarmOverview import AlarmOverview
+from views.alarmSettingsOverview import AlarmSettingsOverview
+from views.changeDoubleSettingView import ChangeDoubleSettingView
+from views.changeSingleSettingView import ChangeSingleSettingView
+from views.mainView import MainView, MainViewActions
+from views.menuView import MenuView, MenuViewActions
+from views.setTimeView import SetTimeCallback, SetTimeView
 
-class ViewController(tk.Tk):
+
+class ViewController(Tk):
 
     def __init__(self):
         super().__init__()
@@ -47,6 +35,8 @@ class ViewController(tk.Tk):
         self.settings_initialized = False
 
         self.config = ConfigValues()
+
+        Internationalization()
 
         self._thread_alive = True
         self.io_thread = None
@@ -71,9 +61,9 @@ class ViewController(tk.Tk):
         # for RPi
 
         self.protocol("WM_DELETE_WINDOW", self.quit)
-        self.title("Operation Air Ventilator")
+        self.title(_("Operation Air Ventilator"))
         self.geometry('800x480')
-        signal.signal(signal.SIGINT, self.quit)
+        signal(SIGINT, self.quit)
         self.attributes('-fullscreen', self.config.values['window']['fullscreen'])
         self.center()
 
@@ -103,7 +93,6 @@ class ViewController(tk.Tk):
         if type == SetTimeCallback.SET_TIME:
             airtime.setTime(time)
             print("Set time to " + airtime.time)
-            #os.system("date -s " + time)
         self.setTimeView.place_forget()
         self.mainView.pack(fill=BOTH, expand=True)
 
@@ -115,7 +104,7 @@ class ViewController(tk.Tk):
             min_peep = self.config.values['alarmSettings']['min_peep']
             max_peep = self.config.values['alarmSettings']['max_peep']
             self.settingsView = ChangeDoubleSettingView(SettingType.PEEP, self.settings.min_peep, min_peep, max_peep, self.peep_step,
-                                                        self.settings.max_peep, min_peep, max_peep, self.peep_step, "PEEP [cm H2O]",
+                                                        self.settings.max_peep, min_peep, max_peep, self.peep_step, _("PEEP") + " " + _("[cm H2O]"),
                                                         self.changeDoubleValueViewCallback)
             self.settingsView.place(x=0, y=0, width=self.winfo_width(), height=self.winfo_height())
             self.settingsView.fill_frame()
@@ -123,7 +112,7 @@ class ViewController(tk.Tk):
             min_fio2 = self.config.values['alarmSettings']['min_fio2']
             max_fio2 = self.config.values['alarmSettings']['max_fio2']
             self.settingsView = ChangeDoubleSettingView(SettingType.OXYGEN, self.settings.min_fio2, min_fio2, max_fio2, self.fio2_step,
-                                                        self.settings.max_fio2, min_fio2, max_fio2, self.fio2_step, "Oxygen [O2]",
+                                                        self.settings.max_fio2, min_fio2, max_fio2, self.fio2_step, _("Oxygen") + " " + _("[O2]"),
                                                         self.changeDoubleValueViewCallback)
             self.settingsView.place(x=0, y=0, width=self.winfo_width(), height=self.winfo_height())
             self.settingsView.fill_frame()
@@ -131,7 +120,7 @@ class ViewController(tk.Tk):
             min_tv = self.config.values['alarmSettings']['min_tv']
             max_tv = self.config.values['alarmSettings']['max_tv']
             self.settingsView = ChangeDoubleSettingView(SettingType.TIDAL, self.settings.min_tv, min_tv, max_tv, self.tv_step,
-                                                        self.settings.max_tv, min_tv, max_tv, self.tv_step, "Tidal Volume",
+                                                        self.settings.max_tv, min_tv, max_tv, self.tv_step, _("Tidal Volume"),
                                                         self.changeDoubleValueViewCallback)
             self.settingsView.place(x=0, y=0, width=self.winfo_width(), height=self.winfo_height())
             self.settingsView.fill_frame()
@@ -139,7 +128,7 @@ class ViewController(tk.Tk):
             min_press = self.config.values['alarmSettings']['min_pressure']
             max_press = self.config.values['alarmSettings']['max_pressure']
             self.settingsView = ChangeDoubleSettingView(SettingType.PRESSURE, self.settings.min_pressure, min_press, max_press, self.press_step,
-                                                        self.settings.max_pressure, min_press, max_press, self.press_step, "Pressure [cm H2O]",
+                                                        self.settings.max_pressure, min_press, max_press, self.press_step, _("Pressure") + " " + _("[cm H2O]"),
                                                         self.changeDoubleValueViewCallback)
             self.settingsView.place(x=0, y=0, width=self.winfo_width(), height=self.winfo_height())
             self.settingsView.fill_frame()
@@ -250,7 +239,7 @@ class ViewController(tk.Tk):
             min_peep = self.config.values['defaultSettings']['min_peep']
             max_peep = self.config.values['defaultSettings']['max_peep']
             self.changeSettingView = ChangeSingleSettingView(SettingType.PEEP, self.settings.peep, min_peep,
-                                                             max_peep, self.peep_step, "PEEP \n[cm H2O]", self.changeSingleSettingCallback)
+                                                             max_peep, self.peep_step, _("PEEP") + "\n" + _("[cm H2O]"), self.changeSingleSettingCallback)
             self.changeSettingView.place(x=0, y=0, width=self.winfo_width(), height=self.winfo_height())
             self.changeSettingView.fill_frame()
         elif action == MainViewActions.FREQ:
@@ -258,8 +247,8 @@ class ViewController(tk.Tk):
             min_freq = self.config.values['defaultSettings']['min_freq']
             max_freq = self.config.values['defaultSettings']['max_freq']
             self.settingsView = ChangeDoubleSettingView(SettingType.FREQ, self.settings.freq, min_freq, max_freq, self.freq_step,
-                                                        self.settings.ratio / 10, 1, 3, self.ratio_step, "Frequency and Ratio",
-                                                        self.changeDoubleValueViewCallback, "Freq \n[1/min]", "Ratio (1:?)", bound=False)
+                                                        self.settings.ratio / 10, 1, 3, self.ratio_step, _("Frequency and Ratio"),
+                                                        self.changeDoubleValueViewCallback, _("Freq") + "\n" + _("[1/min]"), _("Ratio") + " (1:?)", bound=False)
             self.settingsView.place(x=0, y=0, width=self.winfo_width(), height=self.winfo_height())
             self.settingsView.fill_frame()
             #self.changeSettingView = ChangeSingleSettingView(SettingType.FREQ, self.settings.freq,
@@ -274,7 +263,7 @@ class ViewController(tk.Tk):
             max_press = self.config.values['defaultSettings']['max_pressure']
             self.changeSettingView = ChangeSingleSettingView(SettingType.PRESSURE, self.settings.pressure,
                                                              min_press,
-                                                             max_press, self.press_step, "Pressure \n[cm H2O]",
+                                                             max_press, self.press_step, _("Pressure") + "\n" + _("[cm H2O]"),
                                                              self.changeSingleSettingCallback)
             self.changeSettingView.place(x=0, y=0, width=self.winfo_width(), height=self.winfo_height())
             self.changeSettingView.fill_frame()
@@ -284,7 +273,7 @@ class ViewController(tk.Tk):
             max_fio2 = self.config.values['defaultSettings']['max_fio2']
             self.changeSettingView = ChangeSingleSettingView(SettingType.OXYGEN, self.settings.oxygen,
                                                              min_fio2,
-                                                             max_fio2, self.fio2_step, "Oxygen \n[O2]",
+                                                             max_fio2, self.fio2_step, _("Oxygen") + "\n" + _("[O2]"),
                                                              self.changeSingleSettingCallback)
             self.changeSettingView.place(x=0, y=0, width=self.winfo_width(), height=self.winfo_height())
             self.changeSettingView.fill_frame()
@@ -324,13 +313,13 @@ class ViewController(tk.Tk):
     def setRatio(self, settings, textR):
         if settings.ratio == 2:
             settings.ratio = 3
-            textR.set("Ratio"+'\n'+'1:3')
+            textR.set(_("Ratio")+'\n'+'1:3')
         elif settings.ratio == 3:
             settings.ratio = 1
-            textR.set("Ratio"+'\n'+'1:1')
+            textR.set(_("Ratio")+'\n'+'1:1')
         else:
             settings.ratio = 2
-            textR.set("Ratio"+'\n'+'1:2')
+            textR.set(_("Ratio")+'\n'+'1:2')
 
     def checkAllAlarms(self, settings, sensors):
         self.alarms.checkForNewAlarms(settings, sensors)
@@ -340,7 +329,7 @@ class ViewController(tk.Tk):
         style = ttk.Style()
         style.configure("style.TButton",background='#263655')
         ttk.Style().configure("TButton", padding=6, relief="flat",background='#263655',foreground='#FFFFFF')
-        default_font = tk.font.nametofont("TkDefaultFont")
+        default_font = font.nametofont("TkDefaultFont")
         default_font.configure(size=13, family="Helvetica Neue")
 
 

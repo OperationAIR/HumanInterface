@@ -1,11 +1,9 @@
-import struct
-
 import datetime
+import struct
+from enum import Enum
 
 from utils.math import pressure_to_cm_h2o
-import struct
 
-from enum import Enum
 
 class UPSStatus(Enum):
     UNKNOWN              = (0),
@@ -183,4 +181,3 @@ class Sensors:
             power_status=0x800063381,
             system_status=0
         )
-

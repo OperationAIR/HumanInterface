@@ -1,22 +1,13 @@
 
-import tkinter as tk
-from tkinter import StringVar, Button, Frame, Label
-import matplotlib
-
-matplotlib.use("TkAgg")
-from tkinter import ttk, BOTH, N, S, E, W, LEFT
-import tkinter.font as tkFont
+from enum import Enum
+from tkinter import E, Frame, Label, N, S, StringVar, W
 
 from utils.config import ConfigValues
 from utils.flatButton import FlatButton
-from utils.constants import SettingType
-
-from views.mainView import MainViewActions
+from utils.internationalization import Internationalization
 
 
-import enum
-
-class MenuViewActions(enum.Enum):
+class MenuViewActions(Enum):
     NONE = 0
     SHUTDOWN = 1
     SELF_TEST = 2
@@ -30,20 +21,23 @@ class MenuView(Frame):
 
         self.callback = callback
 
+        Internationalization()
+
+
     def update(self, settings):
         self.exit_btn.checkTimeout()
         self.exit_btn.setEnabled(not settings.start)
 
         if settings.start:
-            self.exit_btn.setText("Shutdown Disabled\n(Stop Ventilator First)")
+            self.exit_btn.setText(_("Shutdown Disabled\n(Stop Ventilator First)"))
         else:
-            self.exit_btn.setText("Shutdown")
+            self.exit_btn.setText(_("Shutdown"))
 
     def fill_frame(self, settings):
         print("Filling frame!")
         close_btn = FlatButton(self, self.callback, MenuViewActions.NONE,
                                self.config.values['colors']['lightBlue'], fontSize=20)
-        close_btn.setText("Close")
+        close_btn.setText(_("Close"))
         close_btn.grid(row=0, column=3, sticky=N + S + E + W, padx=10, pady=20)
 
         self.exit_btn = FlatButton(self, self.callback, MenuViewActions.SHUTDOWN,
@@ -53,12 +47,11 @@ class MenuView(Frame):
         if settings.start:
             self.exit_btn.setEnabled(False)
 
-
         test_btn = FlatButton(self, self.callback, MenuViewActions.SELF_TEST,
                                self.config.values['colors']['lightBlue'], fontSize=20)
-        test_btn.setText("Self Test")
-        test_btn.grid(row=2, column=0, columnspan=2, sticky=N + S + E + W,padx=(1,0), pady=40)
 
+        test_btn.setText(_("Self Test"))
+        test_btn.grid(row=2, column=0, columnspan=2, sticky=N + S + E + W,padx=(1,0), pady=40)
 
         self.rowconfigure(0, weight=1)
         self.rowconfigure(1, weight=1)

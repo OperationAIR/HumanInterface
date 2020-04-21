@@ -1,6 +1,7 @@
-import enum
+from enum import Enum
 
-class SettingType(enum.Enum):
+
+class SettingType(Enum):
     NONE = 0
     PEEP = 1
     PRESSURE = 2
