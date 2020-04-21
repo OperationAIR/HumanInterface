@@ -3,7 +3,7 @@
 # cd to script dir
 cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 
-python mcu.py --bootloader
+python mcu.py --bootloader --delay
 
 echo "flash firmware over uart.."
 
