@@ -29,7 +29,7 @@ class CurrentValueCanvas(Canvas):
         if isinstance(value, float) or isinstance(value, int):
             self.text = title + '\n' + str(round(value))
         elif isinstance(value, list):
-            self.text = title + '\n' + str(round(value[0])) + ' / ' + str(round(value[1])) 
+            self.text = title + '\n' + str(round(value[0])) + ' (' + str(round(value[1])) + ')' 
 
         self.textId = self.create_text(0, 0, anchor="nw", fill=self.textColor,font="HelveticaNeue 13",
                         text=self.text)

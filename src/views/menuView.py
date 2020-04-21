@@ -23,28 +23,41 @@ class MenuView(Frame):
 
         Internationalization()
 
-    def fill_frame(self):
+
+    def update(self, settings):
+        self.exit_btn.checkTimeout()
+        self.exit_btn.setEnabled(not settings.start)
+
+        if settings.start:
+            self.exit_btn.setText(_("Shutdown Disabled\n(Stop Ventilator First)"))
+        else:
+            self.exit_btn.setText(_("Shutdown"))
+
+    def fill_frame(self, settings):
         print("Filling frame!")
         close_btn = FlatButton(self, self.callback, MenuViewActions.NONE,
                                self.config.values['colors']['lightBlue'], fontSize=20)
         close_btn.setText(_("Close"))
-        close_btn.grid(row=0, column=2, sticky=N + S + E + W, padx=10, pady=20)
+        close_btn.grid(row=0, column=3, sticky=N + S + E + W, padx=10, pady=20)
 
-        exit_btn = FlatButton(self, self.callback, MenuViewActions.SHUTDOWN,
-                               self.config.values['colors']['lightBlue'], fontSize=20)
-        exit_btn.setText(_("Shutdown"))
-        exit_btn.grid(row=1, column=2, sticky=N + S + E + W, padx=(40,0), pady=40)
+        self.exit_btn = FlatButton(self, self.callback, MenuViewActions.SHUTDOWN,
+                               self.config.values['colors']['lightBlue'], fontSize=20, timeout=5)
+        self.exit_btn.grid(row=2, column=2, columnspan=2, sticky=N + S + E + W, padx=(40,0), pady=40)
 
+        if settings.start:
+            self.exit_btn.setEnabled(False)
 
         test_btn = FlatButton(self, self.callback, MenuViewActions.SELF_TEST,
                                self.config.values['colors']['lightBlue'], fontSize=20)
+
         test_btn.setText(_("Self Test"))
-        test_btn.grid(row=1, column=0, sticky=N + S + E + W,padx=(1,0), pady=40)
+        test_btn.grid(row=2, column=0, columnspan=2, sticky=N + S + E + W,padx=(1,0), pady=40)
 
         self.rowconfigure(0, weight=1)
-        self.rowconfigure(1, weight=2)
+        self.rowconfigure(1, weight=1)
         self.rowconfigure(2, weight=2)
-        self.rowconfigure(3, weight=2)
+        self.rowconfigure(3, weight=1)
+        self.rowconfigure(4, weight=1)
 
-        for i in range(0, 3):
+        for i in range(0, 4):
             self.columnconfigure(i, weight=1)

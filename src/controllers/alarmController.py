@@ -1,10 +1,10 @@
 import os
 import time
-from datetime import datetime
 from enum import IntEnum
 from pathlib import Path
 
 import pygame
+from utils.airTime import AirTime
 from utils.anamolyDetection import Anomaly, check_for_anomalies
 from utils.internationalization import Internationalization
 
@@ -55,14 +55,15 @@ def stopAlarm():
 class Alarm:
     def __init__(self, type):
         self.type = type
-        self.timestamp = time.time()
+        self.airTime = AirTime()
+        self.timestamp = self.airTime.time
         self.count = 1
         self.active = True
 
     def newOccurence(self):
         self.count += 1
         self.active = True
-        self.timestamp = time.time()
+        self.timestamp = self.airTime.time
 
     def turnOff(self):
         self.active = False
@@ -71,8 +72,7 @@ class Alarm:
         self.active = True
 
     def __str__(self):
-        dt_object = datetime.fromtimestamp(self.timestamp)
-        return AlarmString[(self.type)] + " (" + _("Latest at") + " " + str(dt_object.hour) +":" + str(dt_object.minute) + ")"
+        return AlarmString[(self.type)] + " (" + _("Latest at") + " " + self.timestamp + ")"
 
 class AlarmController:
 

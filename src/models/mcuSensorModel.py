@@ -51,9 +51,9 @@ class Sensors:
             tidal_volume_exhale,
             minute_volume,
             cycle_state,
-            power_status,
             inspiratory_hold_result,
             expiratory_hold_result,
+            power_status,
             system_status):
 
         self.timestamp = datetime.datetime.now()

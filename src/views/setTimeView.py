@@ -36,11 +36,39 @@ class SetTimeView(Frame):
     def returnTimeCallback(self, type):
         self.callback(type, self.getTime())
 
-    def isValid(self, time):
-        hour = int(str(time[0]) + str(time[1]))
-        minutes = int(str(time[2]) + str(time[3]))
+    def makeValid(self, time, index, change):
+        print(time, index, change)
+        if index == 0:
+            time[0] += change
+            if time[0] == -1 or time[0] == 3:
+                time[0] += (-1*change*3)
+            if time[0] == 2 and time[1] > 3:
+                time[1] = 3
 
-        return 0 <= hour < 24 and 0 <= time[1] < 10 and 0 <= minutes < 60 and 0 <= time[3] < 10
+        if index == 1:
+            time[1] += change
+            if time[0] == 2 and time[1] == 4:
+                time[1] = 0
+            elif time[1] == -1:
+                if time[0] == 2:
+                    time[1] = 3
+                else:
+                    time[1] = 9
+            elif time[1] > 9:
+                time[1] = 0
+                
+        if index == 2:
+            time[2] += change
+            if time[2] in [-1, 6]:
+                time[2] += (-1*change*6)
+        
+        if index == 3:
+            time[3] += change
+            if time[3] in [-1, 10]:
+                time[3] += (-1*change*10)
+        
+
+        return time
 
     def update(self):
         self.first_digit.setText(self.time[0])
@@ -51,13 +79,8 @@ class SetTimeView(Frame):
     def changeTimeCallback(self, arg):
         (index, change) = arg
         newtime = self.time[:]
-        newtime[index] += int(change)
-
-        if newtime[index] < 0:
-            return False
-
-        if self.isValid(newtime):
-            self.time = newtime
+ 
+        self.time = self.makeValid(newtime, index, change)
 
         self.update()
 
