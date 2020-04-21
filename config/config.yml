@@ -47,6 +47,7 @@ alarmSettings:
 
 developer:
   simulate: True
+  hardShutdown: True
   commPort: '/dev/ttyS0'
   baudrate: 500000
   logEnabled: True

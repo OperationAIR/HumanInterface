@@ -44,7 +44,7 @@ class FlatButton(Canvas):
     def checkTimeout(self):
         if self.counting:
             self.time_diff = time.time() - self.timestamp
-            if self.time_diff > self.timeout:
+            if self.time_diff > self.timeout and self.oldText != "":
                 self.setText(self.oldText)
                 self.text = self.oldText
                 self.oldText = ""
@@ -64,7 +64,7 @@ class FlatButton(Canvas):
             self.configure(bg=self.color)
 
     def pressEvent(self, event):
-        if self.timeout > 0:
+        if self.timeout > 0 and self.enabled:
             self.timestamp = time.time()
             self.oldText = self.text
             self.text = "Hold for\n" + str(self.timeout) + " s"
