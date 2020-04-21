@@ -100,13 +100,13 @@ class MainView(Frame):
             self.expHold_btn.setText("Expiration Hold" + "\n{0:.2g} ".format(sensordata.expiratory_hold_result) + "[cm H2O]")
 
         ppeak = max(self.pressureQueue)
-        self.ppeak_label.setText("Ppeak", ppeak)
         pmean = sum(self.pressureQueue)/len(self.pressureQueue)
-        self.pmean_label.setText("Pmean", pmean)
-
-        self.freq_label.setText("Freq.", 10) # not implemented yet, freq sensordata
+        ppeep = min(self.pressureQueue)
+        self.ppeak_label.setText("Ppeak", str(ppeak) + " (" + str(pmean) +")")
+        self.pmean_label.setText("Ppeep", ppeep)
         self.oxy_label.setText("O2", self.sensordata.oxygen)
-        self.tv_label1.setText("TVmin.vol.", self.sensordata.minute_volume)
+        self.tvinexp_label.setText("TV insp/exp", str(self.sensordata.inspiratory_hold_result) + "/" + str(self.sensordata.expiratory_hold_result))
+        self.tv_label1.setText("min.vol.", self.sensordata.minute_volume)
 
         batt_status = self.sensordata.ups_status
         if batt_status == UPSStatus.OK:
@@ -183,13 +183,13 @@ class MainView(Frame):
         self.pmean_label = CurrentValueCanvas(self, "Pmean", 50, self.config.values['colors']['pressurePlot'])
         self.pmean_label.grid(row=3, column=4, rowspan=2, sticky=N + S + E + W)
 
-        self.freq_label = CurrentValueCanvas(self, "Freq.", 9, self.config.values['colors']['flowPlot'])
-        self.freq_label.grid(row=5, column=4, rowspan=2, sticky=N + S + E + W)
-
         self.oxy_label = CurrentValueCanvas(self, "O2", self.sensordata.oxygen, 'white')
-        self.oxy_label.grid(row=7, column=4, rowspan=2, sticky=N + S + E + W)
+        self.oxy_label.grid(row=5, column=4, rowspan=2, sticky=N + S + E + W)
 
-        self.tv_label1 = CurrentValueCanvas(self, "TVmin.vol",
+        self.tvinexp_label = CurrentValueCanvas(self, "TV insp/exp", 0, self.config.values['colors']['green'])
+        self.tvinexp_label.grid(row=7, column=4, rowspan=2, sticky=N + S + E + W)
+
+        self.tv_label1 = CurrentValueCanvas(self, "min.vol",
                                            [self.sensordata.tidal_volume_inhale, self.sensordata.tidal_volume_exhale],
                                            self.config.values['colors']['green'])
         self.tv_label1.grid(row=9, column=4, rowspan=2, sticky=N + S + E + W)

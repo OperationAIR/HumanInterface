@@ -1,4 +1,5 @@
 import signal
+import subprocess
 import tkinter as tk
 from utils.config import ConfigValues
 import matplotlib
@@ -198,9 +199,17 @@ class ViewController(tk.Tk):
             self.menuView.place_forget()
             return
         elif action == MenuViewActions.SHUTDOWN:
-            print("Shutdown Machine")
-            self.quit()
-            # todo actually shot down os...
+            print("Shutting down Machine")
+            hard_shutdown = self.config.values['developer']['hardShutdown']
+            if not hard_shutdown:
+                self.quit()
+            else:
+                try:
+                    subprocess.Popen(['sudo', 'shutdown', '-h', 'now'])
+                except ValueError:
+                    print("Failed to shutdown")
+
+            return
         elif action == MenuViewActions.SELF_TEST:
             print("Clicked SELF_TEST: Not implemented")
         else:
@@ -215,7 +224,7 @@ class ViewController(tk.Tk):
             print("Clicked MENU")
             self.menuView = MenuView(callback=self.menuViewCallback)
             self.menuView.place(x=0, y=0, width=self.winfo_width(), height=self.winfo_height())
-            self.menuView.fill_frame()
+            self.menuView.fill_frame(self.settings)
 
         elif action == MainViewActions.ALARM:
             self.alarmSettingsOverview = AlarmSettingsOverview(self.settings, self.alarmSettingsOverviewCallback)
@@ -401,6 +410,8 @@ class ViewController(tk.Tk):
             self.mcu.request_settings()
 
         self.mainView.update(self.settings, self.latest_sensor_data)
+        if self.menuView:
+            self.menuView.update(self.settings)
 
         if self._thread_alive:
            self.after(100,self.asyncio)

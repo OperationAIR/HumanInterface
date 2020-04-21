@@ -6,6 +6,7 @@ from utils.anamolyDetection import Anomaly, check_for_anomalies
 
 import enum
 import time
+from utils.airTime import AirTime
 from datetime import datetime
 
 ROOT_DIR = str(Path(os.path.dirname(os.path.abspath(__file__))).parent.parent)
@@ -53,14 +54,15 @@ def stopAlarm():
 class Alarm:
     def __init__(self, type):
         self.type = type
-        self.timestamp = time.time()
+        self.airTime = AirTime()
+        self.timestamp = self.airTime.time
         self.count = 1
         self.active = True
 
     def newOccurence(self):
         self.count += 1
         self.active = True
-        self.timestamp = time.time()
+        self.timestamp = self.airTime.time
 
     def turnOff(self):
         self.active = False
@@ -69,8 +71,7 @@ class Alarm:
         self.active = True
 
     def __str__(self):
-        dt_object = datetime.fromtimestamp(self.timestamp)
-        return AlarmString[(self.type)] + " (Latest at " + str(dt_object.hour) +":" + str(dt_object.minute) + ")"
+        return AlarmString[(self.type)] + " (Latest at " + self.timestamp + ")"
 
 class AlarmController:
 
