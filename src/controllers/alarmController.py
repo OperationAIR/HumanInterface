@@ -3,7 +3,6 @@ import os
 from pathlib import Path
 
 from utils.anamolyDetection import Anomaly, check_for_anomalies
-from utils.airTime import AirTime
 
 import enum
 import time
@@ -57,7 +56,6 @@ class Alarm:
         self.timestamp = time.time()
         self.count = 1
         self.active = True
-        self.airtime = AirTime()
 
     def newOccurence(self):
         self.count += 1
@@ -71,7 +69,8 @@ class Alarm:
         self.active = True
 
     def __str__(self):
-        return AlarmString[(self.type)] + " (Latest at " + self.airtime.time + ")"
+        dt_object = datetime.fromtimestamp(self.timestamp)
+        return AlarmString[(self.type)] + " (Latest at " + str(dt_object.hour) +":" + str(dt_object.minute) + ")"
 
 class AlarmController:
 
