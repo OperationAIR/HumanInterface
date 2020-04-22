@@ -246,8 +246,10 @@ class ViewController(Tk):
             print("Clicked Freq")
             min_freq = self.config.values['defaultSettings']['min_freq']
             max_freq = self.config.values['defaultSettings']['max_freq']
+            min_ratio = 0.5 # TODO should go in config
+            max_ratio = 3 # TODO should go in config
             self.settingsView = ChangeDoubleSettingView(SettingType.FREQ, self.settings.freq, min_freq, max_freq, self.freq_step,
-                                                        self.settings.ratio / 10, 1, 3, self.ratio_step, _("Frequency and Ratio"),
+                                                        self.settings.ratio / 10, min_ratio, max_ratio, self.ratio_step, _("Frequency and Ratio"),
                                                         self.changeDoubleValueViewCallback, _("Freq") + "\n" + _("[1/min]"), _("Ratio") + " (1:?)", bound=False)
             self.settingsView.place(x=0, y=0, width=self.winfo_width(), height=self.winfo_height())
             self.settingsView.fill_frame()
@@ -338,7 +340,7 @@ class ViewController(Tk):
         self._thread_alive = False
         self.mcu.disconnect()
         plt.close('all')
-        if self.io_thread: self.io_thread.join()        
+        if self.io_thread: self.io_thread.join()
         self.after(300, self.destroy_async)
 
     def start(self):
