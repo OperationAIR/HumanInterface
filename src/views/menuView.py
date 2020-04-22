@@ -47,12 +47,6 @@ class MenuView(Frame):
         if settings.start:
             self.exit_btn.setEnabled(False)
 
-        test_btn = FlatButton(self, self.callback, MenuViewActions.SELF_TEST,
-                               self.config.values['colors']['lightBlue'], fontSize=20)
-
-        test_btn.setText(_("Self Test"))
-        test_btn.grid(row=2, column=0, columnspan=2, sticky=N + S + E + W,padx=(1,0), pady=40)
-
         self.rowconfigure(0, weight=1)
         self.rowconfigure(1, weight=1)
         self.rowconfigure(2, weight=2)
