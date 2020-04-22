@@ -14,11 +14,11 @@ class ButtonAction (Enum):
 
 class ChangeSingleSettingView(Frame):
 
-    def __init__(self, type, current, min, max, step, description, callback, parent=None):
+    def __init__(self, stype, current, min, max, step, description, callback, parent=None):
         self.config = ConfigValues()
         Frame.__init__(self, parent, bg=self.config.values['colors']['darkBlue'])
 
-        self.type = type
+        self.type = stype
 
         self.current = current
         self.min = min
@@ -31,8 +31,8 @@ class ChangeSingleSettingView(Frame):
 
         self.fill_frame()
 
-    def confirmSetting(self, type):
-        self.callback(type, self.current)
+    def confirmSetting(self, stype):
+        self.callback(stype, self.current)
 
     def valueChange(self, action):
         if action == ButtonAction.MINUS and self.current - self.step >= self.min:
