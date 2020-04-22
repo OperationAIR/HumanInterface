@@ -1,5 +1,6 @@
 from time import time
 from tkinter import Canvas
+import math
 
 from utils.config import ConfigValues
 from utils.internationalization import Internationalization
@@ -55,7 +56,7 @@ class FlatButton(Canvas):
                 self.oldText = ""
                 self.callback(self.arg)
             else:
-                self.text = _("Hold for") + "\n" + str(round(self.timeout - self.time_diff)) + " s"
+                self.text = _("Hold for") + "\n" + str(math.ceil(self.timeout - self.time_diff)) + " s"
                 self.setText(self.text)
             return
 

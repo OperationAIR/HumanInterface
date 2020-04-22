@@ -41,7 +41,7 @@ class MenuView(Frame):
         close_btn.grid(row=0, column=3, sticky=N + S + E + W, padx=10, pady=20)
 
         self.exit_btn = FlatButton(self, self.callback, MenuViewActions.SHUTDOWN,
-                               self.config.values['colors']['lightBlue'], fontSize=20, timeout=5)
+                               self.config.values['colors']['lightBlue'], fontSize=20, timeout=4)
         self.exit_btn.grid(row=2, column=2, columnspan=2, sticky=N + S + E + W, padx=(40,0), pady=40)
 
         if settings.start:
