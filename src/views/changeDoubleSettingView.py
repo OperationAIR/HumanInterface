@@ -18,11 +18,11 @@ class ChangeDoubleSettingView(Frame):
     Internationalization()
 
     # bound (Bool): Are the two variables linked? (Can variable 2 be less than variable 1)
-    def __init__(self, type, min_current, min_min, min_max, step1, max_current, max_min, max_max, step2, description, callback, label1=_("Minimum\nValue"), label2=_("Maximum\nValue"), bound=True, parent=None):
+    def __init__(self, stype, min_current, min_min, min_max, step1, max_current, max_min, max_max, step2, description, callback, label1=_("Minimum\nValue"), label2=_("Maximum\nValue"), bound=True, parent=None):
         self.config = ConfigValues()
         Frame.__init__(self, parent, bg=self.config.values['colors']['darkBlue'])
 
-        self.type = type
+        self.type = stype
 
         self.bound = bound
         self.step1 = step1
@@ -41,8 +41,8 @@ class ChangeDoubleSettingView(Frame):
 
         self.fill_frame()
 
-    def confirmSetting(self, type):
-        self.callback(type, self.min_current, self.max_current)
+    def confirmSetting(self, stype):
+        self.callback(stype, self.min_current, self.max_current)
 
     def valueChange(self, action):
         if action == ChangeAlarmViewActions.MINMINUS and self.min_current - self.step1 >= self.min_min:

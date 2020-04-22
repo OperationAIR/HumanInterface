@@ -53,8 +53,8 @@ def stopAlarm():
 
 
 class Alarm:
-    def __init__(self, type):
-        self.type = type
+    def __init__(self, atype):
+        self.type = atype
         self.airTime = AirTime()
         self.timestamp = self.airTime.time
         self.count = 1
@@ -80,15 +80,15 @@ class AlarmController:
         def __init__(self):
             self.alarms = []
 
-        def addAlarm(self, type):
+        def addAlarm(self, atype):
             found = False
             for alarm in self.alarms:
-                if alarm.type == type:
+                if alarm.type == atype:
                     alarm.newOccurence()
                     found = True
 
             if not found:
-                self.alarms.append(Alarm(type))
+                self.alarms.append(Alarm(atype))
 
             registerAlarm()
 
@@ -98,9 +98,9 @@ class AlarmController:
                     return True
             return False
 
-        def hasActiveAlarm(self, type):
+        def hasActiveAlarm(self, atype):
             for alarm in self.alarms:
-                if alarm.type == type and alarm.active:
+                if alarm.type == atype and alarm.active:
                     return True
             return False
 
@@ -121,11 +121,11 @@ class AlarmController:
                 return True
             return False
 
-        def mute(self, type):
+        def mute(self, atype):
             activeAlarm = False
             for alarm in self.alarms:
                 activeAlarm = alarm.active or activeAlarm
-                if alarm.type == type:
+                if alarm.type == atype:
                     alarm.turnOff()
 
             if not activeAlarm:

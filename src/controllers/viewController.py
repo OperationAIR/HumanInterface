@@ -86,11 +86,11 @@ class ViewController(Tk):
         # self.mcu.request_settings()
         self.mcu.request_sensor_data()
 
-    def setTimeCallback(self, type, time):
+    def setTimeCallback(self, sttype, time):
 
         airtime = AirTime()
 
-        if type == SetTimeCallback.SET_TIME:
+        if sttype == SetTimeCallback.SET_TIME:
             airtime.setTime(time)
             print("Set time to " + airtime.time)
         self.setTimeView.place_forget()
@@ -99,8 +99,8 @@ class ViewController(Tk):
     def updateSettings(self, settings):
         self.settings = settings
 
-    def alarmSettingsOverviewCallback(self, type):
-        if type == SettingType.PEEP:
+    def alarmSettingsOverviewCallback(self, stype):
+        if stype == SettingType.PEEP:
             min_peep = self.config.values['alarmSettings']['min_peep']
             max_peep = self.config.values['alarmSettings']['max_peep']
             self.settingsView = ChangeDoubleSettingView(SettingType.PEEP, self.settings.min_peep, min_peep, max_peep, self.peep_step,
@@ -108,7 +108,7 @@ class ViewController(Tk):
                                                         self.changeDoubleValueViewCallback)
             self.settingsView.place(x=0, y=0, width=self.winfo_width(), height=self.winfo_height())
             self.settingsView.fill_frame()
-        elif type == SettingType.OXYGEN:
+        elif stype == SettingType.OXYGEN:
             min_fio2 = self.config.values['alarmSettings']['min_fio2']
             max_fio2 = self.config.values['alarmSettings']['max_fio2']
             self.settingsView = ChangeDoubleSettingView(SettingType.OXYGEN, self.settings.min_fio2, min_fio2, max_fio2, self.fio2_step,
@@ -116,7 +116,7 @@ class ViewController(Tk):
                                                         self.changeDoubleValueViewCallback)
             self.settingsView.place(x=0, y=0, width=self.winfo_width(), height=self.winfo_height())
             self.settingsView.fill_frame()
-        elif type == SettingType.TIDAL:
+        elif stype == SettingType.TIDAL:
             min_tv = self.config.values['alarmSettings']['min_tv']
             max_tv = self.config.values['alarmSettings']['max_tv']
             self.settingsView = ChangeDoubleSettingView(SettingType.TIDAL, self.settings.min_tv, min_tv, max_tv, self.tv_step,
@@ -124,7 +124,7 @@ class ViewController(Tk):
                                                         self.changeDoubleValueViewCallback)
             self.settingsView.place(x=0, y=0, width=self.winfo_width(), height=self.winfo_height())
             self.settingsView.fill_frame()
-        elif type == SettingType.PRESSURE:
+        elif stype == SettingType.PRESSURE:
             min_press = self.config.values['alarmSettings']['min_pressure']
             max_press = self.config.values['alarmSettings']['max_pressure']
             self.settingsView = ChangeDoubleSettingView(SettingType.PRESSURE, self.settings.min_pressure, min_press, max_press, self.press_step,
@@ -135,20 +135,20 @@ class ViewController(Tk):
 
         self.alarmSettingsOverview.place_forget()
 
-    def changeDoubleValueViewCallback(self, type, val1, val2):
-        if type == SettingType.PEEP:
+    def changeDoubleValueViewCallback(self, stype, val1, val2):
+        if stype == SettingType.PEEP:
             self.settings.min_peep = val1
             self.settings.max_peep = val2
-        elif type == SettingType.OXYGEN:
+        elif stype == SettingType.OXYGEN:
             self.settings.min_fio2 = val1
             self.settings.max_fio2 = val2
-        elif type == SettingType.PRESSURE:
+        elif stype == SettingType.PRESSURE:
             self.settings.min_pressure = val1
             self.settings.max_pressure = val2
-        elif type == SettingType.TIDAL:
+        elif stype == SettingType.TIDAL:
             self.settings.min_tv = val1
             self.settings.max_tv = val2
-        elif type == SettingType.FREQ:
+        elif stype == SettingType.FREQ:
             self.settings.freq = val1
             self.settings.ratio = int(val2 * 10)
             self.settingsView.place_forget()
@@ -157,14 +157,14 @@ class ViewController(Tk):
 
         self.settingsView.place_forget()
 
-    def changeSingleSettingCallback(self, type, value):
-        if type == SettingType.PEEP:
+    def changeSingleSettingCallback(self, stype, value):
+        if stype == SettingType.PEEP:
             self.settings.peep = value
-        if type == SettingType.OXYGEN:
+        if stype == SettingType.OXYGEN:
             self.settings.oxygen = value
-        if type == SettingType.PRESSURE:
+        if stype == SettingType.PRESSURE:
             self.settings.pressure = value
-        if type == SettingType.PEEP:
+        if stype == SettingType.PEEP:
             self.settings.peep = value
 
         self.changeSettingView.place_forget()

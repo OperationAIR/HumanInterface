@@ -19,8 +19,6 @@ class SetTimeView(Frame):
         self.config = ConfigValues()
         Frame.__init__(self, parent, bg=self.config.values['colors']['darkBlue'])
 
-        self.type = type
-
         self.callback = callback
         now = datetime.now()
         dt = now.strftime("%H%M")
@@ -33,8 +31,8 @@ class SetTimeView(Frame):
     def getTime(self):
         return str(self.time[0]) + str(self.time[1]) + ":" + str(self.time[2]) + str(self.time[3])
 
-    def returnTimeCallback(self, type):
-        self.callback(type, self.getTime())
+    def returnTimeCallback(self, ttype):
+        self.callback(ttype, self.getTime())
 
     def makeValid(self, time, index, change):
         print(time, index, change)
