@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-22 14:41+0200\n"
+"POT-Creation-Date: 2020-04-22 17:41+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: utils/flatButton.py:58 utils/flatButton.py:75
+#: utils/flatButton.py:59 utils/flatButton.py:76
 msgid "Hold for"
 msgstr ""
 
@@ -75,18 +75,19 @@ msgid "PEEP"
 msgstr ""
 
 #: controllers/viewController.py:107 controllers/viewController.py:131
-#: controllers/viewController.py:242 controllers/viewController.py:266
+#: controllers/viewController.py:242 controllers/viewController.py:268
 #: views/mainView.py:78 views/mainView.py:81 views/mainView.py:88
-#: views/mainView.py:91 views/mainView.py:125
+#: views/mainView.py:91 views/mainView.py:95 views/mainView.py:98
+#: views/mainView.py:126
 msgid "[cm H2O]"
 msgstr ""
 
-#: controllers/viewController.py:115 controllers/viewController.py:276
+#: controllers/viewController.py:115 controllers/viewController.py:278
 #: views/alarmSettingsOverview.py:45
 msgid "Oxygen"
 msgstr ""
 
-#: controllers/viewController.py:115 controllers/viewController.py:276
+#: controllers/viewController.py:115 controllers/viewController.py:278
 msgid "[O2]"
 msgstr ""
 
@@ -94,38 +95,38 @@ msgstr ""
 msgid "Tidal Volume"
 msgstr ""
 
-#: controllers/viewController.py:131 views/mainView.py:125
+#: controllers/viewController.py:131 views/mainView.py:126
 #: views/alarmSettingsOverview.py:35
 msgid "Pressure"
 msgstr ""
 
-#: controllers/viewController.py:250
+#: controllers/viewController.py:252
 msgid "Frequency and Ratio"
 msgstr ""
 
-#: controllers/viewController.py:251
+#: controllers/viewController.py:253
 msgid "Freq"
 msgstr ""
 
-#: controllers/viewController.py:251 views/mainView.py:80
+#: controllers/viewController.py:253 views/mainView.py:80
 msgid "[1/min]"
 msgstr ""
 
-#: controllers/viewController.py:251 controllers/viewController.py:316
-#: controllers/viewController.py:319 controllers/viewController.py:322
+#: controllers/viewController.py:253 controllers/viewController.py:318
+#: controllers/viewController.py:321 controllers/viewController.py:324
 msgid "Ratio"
 msgstr ""
 
-#: controllers/viewController.py:266 views/mainView.py:81
+#: controllers/viewController.py:268 views/mainView.py:81
 msgid "PC above PEEP"
 msgstr ""
 
-#: views/setTimeView.py:142
+#: views/setTimeView.py:141
 msgid "Set the Time"
 msgstr ""
 
-#: views/setTimeView.py:150 views/changeDoubleSettingView.py:115
-#: views/changeSingleSettingView.py:76
+#: views/setTimeView.py:149 views/changeDoubleSettingView.py:132
+#: views/changeSingleSettingView.py:85
 msgid "Confirm"
 msgstr ""
 
@@ -153,7 +154,7 @@ msgstr ""
 msgid "Expiration Hold"
 msgstr ""
 
-#: views/mainView.py:95 views/mainView.py:172
+#: views/mainView.py:95 views/mainView.py:173
 msgid "Ppeak"
 msgstr ""
 
@@ -161,76 +162,80 @@ msgstr ""
 msgid "Ppeep"
 msgstr ""
 
-#: views/mainView.py:99 views/mainView.py:178
+#: views/mainView.py:99 views/mainView.py:179
 msgid "O2"
 msgstr ""
 
-#: views/mainView.py:100 views/mainView.py:181
+#: views/mainView.py:100 views/mainView.py:182
 msgid "TV in/exp"
+msgstr ""
+
+#: views/mainView.py:100
+msgid "[mL]"
 msgstr ""
 
 #: views/mainView.py:101
 msgid "min.vol."
 msgstr ""
 
-#: views/mainView.py:105
-msgid "Pwr. %"
+#: views/mainView.py:101
+msgid "[L]"
 msgstr ""
 
-#: views/mainView.py:107 views/mainView.py:189
-msgid "Batt. %"
+#: views/mainView.py:108 views/mainView.py:190
+msgid "Batt. [%]"
 msgstr ""
 
-#: views/mainView.py:109
+#: views/mainView.py:110
 msgid "Pwr. Err."
 msgstr ""
 
-#: views/mainView.py:132
+#: views/mainView.py:133
 msgid "Flow"
 msgstr ""
 
-#: views/mainView.py:132
+#: views/mainView.py:133
 msgid "[L / min]"
 msgstr ""
 
-#: views/mainView.py:140
+#: views/mainView.py:141
 msgid "Menu"
 msgstr ""
 
-#: views/mainView.py:144
+#: views/mainView.py:145
 msgid "Alarm"
 msgstr ""
 
-#: views/mainView.py:148
+#: views/mainView.py:149
 msgid "Alarm Overview"
 msgstr ""
 
-#: views/mainView.py:152
+#: views/mainView.py:153
 msgid "Patient"
 msgstr ""
 
-#: views/mainView.py:175
+#: views/mainView.py:176
 msgid "Pmean"
 msgstr ""
 
-#: views/mainView.py:184
+#: views/mainView.py:185
 msgid "min.vol"
 msgstr ""
 
-#: views/mainView.py:195
+#: views/mainView.py:196
 msgid ""
 "Inspiration Hold\n"
 "(Hold to measure)"
 msgstr ""
 
-#: views/mainView.py:200
+#: views/mainView.py:201
 msgid ""
 "Expiration Hold\n"
 "(Hold to measure)"
 msgstr ""
 
-#: views/alarmSettingsOverview.py:25 views/changeDoubleSettingView.py:71
-#: views/alarmOverview.py:35 views/changeSingleSettingView.py:51
+#: views/alarmSettingsOverview.py:25 views/changeDoubleSettingView.py:88
+#: views/alarmOverview.py:35 views/changeSingleSettingView.py:60
 #: views/menuView.py:40
 msgid "Close"
 msgstr ""
@@ -269,8 +274,4 @@ msgstr ""
 
 #: views/menuView.py:34
 msgid "Shutdown"
-msgstr ""
-
-#: views/menuView.py:53
-msgid "Self Test"
 msgstr ""

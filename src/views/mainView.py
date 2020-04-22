@@ -92,19 +92,20 @@ class MainView(Frame):
 
         ppeak = max(self.pressureQueue)
         pmean = sum(self.pressureQueue)/len(self.pressureQueue)
-        self.ppeak_label.setText(_("Ppeak"), [ppeak, pmean])
+        self.ppeak_label.setText(_("Ppeak") + "\n" + _("[cm H2O]"), [ppeak, pmean])
 
         ppeep = min(self.pressureQueue)
-        self.pmean_label.setText(_("Ppeep"), ppeep)
-        self.oxy_label.setText(_("O2"), self.sensordata.oxygen)
-        self.tvinexp_label.setText(_("TV in/exp"), str(self.sensordata.tidal_volume_inhale) + "/" + str(self.sensordata.tidal_volume_exhale))
-        self.tv_label1.setText(_("min.vol."), self.sensordata.minute_volume)
+        self.pmean_label.setText(_("Ppeep") + "\n" + _("[cm H2O]"), ppeep)
+        self.oxy_label.setText(_("O2") + " [%]", self.sensordata.oxygen)
+        self.tvinexp_label.setText(_("TV in/exp") + " \n" + _("[mL]"), str(self.sensordata.tidal_volume_inhale) + "/" + str(self.sensordata.tidal_volume_exhale))
+        self.tv_label1.setText(_("min.vol."), str(round(self.sensordata.minute_volume)) + " " + _("[L]"))
 
         batt_status = self.sensordata.ups_status
         if batt_status == UPSStatus.OK:
-            self.batt_label.setText(_("Pwr. %"), self.sensordata.battery_percentage)
+            # self.batt_label.setText(_("Pwr. [%]"), self.sensordata.battery_percentage)
+            self.batt_label.setTitle("")
         elif batt_status == UPSStatus.BATTERY_POWERED:
-            self.batt_label.setText(_("Batt. %"), self.sensordata.battery_percentage)
+            self.batt_label.setText(_("Batt. [%]"), self.sensordata.battery_percentage)
         else:
             self.batt_label.setTitle(_("Pwr. Err."))
 
@@ -186,7 +187,7 @@ class MainView(Frame):
                                            self.config.values['colors']['green'])
         self.tv_label1.grid(row=9, column=4, rowspan=2, sticky=N + S + E + W)
 
-        self.batt_label = CurrentValueCanvas(self, _("Batt. %"), self.sensordata.battery_percentage, 'white')
+        self.batt_label = CurrentValueCanvas(self, _("Batt. [%]"), self.sensordata.battery_percentage, 'white')
         self.batt_label.grid(row=11, column=4, rowspan=2, sticky=N + S + E + W)
 
         # Buttons under graphs
@@ -207,10 +208,10 @@ class MainView(Frame):
         for i in range(9, 13):
             self.rowconfigure(i, weight=3)
 
-        self.columnconfigure(0, weight=3)
+        self.columnconfigure(0, weight=2)
         self.columnconfigure(1, weight=2)
-        self.columnconfigure(2, weight=4)
-        self.columnconfigure(3, weight=4)
+        self.columnconfigure(2, weight=5)
+        self.columnconfigure(3, weight=5)
         self.columnconfigure(4, weight=2)
 
         self.drawGraphs()
