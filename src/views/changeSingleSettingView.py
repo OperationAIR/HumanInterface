@@ -35,10 +35,20 @@ class ChangeSingleSettingView(Frame):
         self.callback(stype, self.current)
 
     def valueChange(self, action):
-        if action == ButtonAction.MINUS and self.current - self.step >= self.min:
-            self.current = self.current - self.step
-        elif action == ButtonAction.PLUS and self.current + self.step <= self.max:
-            self.current = self.current + self.step
+        if action == ButtonAction.MINUS:
+            if self.current - self.step >= self.min:
+                print(self.current, self.step)
+                if self.current % self.step != 0:
+                    self.current = self.current - (self.current % self.step)
+                else:
+                    self.current = self.current - self.step
+            else:
+                self.current = self.min
+        elif action == ButtonAction.PLUS:
+            if self.current + self.step <= self.max:
+                self.current = self.current + self.step - (self.current % self.step)
+            else:
+                self.current = self.max
 
         self.value_btn.setText(self.current)
 
