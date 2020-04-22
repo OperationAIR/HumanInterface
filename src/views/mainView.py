@@ -119,14 +119,14 @@ class MainView(Frame):
 
 
         # Parameters
-        pressure_x_len = 100         # Number of points to display
+        pressure_x_len = 120         # Number of points to display
         pressure_y_range = [0, 40]  # Range of possible Y values to display
 
         self.pressuregraph = GraphView(_("Pressure"), _("[cm H2O]"), self.sensordata.pressure, pressure_y_range, pressure_x_len, self.config.values['colors']['pressurePlot'], self)
         self.pressuregraph.getPlot().grid(row=1, column=2, rowspan=4, columnspan=2, sticky=N + S + E + W)
 
         # Parameters
-        flow_x_len = 100         # Number of points to display
+        flow_x_len = 120         # Number of points to display
         flow_y_range = [-60, 0]  # Range of possible Y values to display
 
         self.flowgraph = GraphView(_("Flow"), _("[L / min]"), self.sensordata.flow, flow_y_range, flow_x_len, self.config.values['colors']['flowPlot'], self)
