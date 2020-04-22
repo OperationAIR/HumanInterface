@@ -35,7 +35,6 @@ class SetTimeView(Frame):
         self.callback(ttype, self.getTime())
 
     def makeValid(self, time, index, change):
-        print(time, index, change)
         if index == 0:
             time[0] += change
             if time[0] == -1 or time[0] == 3:
