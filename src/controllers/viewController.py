@@ -332,6 +332,8 @@ class ViewController(Tk):
         default_font = font.nametofont("TkDefaultFont")
         default_font.configure(size=13, family="Helvetica Neue")
 
+    def destroy_async(self):
+        self.destroy()
 
     def quit(self, _signal=None, _=None):
         print('ventilator.quit()')
@@ -340,8 +342,8 @@ class ViewController(Tk):
         plt.close('all')
         if self.io_thread:
             self.io_thread.join()
-            print('io thread joined')
-        self.destroy()
+            print('io thread joined')        
+        self.after(300, self.destroy_async)
 
     def start(self):
         if self.settings.start == 1:
