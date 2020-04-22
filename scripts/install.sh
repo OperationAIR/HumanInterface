@@ -1,3 +1,5 @@
+#!/bin/bash
+
 echo "Copy systemd script to /etc/systemd/system/"
 
 sudo cp ./airone.service /etc/systemd/system/airone.service
