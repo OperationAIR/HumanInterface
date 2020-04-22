@@ -76,7 +76,7 @@ class Microcontroller:
 
         while self._simulation_alive:
             sensors = queue.get()
-            print(sensors)
+            # print(sensors)
 
             self.sensor_queue.put(sensors)
             time.sleep(0.5)

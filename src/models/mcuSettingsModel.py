@@ -36,7 +36,7 @@ class MCUSettings:
         peep = pressure_to_cm_h2o(unpacked[1])
         freq = unpacked[2]
         ratio = unpacked[3]
-        pressure = pressure_to_cm_h2o(unpacked[4])
+        pressure = pressure_to_cm_h2o(unpacked[4]) - peep
         oxygen = unpacked[5]
         return cls(start, peep, freq, ratio, pressure, oxygen)
 
@@ -48,7 +48,7 @@ class MCUSettings:
                 pressure_to_pa(self.peep),
                 self.freq,
                 self.ratio,
-                pressure_to_pa(self.pressure),
+                pressure_to_pa(self.pressure + self.peep),
                 self.oxygen)
 
         print(values)
