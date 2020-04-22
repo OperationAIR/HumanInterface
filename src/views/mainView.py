@@ -60,7 +60,7 @@ class MainView(Frame):
 
         start_stop_text = ""
         if self.settings.start:
-            self.switch_btn.timeout = 5
+            self.switch_btn.timeout = 4
             self.switch_btn.checkTimeout()
             start_stop_text = _("STOP")
         else:
