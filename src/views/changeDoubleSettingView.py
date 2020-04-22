@@ -45,14 +45,31 @@ class ChangeDoubleSettingView(Frame):
         self.callback(stype, self.min_current, self.max_current)
 
     def valueChange(self, action):
-        if action == ChangeAlarmViewActions.MINMINUS and self.min_current - self.step1 >= self.min_min:
-            self.min_current = self.min_current - self.step1
-        elif action == ChangeAlarmViewActions.MINPLUS and self.min_current + self.step1 <= self.min_max and (not self.bound or self.max_current - self.min_current > self.step1):
-            self.min_current = self.min_current + self.step1
+        if action == ChangeAlarmViewActions.MINMINUS:
+            if self.min_current - self.step1 >= self.min_min:
+                if self.min_current % self.step1 != 0:
+                    self.min_current = self.min_current - (self.min_current % self.step1)
+                else:
+                    self.min_current = self.min_current - self.step1
+            else:
+                self.min_current = self.min_min
+
+        elif action == ChangeAlarmViewActions.MINPLUS:
+            if (not self.bound or self.max_current - self.min_current > self.step1):
+                if self.min_current + self.step1 <= self.min_max:
+                    self.min_current = self.min_current + self.step1 - (self.min_current % self.step1)
+
         elif action == ChangeAlarmViewActions.MAXMINUS and self.max_current - self.step2 >= self.max_min and (not self.bound or self.max_current - self.min_current > self.step2):
-            self.max_current = self.max_current - self.step2
-        elif action == ChangeAlarmViewActions.MAXPLUS and self.max_current + self.step2 <= self.max_max:
-            self.max_current = self.max_current + self.step2
+            if self.max_current % self.step2 != 0:
+                self.max_current = self.max_current - (self.max_current % self.step2)
+            else:
+                self.max_current = self.max_current - self.step2
+
+        elif action == ChangeAlarmViewActions.MAXPLUS:
+            if self.max_current + self.step2 <= self.max_max:
+                self.max_current = self.max_current + self.step2 - (self.max_current % self.step2)
+            else:
+                self.max_current = self.max_max
 
         self.min_value_btn.setText(self.min_current)
         self.max_value_btn.setText(self.max_current)
