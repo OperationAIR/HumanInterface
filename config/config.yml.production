@@ -37,9 +37,9 @@ defaultSettings:
   language: "nl"
 
 alarmSettings:
-  min_pressure: 20
-  max_pressure: 50
-  min_peep: 5
+  min_pressure: 5
+  max_pressure: 75
+  min_peep: 0
   max_peep: 35
   min_fio2: 20
   max_fio2: 50
