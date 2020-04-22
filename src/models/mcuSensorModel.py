@@ -143,7 +143,7 @@ class Sensors:
         # ps = 0x80005c30 # Zero battery and UPS OK
         # ps = 0x80005fb4 # 50 % battery and UPS OK
 
-        sensors = Sensors(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0, 0.0, 0.0, 0, 0, ps, 0, 0, 0)
+        sensors = Sensors(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0, 0.0, 0.0, 0, 0, 0, 0, ps, 0)
         sensors.timestamp = datetime.datetime.strptime(list_data[0], '%Y-%m-%d %H:%M:%S.%f')
         sensors.cycle_state = int(list_data[1])
         sensors.pressure_inhale = float(list_data[2])

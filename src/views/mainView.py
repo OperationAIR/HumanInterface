@@ -97,7 +97,7 @@ class MainView(Frame):
         ppeep = min(self.pressureQueue)
         self.pmean_label.setText(_("Ppeep"), ppeep)
         self.oxy_label.setText(_("O2"), self.sensordata.oxygen)
-        self.tvinexp_label.setText(_("TV in/exp"), str(self.sensordata.inspiratory_hold_result) + "/" + str(self.sensordata.expiratory_hold_result))
+        self.tvinexp_label.setText(_("TV in/exp"), str(self.sensordata.tidal_volume_inhale) + "/" + str(self.sensordata.tidal_volume_exhale))
         self.tv_label1.setText(_("min.vol."), self.sensordata.minute_volume)
 
         batt_status = self.sensordata.ups_status
