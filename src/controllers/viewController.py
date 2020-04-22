@@ -263,7 +263,7 @@ class ViewController(Tk):
             max_press = self.config.values['defaultSettings']['max_pressure']
             self.changeSettingView = ChangeSingleSettingView(SettingType.PRESSURE, self.settings.pressure,
                                                              min_press,
-                                                             max_press, self.press_step, _("Pressure") + "\n" + _("[cm H2O]"),
+                                                             max_press, self.press_step, _("PC above PEEP") + "\n" + _("[cm H2O]"),
                                                              self.changeSingleSettingCallback)
             self.changeSettingView.place(x=0, y=0, width=self.winfo_width(), height=self.winfo_height())
             self.changeSettingView.fill_frame()

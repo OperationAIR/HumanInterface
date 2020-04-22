@@ -78,7 +78,7 @@ class MainView(Frame):
         self.peep_btn.setText(_("PEEP") + '\n' + str(self.settings.peep) + " " + _("[cm H2O]"))
         self.peep_btn.setBackground(self.getBtnColor(AlarmType.PEEP_TOO_LOW, AlarmType.PEEP_TOO_HIGH))
         self.freq_btn.setText(_("Frequency") + '\n' + str(self.settings.freq) + " " + _("[1/min]"))
-        self.pres_btn.setText(_("Pressure") + '\n' + str(self.settings.pressure) + " " + _("[cm H2O]"))
+        self.pres_btn.setText(_("PC above PEEP") + '\n' + str(self.settings.pressure) + " " + _("[cm H2O]"))
         self.pres_btn.setBackground(self.getBtnColor(AlarmType.PRESSURE_TOO_LOW, AlarmType.PRESSURE_TOO_HIGH))
         self.oxy_btn.setText(_("Oxygen (O2)") + '\n' + str(self.settings.oxygen) + " [%]")
         self.oxy_btn.setBackground(self.getBtnColor(AlarmType.OXYGEN_TOO_LOW, AlarmType.OXYGEN_TOO_HIGH))

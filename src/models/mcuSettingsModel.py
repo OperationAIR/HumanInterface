@@ -115,12 +115,14 @@ class Settings():
         return cls(start, peep, freq, ratio, pressure, oxygen, max_pressure, min_pressure, max_tv, min_tv, max_fio2, min_fio2, max_peep, min_peep)
 
     def pack_mcu_settings(self):
+        pcAbovePEEP = self.pressure + self.peep
+
         return MCUSettings(
                 self.start,
                 self.peep,
                 self.freq,
                 self.ratio,
-                self.pressure,
+                pcAbovePEEP,
                 self.oxygen).pack()
 
     def equals(self, cmp: MCUSettings):

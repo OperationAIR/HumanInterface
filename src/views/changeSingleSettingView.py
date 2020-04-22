@@ -76,8 +76,10 @@ class ChangeSingleSettingView(Frame):
         confirm_btn.setText(_("Confirm"), "white")
         confirm_btn.grid(row=2, column=0, columnspan=4, sticky=N + S + E + W, padx=20, pady=(20, 20))
 
-        for i in range(0, 4):
+        self.columnconfigure(0, weight=2)
+        for i in range(1, 3):
             self.columnconfigure(i, weight=1)
+        self.columnconfigure(3, weight=2)
 
         self.rowconfigure(0, weight=1)
         self.rowconfigure(1, weight=3)

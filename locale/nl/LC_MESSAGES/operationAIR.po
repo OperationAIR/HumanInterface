@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-21 16:34+0200\n"
-"PO-Revision-Date: 2020-04-21 16:34+0200\n"
+"POT-Creation-Date: 2020-04-22 14:41+0200\n"
+"PO-Revision-Date: 2020-04-22 14:44+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: nl\n"
@@ -95,8 +95,8 @@ msgstr ""
 msgid "Tidal Volume"
 msgstr ""
 
-#: controllers/viewController.py:131 controllers/viewController.py:266
-#: views/mainView.py:81 views/mainView.py:125 views/alarmSettingsOverview.py:35
+#: controllers/viewController.py:131 views/mainView.py:125
+#: views/alarmSettingsOverview.py:35
 msgid "Pressure"
 msgstr "Druk"
 
@@ -117,11 +117,15 @@ msgstr ""
 msgid "Ratio"
 msgstr ""
 
-#: views/setTimeView.py:144
+#: controllers/viewController.py:266 views/mainView.py:81
+msgid "PC above PEEP"
+msgstr "PC over PEEP"
+
+#: views/setTimeView.py:142
 msgid "Set the Time"
 msgstr "Stel Tijd in"
 
-#: views/setTimeView.py:152 views/changeDoubleSettingView.py:115
+#: views/setTimeView.py:150 views/changeDoubleSettingView.py:115
 #: views/changeSingleSettingView.py:76
 msgid "Confirm"
 msgstr "Bevestig"
