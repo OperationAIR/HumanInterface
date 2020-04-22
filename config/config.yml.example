@@ -19,20 +19,20 @@ defaultSettings:
   ratio_step: 0.5
   pressure: 30
   oxygen: 25
-  max_pressure: 50
-  min_pressure: 20
-  pressure_step: 5
+  max_pressure: 40
+  min_pressure: 5
+  pressure_step: 2
   max_tv: 800
   min_tv: 50
   tv_step: 50
-  max_fio2: 60
-  min_fio2: 20
+  max_fio2: 100
+  min_fio2: 21
   fio2_step: 5
-  max_peep: 35
+  max_peep: 30
   min_peep: 5
-  peep_step: 5
-  min_freq: 0
-  max_freq: 30
+  peep_step: 1
+  min_freq: 5
+  max_freq: 40
   freq_step: 1
   language: "nl"
 
@@ -53,7 +53,7 @@ developer:
   baudrate: 500000
   logEnabled: True
   logDir: "sensorlogs"
-  pressureQueueLen: 30
+  pressureQueueLen: 200
   graphYaxisUpdateInterval: 5
 
   # for Mac
