@@ -57,7 +57,7 @@ class GraphView:
         plt.yticks(fontsize=13, color='white')
 
         plt.tick_params(axis="both", which="both", bottom=False, top=False,
-                labelbottom=True, left=False, right=False, labelleft=True, colors="white")
+                labelbottom=False, left=False, right=False, labelleft=True, colors="white")
         
         # Create a blank line. We will update the line in animate
         line, = ax.plot(xs, self.ys, color= self.linecolor)
