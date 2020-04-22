@@ -1,7 +1,9 @@
 #!/bin/bash
 
-./production_mode.sh
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
-./firmware_update.sh
+$DIR/production_mode.sh
 
-../src/main.py
+$DIR/firmware_update.sh
+
+$DIR/../src/main.py
