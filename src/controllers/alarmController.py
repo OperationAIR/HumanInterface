@@ -43,8 +43,8 @@ class AlarmType(IntEnum):
     TIDAL_TOO_LOW = 5
     PRESSURE_TOO_HIGH = 6
     PRESSURE_TOO_LOW = 7
-    OXYGEN_TOO_LOW = 8
-    OXYGEN_TOO_HIGH = 9
+    OXYGEN_TOO_HIGH = 8
+    OXYGEN_TOO_LOW = 9
     RUN_ON_BATTERY = 10
     LOW_BATTERY = 11
 
@@ -122,7 +122,7 @@ class AlarmController:
             self.alarms[:] = [alarm for alarm in self.alarms if alarm.active]
 
         def removeAlarm(self, atype):
-            [self.alarms.remove(a) for a in self.alarms if atype == a]
+            [self.alarms.remove(a) for a in self.alarms if atype == a.type]
 
         def checkAlarm(self, actual, min, max, low_type, high_type):
             if min > actual:
