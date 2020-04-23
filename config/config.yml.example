@@ -34,6 +34,10 @@ defaultSettings:
   min_freq: 5
   max_freq: 40
   freq_step: 1
+  pressureQueueLen: 200
+  graphYaxisUpdateInterval: 5
+  min_batt_voltage: 23600
+  max_batt_voltage: 25400
   language: "nl"
 
 alarmSettings:
@@ -45,6 +49,7 @@ alarmSettings:
   max_fio2: 50
   min_tv: 50
   max_tv: 800
+  min_batt: 10
 
 developer:
   simulate: True
@@ -53,9 +58,7 @@ developer:
   baudrate: 500000
   logEnabled: True
   logDir: "sensorlogs"
-  pressureQueueLen: 200
-  graphYaxisUpdateInterval: 5
-
+  
   # for Mac
 #TTY = '/dev/cu.usbmodemC1DDCDF83'
 # for Ubuntu

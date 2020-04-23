@@ -74,7 +74,7 @@ class GraphView:
             # Update line with new Y values
             line.set_ydata(ys)
 
-            if time() - self.yaxisRefreshTime >= self.config.values['developer']['graphYaxisUpdateInterval']:
+            if time() - self.yaxisRefreshTime >= self.config.values['defaultSettings']['graphYaxisUpdateInterval']:
                 margin = 5
                 ax.set_ylim(bottom=min(ys)-margin, top=max(ys)+margin)
                 self.canvas.draw()

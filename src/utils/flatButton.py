@@ -8,7 +8,7 @@ from utils.internationalization import Internationalization
 
 class FlatButton(Canvas):
 
-    def __init__(self, parent, callback, arg=None, color=None, pressColor=None, fontSize=None, timeout=None):
+    def __init__(self, parent, callback, arg=None, color=None, pressColor=None, fontSize=None, timeout=None, pressable=True):
         Canvas.__init__(self, parent, width=0, height=0, bd=-2, bg=color, highlightthickness=0, relief='ridge')
 
         Internationalization()
@@ -45,6 +45,8 @@ class FlatButton(Canvas):
         self.counting = False
         self.press_arg = None
 
+        self.pressable = pressable
+
         self.enabled = True
 
     def checkTimeout(self):
@@ -70,6 +72,9 @@ class FlatButton(Canvas):
             self.configure(bg=self.color)
 
     def pressEvent(self, event):
+        if not self.pressable:
+            return
+
         if self.timeout > 0 and self.enabled:
             self.timestamp = time()
             self.oldText = self.text
@@ -86,6 +91,9 @@ class FlatButton(Canvas):
         self.press_arg = press_arg
 
     def releaseEvent(self, event):
+        if not self.pressable:
+            return
+
         if self.enabled:
             self.configure(bg=self.color)
 
