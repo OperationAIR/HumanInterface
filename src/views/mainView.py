@@ -1,28 +1,17 @@
-from tkinter import Frame, N, S, E, W
-
-from utils.config import ConfigValues
-import matplotlib
-import matplotlib.animation as animation
-import matplotlib.pyplot as plt
-
-matplotlib.use("TkAgg")
-from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg)
+from enum import Enum
 from collections import deque
+from tkinter import E, Frame, N, S, W
 
 from controllers.alarmController import AlarmController, AlarmType
-
+from models.mcuSensorModel import UPSStatus
 from utils.config import ConfigValues
-from utils.flatButton import FlatButton
 from utils.currentValueCanvas import CurrentValueCanvas
-
+from utils.flatButton import FlatButton
+from utils.internationalization import Internationalization
 from views.graphView import GraphView
 
-from models.mcuSensorModel import UPSStatus
 
-
-import enum
-
-class MainViewActions(enum.Enum):
+class MainViewActions(Enum):
     QUIT = 1
     ALARM = 2
     VIEW_ALARMS = 3
@@ -34,8 +23,10 @@ class MainViewActions(enum.Enum):
     PRESSURE = 9
     OXYGEN = 10
     MENU = 11
-    INSP_HOLD = 12
-    EXP_HOLD = 13
+    INSP_HOLD_START = 12
+    INSP_HOLD_STOP = 13
+    EXP_HOLD_START = 14
+    EXP_HOLD_STOP = 15
 
 class MainView(Frame):
 
@@ -49,6 +40,8 @@ class MainView(Frame):
         self.pressureQueue = deque(maxlen=self.config.values['defaultSettings']['pressureQueueLen'])
 
         self.alarms = AlarmController()
+
+        Internationalization()
 
         self.fill_frame()
 
@@ -72,12 +65,12 @@ class MainView(Frame):
 
         start_stop_text = ""
         if self.settings.start:
-            self.switch_btn.timeout = 5
+            self.switch_btn.timeout = 4
             self.switch_btn.checkTimeout()
-            start_stop_text = "STOP"
+            start_stop_text = _("STOP")
         else:
             self.switch_btn.timeout = 0
-            start_stop_text = "START"
+            start_stop_text = _("START")
 
         if self.alarms.present():
             self.alarm_overview_btn.setBackground(self.config.values['colors']['alarmColor'])
@@ -87,30 +80,39 @@ class MainView(Frame):
         self.pressureQueue.append(self.sensordata.pressure)
 
         self.switch_btn.setText(start_stop_text)
-        self.peep_btn.setText("PEEP" + '\n' + str(self.settings.peep) + " [cm H2O]")
+        self.peep_btn.setText(_("PEEP") + '\n' + str(self.settings.peep) + " " + _("[cm H2O]"))
         self.peep_btn.setBackground(self.getBtnColor(AlarmType.PEEP_TOO_LOW, AlarmType.PEEP_TOO_HIGH))
-        self.freq_btn.setText("Frequency" + '\n' + str(self.settings.freq) + " [1/min]")
-        self.pres_btn.setText("Pressure" + '\n' + str(self.settings.pressure) + " [cm H2O]")
+        self.freq_btn.setText(_("Frequency") + '\n' + str(self.settings.freq) + " " + _("[1/min]"))
+        self.pres_btn.setText(_("PC above PEEP") + '\n' + str(self.settings.pressure) + " " + _("[cm H2O]"))
         self.pres_btn.setBackground(self.getBtnColor(AlarmType.PRESSURE_TOO_LOW, AlarmType.PRESSURE_TOO_HIGH))
-        self.oxy_btn.setText("Oxygen (02)" + '\n' + str(self.settings.oxygen) + " [%]")
+        self.oxy_btn.setText(_("Oxygen (O2)") + '\n' + str(self.settings.oxygen) + " [%]")
         self.oxy_btn.setBackground(self.getBtnColor(AlarmType.OXYGEN_TOO_LOW, AlarmType.OXYGEN_TOO_HIGH))
 
-        ppeak = max(self.pressureQueue)
-        self.ppeak_label.setText("Ppeak", ppeak)
-        pmean = sum(self.pressureQueue)/len(self.pressureQueue)
-        self.pmean_label.setText("Pmean", pmean)
+        self.inspHold_btn.setEnabled(settings.start)
+        if sensordata.inspiratory_hold_result:
+            self.inspHold_btn.setText(_("Inspiration Hold") + "\n{0:.2g} ".format(sensordata.inspiratory_hold_result) + _("[cm H2O]"))
+        self.expHold_btn.setEnabled(settings.start)
+        if sensordata.expiratory_hold_result:
+            self.expHold_btn.setText(_("Expiration Hold") + "\n{0:.2g} ".format(sensordata.expiratory_hold_result) + _("[cm H2O]"))
 
-        self.freq_label.setText("Freq.", 10) # not implemented yet, freq sensordata
-        self.oxy_label.setText("O2", self.sensordata.oxygen)
-        self.tv_label1.setText("TVmin.vol.", self.sensordata.minute_volume)
+        ppeak = max(self.pressureQueue)
+        pmean = sum(self.pressureQueue)/len(self.pressureQueue)
+        self.ppeak_label.setText(_("Ppeak") + "\n" + _("[cm H2O]"), [ppeak, pmean])
+
+        ppeep = min(self.pressureQueue)
+        self.pmean_label.setText(_("Ppeep") + "\n" + _("[cm H2O]"), ppeep)
+        self.oxy_label.setText(_("O2") + " [%]", self.sensordata.oxygen)
+        self.tvinexp_label.setText(_("TV in/exp") + " \n" + _("[mL]"), str(self.sensordata.tidal_volume_inhale) + "/" + str(self.sensordata.tidal_volume_exhale))
+        self.tv_label1.setText(_("min.vol."), str(round(self.sensordata.minute_volume)) + " " + _("[L]"))
 
         batt_status = self.sensordata.ups_status
         if batt_status == UPSStatus.OK:
-            self.batt_label.setText("Pwr. %", self.sensordata.battery_percentage)
+            # self.batt_label.setText(_("Pwr. [%]"), self.sensordata.battery_percentage)
+            self.batt_label.setTitle("")
         elif batt_status == UPSStatus.BATTERY_POWERED:
-            self.batt_label.setText("Batt. %", self.sensordata.battery_percentage)
+            self.batt_label.setText(_("Batt. [%]"), self.sensordata.battery_percentage)
         else:
-            self.batt_label.setTitle("Pwr. Err.")
+            self.batt_label.setTitle(_("Pwr. Err."))
         self.batt_label.setBackgroundColor(self.getCanvasColor(AlarmType.RUN_ON_BATTERY, AlarmType.LOW_BATTERY))
 
         self.flowgraph.update(-1 * self.sensordata.flow)
@@ -124,17 +126,17 @@ class MainView(Frame):
 
 
         # Parameters
-        pressure_x_len = 400         # Number of points to display
+        pressure_x_len = 150         # Number of points to display
         pressure_y_range = [0, 40]  # Range of possible Y values to display
 
-        self.pressuregraph = GraphView("Pressure", "[cm H2O]", self.sensordata.pressure, pressure_y_range, pressure_x_len, self.config.values['colors']['pressurePlot'], self)
+        self.pressuregraph = GraphView(_("Pressure"), _("[cm H2O]"), self.sensordata.pressure, pressure_y_range, pressure_x_len, self.config.values['colors']['pressurePlot'], self)
         self.pressuregraph.getPlot().grid(row=1, column=2, rowspan=4, columnspan=2, sticky=N + S + E + W)
 
         # Parameters
-        flow_x_len = 400         # Number of points to display
+        flow_x_len = 150         # Number of points to display
         flow_y_range = [-60, 0]  # Range of possible Y values to display
 
-        self.flowgraph = GraphView("Flow", "[L / min]", self.sensordata.flow, flow_y_range, flow_x_len, self.config.values['colors']['flowPlot'], self)
+        self.flowgraph = GraphView(_("Flow"), _("[L / min]"), self.sensordata.flow, flow_y_range, flow_x_len, self.config.values['colors']['flowPlot'], self)
         self.flowgraph.getPlot().grid(row=5, column=2, rowspan=4, columnspan=2, sticky=N + S + E + W)
 
 
@@ -142,22 +144,22 @@ class MainView(Frame):
         # Buttons on the  top and left
         self.air_btn = FlatButton(self, self.callback, MainViewActions.MENU,
                              self.config.values['colors']['lightBlue'])
-        self.air_btn.setText("Menu")
+        self.air_btn.setText(_("Menu"))
         self.air_btn.grid(row=0, column=0, sticky=N + S + E + W, padx=(0,2), pady=(2,0))
 
         self.alarm_btn = FlatButton(self, self.callback, MainViewActions.ALARM, self.config.values['colors']['lightBlue'])
-        self.alarm_btn.setText("Alarm")
+        self.alarm_btn.setText(_("Alarm"))
         self.alarm_btn.grid(row=0, column=1, sticky=N + S + E + W, padx=(0,2), pady=(2,0))
 
         self.alarm_overview_btn = FlatButton(self, self.callback, MainViewActions.VIEW_ALARMS, self.config.values['colors']['lightBlue'])
-        self.alarm_overview_btn.setText("Alarm Overview")
+        self.alarm_overview_btn.setText(_("Alarm Overview"))
         self.alarm_overview_btn.grid(row=0, column=2, sticky=N + S + E + W, padx=(0,2), pady=(2,0))
 
         self.patient_btn = FlatButton(self, self.callback, MainViewActions.PATIENT, self.config.values['colors']['lightBlue'])
-        self.patient_btn.setText("Patient")
+        self.patient_btn.setText(_("Patient"))
         self.patient_btn.grid(row=0, column=3, sticky=N + S + E + W, padx=(0,2), pady=(2, 0))
 
-        self.switch_btn = FlatButton(self, self.callback, MainViewActions.STARTSTOP, self.config.values['colors']['lightBlue'], timeout=5)
+        self.switch_btn = FlatButton(self, self.callback, MainViewActions.STARTSTOP, self.config.values['colors']['lightBlue'], timeout=4)
         self.switch_btn.grid(row=0, column=4, sticky=N + S + E + W, padx=(0,2), pady=(2, 0))
 
         self.peep_btn = FlatButton(self, self.callback, MainViewActions.PEEP, self.config.values['colors']['lightBlue'])
@@ -174,33 +176,35 @@ class MainView(Frame):
 
 
         # Labels on the right side next to the graphs
-        self.ppeak_label = CurrentValueCanvas(self, "Ppeak", 100, self.config.values['colors']['pressurePlot'])
+        self.ppeak_label = CurrentValueCanvas(self, _("Ppeak"), 100, self.config.values['colors']['pressurePlot'])
         self.ppeak_label.grid(row=1, column=4, rowspan=2, sticky=N + S + E + W)
 
-        self.pmean_label = CurrentValueCanvas(self, "Pmean", 50, self.config.values['colors']['pressurePlot'])
+        self.pmean_label = CurrentValueCanvas(self, _("Pmean"), 50, self.config.values['colors']['pressurePlot'])
         self.pmean_label.grid(row=3, column=4, rowspan=2, sticky=N + S + E + W)
 
-        self.freq_label = CurrentValueCanvas(self, "Freq.", 9, self.config.values['colors']['flowPlot'])
-        self.freq_label.grid(row=5, column=4, rowspan=2, sticky=N + S + E + W)
+        self.oxy_label = CurrentValueCanvas(self, _("O2"), self.sensordata.oxygen, 'white')
+        self.oxy_label.grid(row=5, column=4, rowspan=2, sticky=N + S + E + W)
 
-        self.oxy_label = CurrentValueCanvas(self, "O2", self.sensordata.oxygen, 'white')
-        self.oxy_label.grid(row=7, column=4, rowspan=2, sticky=N + S + E + W)
+        self.tvinexp_label = CurrentValueCanvas(self, _("TV in/exp"), 0, self.config.values['colors']['green'])
+        self.tvinexp_label.grid(row=7, column=4, rowspan=2, sticky=N + S + E + W)
 
-        self.tv_label1 = CurrentValueCanvas(self, "TVmin.vol",
+        self.tv_label1 = CurrentValueCanvas(self, _("min.vol"),
                                            [self.sensordata.tidal_volume_inhale, self.sensordata.tidal_volume_exhale],
                                            self.config.values['colors']['green'])
         self.tv_label1.grid(row=9, column=4, rowspan=2, sticky=N + S + E + W)
 
-        self.batt_label = CurrentValueCanvas(self, "Batt. %", self.sensordata.battery_percentage, 'white')
+        self.batt_label = CurrentValueCanvas(self, _("Batt. [%]"), self.sensordata.battery_percentage, 'white')
         self.batt_label.grid(row=11, column=4, rowspan=2, sticky=N + S + E + W)
 
         # Buttons under graphs
-        self.inspHold_btn = FlatButton(self, self.callback, MainViewActions.INSP_HOLD, self.config.values['colors']['lightBlue'])
-        self.inspHold_btn.setText("Inspiration\nHold")
+        self.inspHold_btn = FlatButton(self, self.callback, MainViewActions.INSP_HOLD_STOP, self.config.values['colors']['lightBlue'])
+        self.inspHold_btn.setCustomPressArgument(MainViewActions.INSP_HOLD_START)
+        self.inspHold_btn.setText(_("Inspiration Hold\n(Hold to measure)"))
         self.inspHold_btn.grid(row=10, column=2, columnspan=1, rowspan=3, sticky=N + S + E + W, padx=(0,2), pady=(2,0))
 
-        self.expHold_btn = FlatButton(self, self.callback, MainViewActions.EXP_HOLD, self.config.values['colors']['lightBlue'])
-        self.expHold_btn.setText("Expiration\nHold")
+        self.expHold_btn = FlatButton(self, self.callback, MainViewActions.EXP_HOLD_STOP, self.config.values['colors']['lightBlue'])
+        self.expHold_btn.setCustomPressArgument(MainViewActions.EXP_HOLD_START)
+        self.expHold_btn.setText(_("Expiration Hold\n(Hold to measure)"))
         self.expHold_btn.grid(row=10, column=3, columnspan=1, rowspan=3, sticky=N + S + E + W, padx=(0,2), pady=(2,0))
 
 
@@ -210,11 +214,10 @@ class MainView(Frame):
         for i in range(9, 13):
             self.rowconfigure(i, weight=3)
 
-        self.columnconfigure(0, weight=3)
+        self.columnconfigure(0, weight=2)
         self.columnconfigure(1, weight=2)
-        self.columnconfigure(2, weight=4)
-        self.columnconfigure(3, weight=4)
+        self.columnconfigure(2, weight=5)
+        self.columnconfigure(3, weight=5)
         self.columnconfigure(4, weight=2)
 
         self.drawGraphs()
-

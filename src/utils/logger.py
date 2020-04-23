@@ -7,9 +7,9 @@ The session can be ended with `logger.close_session()`. The file will then be cl
 """
 
 import csv
+import os
 import typing
 from pathlib import Path
-import os
 
 LogHandle = typing.NamedTuple('loghandle', [('file', typing.TextIO), ('writer', csv.writer)])
 

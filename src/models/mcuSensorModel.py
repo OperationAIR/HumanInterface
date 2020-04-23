@@ -1,13 +1,10 @@
-import struct
-
 import datetime
-
-from utils.math import pressure_to_cm_h2o
 import struct
+from enum import Enum
 
 from utils.config import ConfigValues
+from utils.math import pressure_to_cm_h2o
 
-from enum import Enum
 
 class UPSStatus(Enum):
     UNKNOWN              = (0),
@@ -55,9 +52,9 @@ class Sensors:
             tidal_volume_exhale,
             minute_volume,
             cycle_state,
-            power_status,
             inspiratory_hold_result,
             expiratory_hold_result,
+            power_status,
             system_status):
 
         self.timestamp = datetime.datetime.now()
@@ -149,7 +146,7 @@ class Sensors:
         # ps = 0x80005c30 # Zero battery and UPS OK
         # ps = 0x80005fb4 # 50 % battery and UPS OK
 
-        sensors = Sensors(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0, 0.0, 0.0, 0, 0, ps, 0, 0, 0)
+        sensors = Sensors(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0, 0.0, 0.0, 0, 0, 0, 0, ps, 0)
         sensors.timestamp = datetime.datetime.strptime(list_data[0], '%Y-%m-%d %H:%M:%S.%f')
         sensors.cycle_state = int(list_data[1])
         sensors.pressure_inhale = float(list_data[2])
@@ -187,4 +184,3 @@ class Sensors:
             power_status=0x800063381,
             system_status=0
         )
-

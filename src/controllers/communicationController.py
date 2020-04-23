@@ -1,21 +1,17 @@
-
 import binascii
-import random
 import signal
 import struct
 import sys
-import time
-import serial
 import threading
-
-import crcmod
+import time
 from enum import Enum
 from queue import Queue
-from serial.tools import list_ports
 
-from models.mcuSettingsModel import Settings, MCUSettings
+import crcmod
 from models.mcuSensorModel import Sensors
-
+from models.mcuSettingsModel import MCUSettings, Settings
+from serial import Serial
+from serial.tools import list_ports
 from utils.logPlayer import replay_log
 
 PREFIX_LEN = 4
@@ -80,7 +76,7 @@ class Microcontroller:
 
         while self._simulation_alive:
             sensors = queue.get()
-            print(sensors)
+            # print(sensors)
 
             self.sensor_queue.put(sensors)
             time.sleep(0.5)
@@ -120,7 +116,7 @@ class Microcontroller:
         available_ports = [p.device for p in list_ports.comports()]
         print(available_ports)
         if 1 or self.port in available_ports: #todo rpi
-            self.serial = serial.Serial(self.port, self.baudrate, timeout=0.1)
+            self.serial = Serial(self.port, self.baudrate, timeout=0.1)
             print('open port: ', self.serial, self.serial.port)
             self._start_reader()
         else:
@@ -158,19 +154,18 @@ class Microcontroller:
         """Send command to request latest sensor data from microcontroller"""
         self._send_buffer(SerialCommand.SensorData.format())
 
-
-    def try_start_inspiratroy_hold(self):
+    def try_start_inspiratory_hold(self):
         print('try start inspiratory hold')
         self._send_buffer(SerialCommand.TriggerInspiratoryHold.format())
 
-    def stop_inspiratroy_hold(self):
+    def stop_inspiratory_hold(self):
         self._send_buffer(SerialCommand.StopInspiratoryHold.format())
 
-    def try_start_expiratroy_hold(self):
+    def try_start_expiratory_hold(self):
         print('try start inspiratory hold')
         self._send_buffer(SerialCommand.TriggerExpiratoryHold.format())
 
-    def stop_expiratroy_hold(self):
+    def stop_expiratory_hold(self):
         self._send_buffer(SerialCommand.StopExpiratoryHold.format())
 
 
@@ -371,4 +366,3 @@ if __name__ == "__main__":
                 mcu.request_sensor_data()
 
         time.sleep(0.1)
-

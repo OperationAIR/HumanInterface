@@ -26,7 +26,7 @@ if args.reset:
     print('resetting..')
     rst.on()
     sleep(delay)
-    print('done')
+    print('mcu should be reset to regular firmware now')
     rst.off()
 elif args.bootloader:
     print('reset to uart bootloader..')

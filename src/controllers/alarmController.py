@@ -1,13 +1,12 @@
-import pygame
 import os
+from enum import IntEnum
 from pathlib import Path
 
-from utils.anamolyDetection import Anomaly, check_for_anomalies
+import pygame
 from models.mcuSensorModel import UPSStatus
-
-import enum
-import time
-from datetime import datetime
+from utils.airTime import AirTime
+from utils.anamolyDetection import Anomaly, check_for_anomalies
+from utils.internationalization import Internationalization
 
 ROOT_DIR = str(Path(os.path.dirname(os.path.abspath(__file__))).parent.parent)
 
@@ -16,22 +15,24 @@ pygame.mixer.init()
 mediumAlarm = pygame.mixer.Sound(ROOT_DIR + "/resources/sounds/medium_alarm.wav")
 #highAlarm = pygame.mixer.Sound("alarm_high_priority.wav")
 
+Internationalization()
+
 AlarmString = [
-    "Nothing.",
-    "Clear all alarms",
-    "PEEP value too high",
-    "PEEP value too low",
-    "TIDAL value too high",
-    "TIDAL value too low",
-    "PRESSURE value too high",
-    "PRESSURE value too low",
-    "OXYGEN value too high",
-    "OXYGEN value too low",
-    "Running on BATTERY",
-    "LOW BATTERY"
+    _("Nothing."),
+    _("Clear all alarms"),
+    _("PEEP value too high"),
+    _("PEEP value too low"),
+    _("TIDAL value too high"),
+    _("TIDAL value too low"),
+    _("PRESSURE value too high"),
+    _("PRESSURE value too low"),
+    _("OXYGEN value too high"),
+    _("OXYGEN value too low"),
+    _("Running on BATTERY"),
+    _("LOW BATTERY")
 ]
 
-class AlarmType(enum.IntEnum):
+class AlarmType(IntEnum):
     NONE = 0
     CLEAR = 1
     PEEP_TOO_HIGH = 2
@@ -56,16 +57,17 @@ def stopAlarm():
 
 
 class Alarm:
-    def __init__(self, type):
-        self.type = type
-        self.timestamp = time.time()
+    def __init__(self, atype):
+        self.type = atype
+        self.airTime = AirTime()
+        self.timestamp = self.airTime.time
         self.count = 1
         self.active = True
 
     def newOccurence(self):
         self.count += 1
         self.active = True
-        self.timestamp = time.time()
+        self.timestamp = self.airTime.time
 
     def turnOff(self):
         self.active = False
@@ -74,8 +76,7 @@ class Alarm:
         self.active = True
 
     def __str__(self):
-        dt_object = datetime.fromtimestamp(self.timestamp)
-        return AlarmString[(self.type)] + " (Latest at " + str(dt_object.hour) +":" + str(dt_object.minute) + ")"
+        return AlarmString[(self.type)] + " (" + _("Latest at") + " " + self.timestamp + ")"
 
 class AlarmController:
 
@@ -83,15 +84,15 @@ class AlarmController:
         def __init__(self):
             self.alarms = []
 
-        def addAlarm(self, type):
+        def addAlarm(self, atype):
             found = False
             for alarm in self.alarms:
-                if alarm.type == type:
+                if alarm.type == atype:
                     alarm.newOccurence()
                     found = True
 
             if not found:
-                self.alarms.append(Alarm(type))
+                self.alarms.append(Alarm(atype))
 
             registerAlarm()
 
@@ -101,9 +102,9 @@ class AlarmController:
                     return True
             return False
 
-        def hasActiveAlarm(self, type):
+        def hasActiveAlarm(self, atype):
             for alarm in self.alarms:
-                if alarm.type == type and alarm.active:
+                if alarm.type == atype and alarm.active:
                     return True
             return False
 
@@ -124,11 +125,11 @@ class AlarmController:
                 return True
             return False
 
-        def mute(self, type):
+        def mute(self, atype):
             activeAlarm = False
             for alarm in self.alarms:
                 activeAlarm = alarm.active or activeAlarm
-                if alarm.type == type:
+                if alarm.type == atype:
                     alarm.turnOff()
 
             if not activeAlarm:

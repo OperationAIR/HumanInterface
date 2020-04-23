@@ -1,6 +1,7 @@
-# import tkinter as tk
 from tkinter import Canvas
+
 from utils.config import ConfigValues
+
 
 class CurrentValueCanvas(Canvas):
 
@@ -28,7 +29,9 @@ class CurrentValueCanvas(Canvas):
         if isinstance(value, float) or isinstance(value, int):
             self.text = title + '\n' + str(round(value))
         elif isinstance(value, list):
-            self.text = title + '\n' + str(round(value[0])) + ' / ' + str(round(value[1])) 
+            self.text = title + '\n' + str(round(value[0])) + ' (' + str(round(value[1])) + ')' 
+        elif isinstance(value, str):
+            self.text = title + '\n' + value
 
         self.textId = self.create_text(0, 0, anchor="nw", fill=self.textColor,font="HelveticaNeue 13",
                         text=self.text)
@@ -40,4 +43,3 @@ class CurrentValueCanvas(Canvas):
 
         self.textId = self.create_text(0, 0, anchor="nw", fill=self.textColor,font="HelveticaNeue 13",
                         text=self.text)
-

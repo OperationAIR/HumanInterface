@@ -1,31 +1,24 @@
-
-import tkinter as tk
-from tkinter import StringVar, Button, Frame, Label
-import matplotlib
-
-matplotlib.use("TkAgg")
-from tkinter import ttk, BOTH, N, S, E, W, LEFT
-import tkinter.font as tkFont
+from enum import Enum
+from tkinter import E, Frame, N, S, W
 
 from utils.config import ConfigValues
-from utils.flatButton import FlatButton
 from utils.constants import SettingType
+from utils.flatButton import FlatButton
+from utils.internationalization import Internationalization
 
 
-import enum
-
-class ButtonAction (enum.Enum):
+class ButtonAction (Enum):
     NONE = 0
     MINUS = 1
     PLUS = 2
 
 class ChangeSingleSettingView(Frame):
 
-    def __init__(self, type, current, min, max, step, description, callback, parent=None):
+    def __init__(self, stype, current, min, max, step, description, callback, parent=None):
         self.config = ConfigValues()
         Frame.__init__(self, parent, bg=self.config.values['colors']['darkBlue'])
 
-        self.type = type
+        self.type = stype
 
         self.current = current
         self.min = min
@@ -34,16 +27,27 @@ class ChangeSingleSettingView(Frame):
         self.description = description
         self.callback = callback
 
+        Internationalization()
+
         self.fill_frame()
 
-    def confirmSetting(self, type):
-        self.callback(type, self.current)
+    def confirmSetting(self, stype):
+        self.callback(stype, self.current)
 
     def valueChange(self, action):
-        if action == ButtonAction.MINUS and self.current - self.step >= self.min:
-            self.current = self.current - self.step
-        elif action == ButtonAction.PLUS and self.current + self.step <= self.max:
-            self.current = self.current + self.step
+        if action == ButtonAction.MINUS:
+            if self.current - self.step >= self.min:
+                if self.current % self.step != 0:
+                    self.current = self.current - (self.current % self.step)
+                else:
+                    self.current = self.current - self.step
+            else:
+                self.current = self.min
+        elif action == ButtonAction.PLUS:
+            if self.current + self.step <= self.max:
+                self.current = self.current + self.step - (self.current % self.step)
+            else:
+                self.current = self.max
 
         self.value_btn.setText(self.current)
 
@@ -53,7 +57,7 @@ class ChangeSingleSettingView(Frame):
 
         close_btn = FlatButton(self, self.confirmSetting, SettingType.NONE,
                                self.config.values['colors']['lightBlue'], fontSize=20)
-        close_btn.setText("Close")
+        close_btn.setText(_("Close"))
         close_btn.grid(row=0, column=3, sticky=N+S+E+W, padx=10, pady=10)
 
         desc_btn = FlatButton(self, None, None,
@@ -78,11 +82,13 @@ class ChangeSingleSettingView(Frame):
 
 
         confirm_btn = FlatButton(self, self.confirmSetting, self.type, self.config.values['colors']['green'], fontSize=40)
-        confirm_btn.setText("Confirm", "white")
+        confirm_btn.setText(_("Confirm"), "white")
         confirm_btn.grid(row=2, column=0, columnspan=4, sticky=N + S + E + W, padx=20, pady=(20, 20))
 
-        for i in range(0, 4):
+        self.columnconfigure(0, weight=2)
+        for i in range(1, 3):
             self.columnconfigure(i, weight=1)
+        self.columnconfigure(3, weight=2)
 
         self.rowconfigure(0, weight=1)
         self.rowconfigure(1, weight=3)

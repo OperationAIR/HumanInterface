@@ -1,17 +1,18 @@
 #!/bin/bash
 
-# cd to script dir
-cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
-python mcu.py --bootloader
+while true ; do
 
-echo "flash firmware over uart.."
-
-../bin/mxli -b 115200 -d /dev/ttyS0 -c12M -E ../bin/firmware.bin
-
-echo "done"
-
-python mcu.py --reset
-
-# go back to previous directory
-cd -
+    python3 $DIR/mcu.py --bootloader --delay
+    echo 'Start firmware update over uart..'
+    $DIR/../bin/mxli -b 115200 -d /dev/ttyS0 -c12M -E ../bin/firmware.bin
+    res=$?
+    python3 $DIR/mcu.py --reset
+    if [ "$res" -eq 0 ]; then
+        echo 'done'
+        break
+    fi
+    ((c++)) && ((c==3)) && c=0 && break
+    echo 'Failed try $c. Try again'
+done

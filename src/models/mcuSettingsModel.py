@@ -1,6 +1,7 @@
 import struct
-from utils.math import pressure_to_pa, pressure_to_cm_h2o
+
 from utils.config import ConfigValues
+from utils.math import pressure_to_cm_h2o, pressure_to_pa
 
 
 class MCUSettings:
@@ -35,7 +36,7 @@ class MCUSettings:
         peep = pressure_to_cm_h2o(unpacked[1])
         freq = unpacked[2]
         ratio = unpacked[3]
-        pressure = pressure_to_cm_h2o(unpacked[4])
+        pressure = pressure_to_cm_h2o(unpacked[4]) - peep
         oxygen = unpacked[5]
         return cls(start, peep, freq, ratio, pressure, oxygen)
 
@@ -47,7 +48,7 @@ class MCUSettings:
                 pressure_to_pa(self.peep),
                 self.freq,
                 self.ratio,
-                pressure_to_pa(self.pressure),
+                pressure_to_pa(self.pressure + self.peep),
                 self.oxygen)
 
         print(values)
@@ -127,6 +128,7 @@ class Settings():
             min_tv, max_fio2, min_fio2, max_peep, min_peep, min_batt_voltage, max_batt_voltage, min_batt)
 
     def pack_mcu_settings(self):
+
         return MCUSettings(
                 self.start,
                 self.peep,

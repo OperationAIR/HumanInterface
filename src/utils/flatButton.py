@@ -1,11 +1,17 @@
+from time import time
 from tkinter import Canvas
+import math
+
 from utils.config import ConfigValues
-import time
+from utils.internationalization import Internationalization
+
 
 class FlatButton(Canvas):
 
     def __init__(self, parent, callback, arg=None, color=None, pressColor=None, fontSize=None, timeout=None, pressable=True):
         Canvas.__init__(self, parent, width=0, height=0, bd=-2, bg=color, highlightthickness=0, relief='ridge')
+
+        Internationalization()
 
         self.config = ConfigValues()
         self.color = color
@@ -34,44 +40,60 @@ class FlatButton(Canvas):
         if timeout:
             self.timeout = timeout
 
-        self.timestamp = time.time()
+        self.timestamp = time()
         self.time_diff = 0
         self.counting = False
+        self.press_arg = None
 
-        self.pressable = pressable
-
-    def pressEvent(self, event):
-        if not self.pressable:
-            return
-
-        if self.timeout > 0:
-            self.timestamp = time.time()
-            self.oldText = self.text
-            self.text = "Hold for\n" + str(self.timeout) + " s"
-            self.setText(self.text)
-            self.counting = True
-
-        if self.callback:
-            self.configure(bg=self.pressColor)
+        self.enabled = True
 
     def checkTimeout(self):
         if self.counting:
-            self.time_diff = time.time() - self.timestamp
-            if self.time_diff > self.timeout:
+            self.time_diff = time() - self.timestamp
+            if self.time_diff > self.timeout and self.oldText != "":
                 self.setText(self.oldText)
                 self.text = self.oldText
                 self.oldText = ""
                 self.callback(self.arg)
             else:
-                self.text = "Hold for \n" + str(round(self.timeout - self.time_diff)) + " s"
+                self.text = _("Hold for") + "\n" + str(math.ceil(self.timeout - self.time_diff)) + " s"
                 self.setText(self.text)
             return
+
+    def setEnabled(self, state):
+        if state == self.enabled:
+            return
+        self.enabled = state
+        if not self.enabled:
+            self.configure(bg=self.pressColor)
+        else:
+            self.configure(bg=self.color)
+
+    def pressEvent(self, event):
+        if not self.pressable:
+            return
+
+        if self.timeout > 0 and self.enabled:
+            self.timestamp = time()
+            self.oldText = self.text
+            self.text = _("Hold for") + "\n" + str(self.timeout) + " s"
+            self.setText(self.text)
+            self.counting = True
+
+        if self.callback and self.enabled:
+            self.configure(bg=self.pressColor)
+            if self.press_arg:
+                self.callback(self.press_arg)
+
+    def setCustomPressArgument(self, press_arg):
+        self.press_arg = press_arg
 
     def releaseEvent(self, event):
         if not self.pressable:
             return
 
-        self.configure(bg=self.color)
+        if self.enabled:
+            self.configure(bg=self.color)
 
         if self.counting:
             self.counting = False
@@ -79,8 +101,9 @@ class FlatButton(Canvas):
             self.text = self.oldText
             self.oldText = ""
 
-        elif self.callback:
-            self.callback(self.arg)
+        elif self.callback and self.enabled:
+            arg = self.arg
+            self.callback(arg)
 
     def setBackground(self, color=None):
         if not color:

@@ -1,5 +1,8 @@
 logs/
-# sensorslogs/
+sensorslogs/
+config.yml
+.idea/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -55,9 +58,9 @@ coverage.xml
 .pytest_cache/
 cover/
 
-# Translations
-*.mo
-*.pot
+# # Translations
+# *.mo
+# *.pot
 
 # Django stuff:
 *.log

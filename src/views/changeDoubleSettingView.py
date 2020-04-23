@@ -1,19 +1,13 @@
-
-import tkinter as tk
-from tkinter import StringVar, Button, Frame, Label
-import matplotlib
-
-matplotlib.use("TkAgg")
-from tkinter import ttk, BOTH, N, S, E, W, LEFT
-import tkinter.font as tkFont
+from enum import Enum
+from tkinter import E, Frame, N, S, W
 
 from utils.config import ConfigValues
-from utils.flatButton import FlatButton
 from utils.constants import SettingType
+from utils.flatButton import FlatButton
+from utils.internationalization import Internationalization
 
-import enum
 
-class ChangeAlarmViewActions(enum.Enum):
+class ChangeAlarmViewActions(Enum):
     CONFIRM = 2
     MINMINUS = 3
     MINPLUS = 4
@@ -21,13 +15,14 @@ class ChangeAlarmViewActions(enum.Enum):
     MAXPLUS = 6
 
 class ChangeDoubleSettingView(Frame):
+    Internationalization()
 
     # bound (Bool): Are the two variables linked? (Can variable 2 be less than variable 1)
-    def __init__(self, type, min_current, min_min, min_max, step1, max_current, max_min, max_max, step2, description, callback, label1="Minimum \nValue", label2="Maximum \nValue", bound=True, parent=None):
+    def __init__(self, stype, min_current, min_min, min_max, step1, max_current, max_min, max_max, step2, description, callback, label1=_("Minimum\nValue"), label2=_("Maximum\nValue"), bound=True, parent=None):
         self.config = ConfigValues()
         Frame.__init__(self, parent, bg=self.config.values['colors']['darkBlue'])
 
-        self.type = type
+        self.type = stype
 
         self.bound = bound
         self.step1 = step1
@@ -46,18 +41,35 @@ class ChangeDoubleSettingView(Frame):
 
         self.fill_frame()
 
-    def confirmSetting(self, type):
-        self.callback(type, self.min_current, self.max_current)
+    def confirmSetting(self, stype):
+        self.callback(stype, self.min_current, self.max_current)
 
     def valueChange(self, action):
-        if action == ChangeAlarmViewActions.MINMINUS and self.min_current - self.step1 >= self.min_min:
-            self.min_current = self.min_current - self.step1
-        elif action == ChangeAlarmViewActions.MINPLUS and self.min_current + self.step1 <= self.min_max and (not self.bound or self.max_current - self.min_current > self.step1):
-            self.min_current = self.min_current + self.step1
+        if action == ChangeAlarmViewActions.MINMINUS:
+            if self.min_current - self.step1 >= self.min_min:
+                if self.min_current % self.step1 != 0:
+                    self.min_current = self.min_current - (self.min_current % self.step1)
+                else:
+                    self.min_current = self.min_current - self.step1
+            else:
+                self.min_current = self.min_min
+
+        elif action == ChangeAlarmViewActions.MINPLUS:
+            if (not self.bound or self.max_current - self.min_current > self.step1):
+                if self.min_current + self.step1 <= self.min_max:
+                    self.min_current = self.min_current + self.step1 - (self.min_current % self.step1)
+
         elif action == ChangeAlarmViewActions.MAXMINUS and self.max_current - self.step2 >= self.max_min and (not self.bound or self.max_current - self.min_current > self.step2):
-            self.max_current = self.max_current - self.step2
-        elif action == ChangeAlarmViewActions.MAXPLUS and self.max_current + self.step2 <= self.max_max:
-            self.max_current = self.max_current + self.step2
+            if self.max_current % self.step2 != 0:
+                self.max_current = self.max_current - (self.max_current % self.step2)
+            else:
+                self.max_current = self.max_current - self.step2
+
+        elif action == ChangeAlarmViewActions.MAXPLUS:
+            if self.max_current + self.step2 <= self.max_max:
+                self.max_current = self.max_current + self.step2 - (self.max_current % self.step2)
+            else:
+                self.max_current = self.max_max
 
         self.min_value_btn.setText(self.min_current)
         self.max_value_btn.setText(self.max_current)
@@ -73,7 +85,7 @@ class ChangeDoubleSettingView(Frame):
 
         close_btn = FlatButton(self, self.confirmSetting, SettingType.NONE,
                                self.config.values['colors']['lightBlue'], fontSize=20)
-        close_btn.setText("Close")
+        close_btn.setText(_("Close"))
         close_btn.grid(row=0, column=3, sticky=N+S+E+W, padx=10, pady=10)
 
         min_desc_btn = FlatButton(self, None, None,
@@ -117,7 +129,7 @@ class ChangeDoubleSettingView(Frame):
         self.max_value_btn.grid(row=2, column=3, sticky=N + S + E + W)
 
         confirm_btn = FlatButton(self, self.confirmSetting, self.type, self.config.values['colors']['green'], fontSize=40)
-        confirm_btn.setText("Confirm", "white")
+        confirm_btn.setText(_("Confirm"), "white")
         confirm_btn.grid(row=3, column=0, columnspan=4, sticky=N + S + E + W, padx=20, pady=(60, 20))
 
         for i in range(0, 4):

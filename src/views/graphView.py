@@ -1,5 +1,5 @@
-import time
 from collections import deque
+from time import time
 
 import matplotlib
 import matplotlib.animation as animation
@@ -24,7 +24,7 @@ class GraphView:
 
         self.config = ConfigValues()
 
-        self.yaxisRefreshTime = time.time()
+        self.yaxisRefreshTime = time()
 
         self.ys = deque([0 for x in range(xlen)], maxlen=xlen)
 
@@ -57,7 +57,7 @@ class GraphView:
         plt.yticks(fontsize=13, color='white')
 
         plt.tick_params(axis="both", which="both", bottom=False, top=False,
-                labelbottom=True, left=False, right=False, labelleft=True, colors="white")
+                labelbottom=False, left=False, right=False, labelleft=True, colors="white")
         
         # Create a blank line. We will update the line in animate
         line, = ax.plot(xs, self.ys, color= self.linecolor)
@@ -74,11 +74,11 @@ class GraphView:
             # Update line with new Y values
             line.set_ydata(ys)
 
-            if time.time() - self.yaxisRefreshTime >= self.config.values['defaultSettings']['graphYaxisUpdateInterval']:
+            if time() - self.yaxisRefreshTime >= self.config.values['developer']['graphYaxisUpdateInterval']:
                 margin = 5
                 ax.set_ylim(bottom=min(ys)-margin, top=max(ys)+margin)
                 self.canvas.draw()
-                self.yaxisRefreshTime = time.time()
+                self.yaxisRefreshTime = time()
 
             return line,
         # Set up plot to call animate() function periodically
