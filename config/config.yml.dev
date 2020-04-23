@@ -37,7 +37,7 @@ defaultSettings:
   pressureQueueLen: 200
   graphYaxisUpdateInterval: 5
   min_batt_voltage: 23600
-  max_batt_voltage: 2540
+  max_batt_voltage: 25400
   language: "nl"
 
 alarmSettings:

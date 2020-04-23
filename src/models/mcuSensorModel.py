@@ -141,10 +141,11 @@ class Sensors:
     def from_list(cls, list_data):
         # For testing different battery levels and whether power is connected
         # ps = 0x80006338 # Full battery and UPS OK
-        ps = 0x40006338 # Full battery and UPS Battery powered
+        # ps = 0x40006338 # Full battery and UPS Battery powered
         # ps = 0x40005c30 # Zero battery and UPS Battery powered
         # ps = 0x80005c30 # Zero battery and UPS OK
         # ps = 0x80005fb4 # 50 % battery and UPS OK
+        ps = 0x40005fb4 # 50 % battery and UPS Battery powered
 
         sensors = Sensors(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0, 0.0, 0.0, 0, 0, 0, 0, ps, 0)
         sensors.timestamp = datetime.datetime.strptime(list_data[0], '%Y-%m-%d %H:%M:%S.%f')

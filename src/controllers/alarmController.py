@@ -115,6 +115,9 @@ class AlarmController:
         def removeInactive(self):
             self.alarms[:] = [alarm for alarm in self.alarms if alarm.active]
 
+        def removeAlarm(self, atype):
+            [self.alarms.remove(a) for a in self.alarms if atype == a]
+
         def checkAlarm(self, actual, min, max, low_type, high_type):
             if min > actual:
                 self.addAlarm(low_type)
@@ -158,6 +161,9 @@ class AlarmController:
             
             if sensordata.ups_status == UPSStatus.BATTERY_POWERED:
                 self.addAlarm(AlarmType.RUN_ON_BATTERY)
+            elif sensordata.ups_status == UPSStatus.OK:
+                self.removeAlarm(AlarmType.RUN_ON_BATTERY)
+
 
         def __str__(self):
             return repr(self)
