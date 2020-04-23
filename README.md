@@ -3,6 +3,7 @@
 Built in Python 3 using the tkinter gui platform, matplotlib and pyserial.
 
 # For Production
+In the case of Production it is assumed that a Raspberry Pi loaded with Raspbian is used. 
 
 Clone this repository in the home directory (eg `/home/pi`).
 
