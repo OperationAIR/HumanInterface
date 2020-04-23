@@ -47,7 +47,7 @@ alarmSettings:
   min_peep: 0
   max_peep: 35
   min_fio2: 20
-  max_fio2: 50
+  max_fio2: 100
   min_tv: 50
   max_tv: 800
   min_batt: 10
