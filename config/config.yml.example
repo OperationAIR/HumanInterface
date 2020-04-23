@@ -41,6 +41,7 @@ defaultSettings:
   language: "nl"
 
 alarmSettings:
+  alarm_start_delay: 10 # in seconds, small delay from starting device
   min_pressure: 5
   max_pressure: 75
   min_peep: 0

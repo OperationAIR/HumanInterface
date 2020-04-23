@@ -4,9 +4,11 @@ from pathlib import Path
 
 import pygame
 from models.mcuSensorModel import UPSStatus
+
 from utils.airTime import AirTime
 from utils.anamolyDetection import Anomaly, check_for_anomalies
 from utils.internationalization import Internationalization
+from utils.config import ConfigValues
 
 ROOT_DIR = str(Path(os.path.dirname(os.path.abspath(__file__))).parent.parent)
 
@@ -83,6 +85,10 @@ class AlarmController:
     class __AlarmController:
         def __init__(self):
             self.alarms = []
+            self.started_since = -1
+            config = ConfigValues()
+            self.timeout = config.values['alarmSettings']['alarm_start_delay']
+            self.airTime = AirTime()
 
         def addAlarm(self, atype):
             found = False
@@ -138,7 +144,24 @@ class AlarmController:
                 stopAlarm()
 
 
+        def checkStartDelay(self, settings):
+            if settings.start and self.started_since == -1:
+                self.started_since = self.airTime.time_in_seconds
+                return False
+
+            if self.started_since == -1:
+                return False
+
+            return self.airTime.time_in_seconds - self.started_since >= self.timeout
+
+
         def checkForNewAlarms(self, settings, sensordata):
+
+            can_start = self.checkStartDelay(settings)
+
+            if not can_start:
+                return
+
             anomaly = check_for_anomalies(sensordata, settings)
 
             if anomaly == Anomaly.PEEP_TOO_HIGH:
