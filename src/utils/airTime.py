@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+import time
 
 
 class AirTime:
@@ -21,6 +22,11 @@ class AirTime:
             now = datetime.now() + timedelta(0, self.offset)
             dt = now.strftime("%H:%M")
             return dt
+
+        @property
+        def time_in_seconds(self):
+            now = datetime.now() + timedelta(0, self.offset)
+            return time.mktime(now.timetuple())
 
     instance = None
 
