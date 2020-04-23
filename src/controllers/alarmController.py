@@ -114,7 +114,6 @@ class AlarmController:
 
         def removeInactive(self):
             self.alarms[:] = [alarm for alarm in self.alarms if alarm.active]
-            print(len(self.alarms))
 
         def checkAlarm(self, actual, min, max, low_type, high_type):
             if min > actual:

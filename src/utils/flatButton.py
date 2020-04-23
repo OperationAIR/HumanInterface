@@ -45,6 +45,8 @@ class FlatButton(Canvas):
         self.counting = False
         self.press_arg = None
 
+        self.pressable = pressable
+
         self.enabled = True
 
     def checkTimeout(self):
