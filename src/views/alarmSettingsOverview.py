@@ -19,7 +19,6 @@ class AlarmSettingsOverview(Frame):
 
 
     def fill_frame(self):
-        print("Filling frame!")
         close_btn = FlatButton(self, self.callback, None,
                                self.config.values['colors']['lightBlue'], fontSize=20)
         close_btn.setText(_("Close"))
