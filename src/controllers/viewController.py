@@ -82,7 +82,7 @@ class ViewController(Tk):
         self.setTimeView.place(x=0, y=0, width=self.winfo_width(), height=self.winfo_height())
 
         self.request_sensor_timestamp = None
-        self.request_timeout = 1
+        self.request_timeout = 5
 
         self.io_thread = Thread(target=self.asyncio)
         self.io_thread.daemon = True
@@ -345,6 +345,7 @@ class ViewController(Tk):
         self.after(300, self.destroy_async)
 
     def start(self):
+        self.request_sensor_timestamp = None
         if self.settings.start == 1:
             # send stop
             self.settings.start = 0
@@ -375,8 +376,12 @@ class ViewController(Tk):
     def asyncio(self):
         if self.settings.start:
             self.mcu.request_sensor_data()
-            if self.request_sensor_timestamp is None:
+
+            can_start = self.alarms.checkStartDelay(self.settings)
+
+            if can_start and self.request_sensor_timestamp is None:
                 self.request_sensor_timestamp = time()
+
             if self.latest_sensor_data.cycle_state:
                 self.checkAllAlarms(self.settings, self.latest_sensor_data)
 
