@@ -156,7 +156,8 @@ class MainView(Frame):
         self.alarm_overview_btn.grid(row=0, column=2, sticky=N + S + E + W, padx=(0,2), pady=(2,0))
 
         self.patient_btn = FlatButton(self, self.callback, MainViewActions.PATIENT, self.config.values['colors']['lightBlue'])
-        self.patient_btn.setText(_("Patient"))
+        # self.patient_btn.setText(_("Patient"))
+        self.patient_btn.setText("")
         self.patient_btn.grid(row=0, column=3, sticky=N + S + E + W, padx=(0,2), pady=(2, 0))
 
         self.switch_btn = FlatButton(self, self.callback, MainViewActions.STARTSTOP, self.config.values['colors']['lightBlue'], timeout=4)
