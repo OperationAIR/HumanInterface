@@ -31,7 +31,8 @@ AlarmString = [
     _("OXYGEN value too high"),
     _("OXYGEN value too low"),
     _("Running on BATTERY"),
-    _("LOW BATTERY")
+    _("LOW BATTERY"),
+    _("Controller disconnected")
 ]
 
 class AlarmType(IntEnum):
@@ -47,6 +48,7 @@ class AlarmType(IntEnum):
     OXYGEN_TOO_LOW = 9
     RUN_ON_BATTERY = 10
     LOW_BATTERY = 11
+    MCU_DISCONNECTED = 12
 
 def registerAlarm():
     if pygame.mixer.get_busy() == 1:

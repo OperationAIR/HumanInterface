@@ -2,6 +2,7 @@ import subprocess
 from queue import Queue
 from signal import SIGINT, signal
 from threading import Thread
+from time import time
 from tkinter import BOTH, Tk, font, ttk
 
 import matplotlib.pyplot as plt
@@ -79,6 +80,9 @@ class ViewController(Tk):
         self.mainView = MainView(self.winfo_width(), self.winfo_height(), self.settings, self.latest_sensor_data, self.mainViewCallback)
 
         self.setTimeView.place(x=0, y=0, width=self.winfo_width(), height=self.winfo_height())
+
+        self.request_sensor_timestamp = None
+        self.request_timeout = 1
 
         self.io_thread = Thread(target=self.asyncio)
         self.io_thread.daemon = True
@@ -374,6 +378,8 @@ class ViewController(Tk):
     def asyncio(self):
         if self.settings.start:
             self.mcu.request_sensor_data()
+            if self.request_sensor_timestamp is None:
+                self.request_sensor_timestamp = time()
             if self.latest_sensor_data.cycle_state:
                 self.checkAllAlarms(self.settings, self.latest_sensor_data)
 
@@ -383,6 +389,12 @@ class ViewController(Tk):
 
             if self.log_handle:
                 logger.write_csv(self.log_handle, self.latest_sensor_data.as_list())
+        elif self.settings.start and self.request_sensor_timestamp != None:
+            timeDiff = time() - self.request_sensor_timestamp
+            if timeDiff > self.request_timeout:
+                self.alarms.addAlarm(AlarmType.MCU_DISCONNECTED)
+                self.request_sensor_timestamp = None
+
 
         if not self.settings_queue.empty():
             mcuSettings = self.settings_queue.get()

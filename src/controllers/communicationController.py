@@ -3,9 +3,9 @@ import signal
 import struct
 import sys
 import threading
-import time
 from enum import Enum
 from queue import Queue
+from time import sleep
 
 import crcmod
 from models.mcuSensorModel import Sensors
@@ -79,7 +79,7 @@ class Microcontroller:
             # print(sensors)
 
             self.sensor_queue.put(sensors)
-            time.sleep(0.5)
+            sleep(0.5)
 
         print ('exit simulation thread')
 
@@ -295,7 +295,7 @@ class Microcontroller:
                 raise       # XXX handle instead of re-raise?
 
 
-            time.sleep(0.01)
+            sleep(0.01)
 
         print ('exit serial thread')
 
@@ -329,7 +329,7 @@ if __name__ == "__main__":
     mcu.led_on()
     mcu.send_settings(s)
 
-    time.sleep(1)
+    sleep(1)
     mcu.request_sensor_data()
 
     exit = False
@@ -365,4 +365,4 @@ if __name__ == "__main__":
                 mcu.led_off()
                 mcu.request_sensor_data()
 
-        time.sleep(0.1)
+        sleep(0.1)

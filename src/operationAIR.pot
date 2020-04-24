@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-23 12:11+0200\n"
+"POT-Creation-Date: 2020-04-24 13:54+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,111 +21,115 @@ msgstr ""
 msgid "Hold for"
 msgstr ""
 
-#: controllers/alarmController.py:21
+#: controllers/alarmController.py:23
 msgid "Nothing."
 msgstr ""
 
-#: controllers/alarmController.py:22
+#: controllers/alarmController.py:24
 msgid "Clear all alarms"
 msgstr ""
 
-#: controllers/alarmController.py:23
+#: controllers/alarmController.py:25
 msgid "PEEP value too high"
 msgstr ""
 
-#: controllers/alarmController.py:24
+#: controllers/alarmController.py:26
 msgid "PEEP value too low"
 msgstr ""
 
-#: controllers/alarmController.py:25
+#: controllers/alarmController.py:27
 msgid "TIDAL value too high"
 msgstr ""
 
-#: controllers/alarmController.py:26
+#: controllers/alarmController.py:28
 msgid "TIDAL value too low"
 msgstr ""
 
-#: controllers/alarmController.py:27
+#: controllers/alarmController.py:29
 msgid "PRESSURE value too high"
 msgstr ""
 
-#: controllers/alarmController.py:28
+#: controllers/alarmController.py:30
 msgid "PRESSURE value too low"
 msgstr ""
 
-#: controllers/alarmController.py:29
+#: controllers/alarmController.py:31
 msgid "OXYGEN value too high"
 msgstr ""
 
-#: controllers/alarmController.py:30
+#: controllers/alarmController.py:32
 msgid "OXYGEN value too low"
 msgstr ""
 
-#: controllers/alarmController.py:31
+#: controllers/alarmController.py:33
 msgid "Running on BATTERY"
 msgstr ""
 
-#: controllers/alarmController.py:32
+#: controllers/alarmController.py:34
 msgid "LOW BATTERY"
 msgstr ""
 
-#: controllers/alarmController.py:79
+#: controllers/alarmController.py:35
+msgid "Controller disconnected"
+msgstr ""
+
+#: controllers/alarmController.py:83
 msgid "Latest at"
 msgstr ""
 
-#: controllers/viewController.py:64
+#: controllers/viewController.py:65
 msgid "Operation Air Ventilator"
 msgstr ""
 
-#: controllers/viewController.py:107 controllers/viewController.py:242
+#: controllers/viewController.py:111 controllers/viewController.py:246
 #: views/mainView.py:83 views/alarmSettingsOverview.py:30
 msgid "PEEP"
 msgstr ""
 
-#: controllers/viewController.py:107 controllers/viewController.py:131
-#: controllers/viewController.py:242 controllers/viewController.py:268
+#: controllers/viewController.py:111 controllers/viewController.py:135
+#: controllers/viewController.py:246 controllers/viewController.py:272
 #: views/mainView.py:83 views/mainView.py:86 views/mainView.py:93
 #: views/mainView.py:96 views/mainView.py:100 views/mainView.py:103
-#: views/mainView.py:132
+#: views/mainView.py:131
 msgid "[cm H2O]"
 msgstr ""
 
-#: controllers/viewController.py:115 controllers/viewController.py:278
+#: controllers/viewController.py:119 controllers/viewController.py:282
 #: views/alarmSettingsOverview.py:45
 msgid "Oxygen"
 msgstr ""
 
-#: controllers/viewController.py:115 controllers/viewController.py:278
+#: controllers/viewController.py:119 controllers/viewController.py:282
 msgid "[O2]"
 msgstr ""
 
-#: controllers/viewController.py:123 views/alarmSettingsOverview.py:40
+#: controllers/viewController.py:127 views/alarmSettingsOverview.py:40
 msgid "Tidal Volume"
 msgstr ""
 
-#: controllers/viewController.py:131 views/mainView.py:132
+#: controllers/viewController.py:135 views/mainView.py:131
 #: views/alarmSettingsOverview.py:35
 msgid "Pressure"
 msgstr ""
 
-#: controllers/viewController.py:252
+#: controllers/viewController.py:256
 msgid "Frequency and Ratio"
 msgstr ""
 
-#: controllers/viewController.py:253
+#: controllers/viewController.py:257
 msgid "Freq"
 msgstr ""
 
-#: controllers/viewController.py:253 views/mainView.py:85
+#: controllers/viewController.py:257 views/mainView.py:85
 msgid "[1/min]"
 msgstr ""
 
-#: controllers/viewController.py:253 controllers/viewController.py:318
-#: controllers/viewController.py:321 controllers/viewController.py:324
+#: controllers/viewController.py:257 controllers/viewController.py:322
+#: controllers/viewController.py:325 controllers/viewController.py:328
 msgid "Ratio"
 msgstr ""
 
-#: controllers/viewController.py:268 views/mainView.py:86
+#: controllers/viewController.py:272 views/mainView.py:86
 msgid "PC above PEEP"
 msgstr ""
 
@@ -162,7 +166,7 @@ msgstr ""
 msgid "Expiration Hold"
 msgstr ""
 
-#: views/mainView.py:100 views/mainView.py:179
+#: views/mainView.py:100 views/mainView.py:178
 msgid "Ppeak"
 msgstr ""
 
@@ -170,11 +174,11 @@ msgstr ""
 msgid "Ppeep"
 msgstr ""
 
-#: views/mainView.py:104 views/mainView.py:185
+#: views/mainView.py:104 views/mainView.py:184
 msgid "O2"
 msgstr ""
 
-#: views/mainView.py:105 views/mainView.py:188
+#: views/mainView.py:105 views/mainView.py:187
 msgid "TV in/exp"
 msgstr ""
 
@@ -190,53 +194,53 @@ msgstr ""
 msgid "[L]"
 msgstr ""
 
-#: views/mainView.py:113 views/mainView.py:196
-msgid "Batt. [%]"
-msgstr ""
-
-#: views/mainView.py:115
+#: views/mainView.py:111
 msgid "Pwr. Err."
 msgstr ""
 
-#: views/mainView.py:139
+#: views/mainView.py:138
 msgid "Flow"
 msgstr ""
 
-#: views/mainView.py:139
+#: views/mainView.py:138
 msgid "[L / min]"
 msgstr ""
 
-#: views/mainView.py:147
+#: views/mainView.py:146
 msgid "Menu"
 msgstr ""
 
-#: views/mainView.py:151
+#: views/mainView.py:150
 msgid "Alarm"
 msgstr ""
 
-#: views/mainView.py:155
+#: views/mainView.py:154
 msgid "Alarm Overview"
 msgstr ""
 
-#: views/mainView.py:159
+#: views/mainView.py:158
 msgid "Patient"
 msgstr ""
 
-#: views/mainView.py:182
+#: views/mainView.py:181
 msgid "Pmean"
 msgstr ""
 
-#: views/mainView.py:191
+#: views/mainView.py:190
 msgid "min.vol"
 msgstr ""
 
-#: views/mainView.py:202
+#: views/mainView.py:195
+msgid "Batt. [%]"
+msgstr ""
+
+#: views/mainView.py:201
 msgid ""
 "Inspiration Hold\n"
 "(Hold to measure)"
 msgstr ""
 
-#: views/mainView.py:207
+#: views/mainView.py:206
 msgid ""
 "Expiration Hold\n"
 "(Hold to measure)"
