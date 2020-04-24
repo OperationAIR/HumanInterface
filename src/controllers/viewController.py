@@ -232,9 +232,6 @@ class ViewController(Tk):
 
         elif action == MainViewActions.PATIENT:
             print("Clicked Patient")
-            airtime = AirTime()
-            print(airtime.time)
-            self.mcu.try_start_inspiratroy_hold()
         elif action == MainViewActions.STARTSTOP:
             print("Clicked Startstop")
             self.start()

@@ -34,7 +34,6 @@ class MenuView(Frame):
             self.exit_btn.setText(_("Shutdown"))
 
     def fill_frame(self, settings):
-        print("Filling frame!")
         close_btn = FlatButton(self, self.callback, MenuViewActions.NONE,
                                self.config.values['colors']['lightBlue'], fontSize=20)
         close_btn.setText(_("Close"))
