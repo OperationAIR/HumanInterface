@@ -106,13 +106,12 @@ class MainView(Frame):
         self.tv_label1.setText(_("min.vol."), str(round(self.sensordata.minute_volume)) + " " + _("[L]"))
 
         batt_status = self.sensordata.ups_status
-        if batt_status == UPSStatus.OK:
-            # self.batt_label.setText(_("Pwr. [%]"), self.sensordata.battery_percentage)
-            self.batt_label.setTitle("")
-        elif batt_status == UPSStatus.BATTERY_POWERED:
-            self.batt_label.setText(_("Batt. [%]"), self.sensordata.battery_percentage)
-        else:
+        
+        if batt_status == (UPSStatus.UNKNOWN or UPSStatus.FAIL):
             self.batt_label.setTitle(_("Pwr. Err."))
+        else:
+            self.batt_label.setTitle("")
+
         self.batt_label.setBackgroundColor(self.getCanvasColor(AlarmType.RUN_ON_BATTERY, AlarmType.LOW_BATTERY))
 
         self.flowgraph.update(-1 * self.sensordata.flow)
