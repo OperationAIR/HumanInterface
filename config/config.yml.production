@@ -57,6 +57,6 @@ developer:
   hardShutdown: True
   commPort: '/dev/ttyS0'
   baudrate: 500000
-  logEnabled: True
+  logEnabled: False
   logDir: "sensorlogs"
 
