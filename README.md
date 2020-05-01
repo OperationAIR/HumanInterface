@@ -91,6 +91,6 @@ python src/main.py
 
 # License
 
-Copyright (c) TU Delft. All rights reserved.
+Copyright (c) 2020 TU Delft. All rights reserved.
 
 Licensed under the [Apache 2.0](LICENSE) license.
