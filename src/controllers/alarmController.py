@@ -125,6 +125,7 @@ class AlarmController:
 
         def removeAlarm(self, atype):
             [self.alarms.remove(a) for a in self.alarms if atype == a.type]
+            self.mute(atype)
 
         def checkAlarm(self, actual, min, max, low_type, high_type):
             if min > actual:
