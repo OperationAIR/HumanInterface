@@ -82,7 +82,7 @@ class ViewController(Tk):
         self.setTimeView.place(x=0, y=0, width=self.winfo_width(), height=self.winfo_height())
 
         self.request_sensor_timestamp = None
-        self.request_timeout = 5
+        self.request_timeout = 10
 
         self.io_thread = Thread(target=self.asyncio)
         self.io_thread.daemon = True
@@ -391,6 +391,9 @@ class ViewController(Tk):
 
             if self.log_handle:
                 logger.write_csv(self.log_handle, self.latest_sensor_data.as_list())
+            
+            self.alarms.removeAlarm(AlarmType.MCU_DISCONNECTED)
+
         elif self.settings.start and self.request_sensor_timestamp != None:
             timeDiff = time() - self.request_sensor_timestamp
             if timeDiff > self.request_timeout:
