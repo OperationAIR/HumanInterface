@@ -345,6 +345,7 @@ class ViewController(Tk):
         self.after(300, self.destroy_async)
 
     def start(self):
+        self.alarms.resetStartDelay()
         self.request_sensor_timestamp = None
         if self.settings.start == 1:
             # send stop

@@ -146,6 +146,9 @@ class AlarmController:
             if not activeAlarm:
                 stopAlarm()
 
+        def resetStartDelay(self):
+            self.started_since = -1
+
 
         def checkStartDelay(self, settings):
             if settings.start and self.started_since == -1:
